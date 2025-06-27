@@ -193,6 +193,7 @@
                                     <input type="number" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                     <input type="number" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                     <input type="number" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    <button id="limpar_media" type="button" class="mt-2 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
                                 </div>
                                 <div class="flex flex-col gap-4 justify-center">
                                     <div class="p-4 rounded-lg neumorphic-inset">
@@ -208,7 +209,6 @@
                                 <div class="flex flex-col gap-2">
                                     <h3 class="text-lg font-semibold mb-2">Valores a Somar</h3>
                                     <div id="soma-inputs-container" class="flex flex-col gap-2">
-                                        <!-- 5 inputs para somar -->
                                         <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                         <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                         <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
@@ -219,7 +219,6 @@
                                 <div class="flex flex-col gap-2">
                                     <h3 class="text-lg font-semibold mb-2">Valores a Subtrair</h3>
                                     <div id="sub-inputs-container" class="flex flex-col gap-2">
-                                         <!-- 5 inputs para subtrair -->
                                         <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                         <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                         <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
@@ -236,6 +235,9 @@
                                         <p class="text-sm font-medium">Divisão por 12</p>
                                         <p id="soma_div12_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
                                     </div>
+                                </div>
+                                <div class="md:col-span-2 mt-4">
+                                    <button id="limpar_soma" type="button" class="w-full p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
                                 </div>
                             </div>
                         </div>
@@ -367,12 +369,10 @@
                     button.classList.add('text-accent');
 
                     rendaPfTabContents.forEach(content => {
-                        // CORREÇÃO: Usa a classe 'hidden' para controlar a visibilidade
                         const isActive = content.id === targetTabId;
                         content.classList.toggle('hidden', !isActive);
                     });
 
-                    // CORREÇÃO: Recalcula a altura do container PAI do conteúdo das abas
                     const parentModule = document.getElementById('renda-pf-module');
                     moduleContainer.style.height = `${parentModule.scrollHeight}px`;
                 });
@@ -392,7 +392,9 @@
 
             // Aba 2: Média Holerites
             const mediaInputs = document.querySelectorAll('.media-holerite-input');
-            mediaInputs.forEach(input => input.addEventListener('input', () => {
+            const limparMediaBtn = document.getElementById('limpar_media');
+            
+            function calcularMedia() {
                 let total = 0;
                 let count = 0;
                 mediaInputs.forEach(inp => {
@@ -404,11 +406,19 @@
                 });
                 const media = count > 0 ? total / count : 0;
                 document.getElementById('media_resultado').textContent = formatCurrency(media);
-            }));
+            }
+            mediaInputs.forEach(input => input.addEventListener('input', calcularMedia));
+            limparMediaBtn.addEventListener('click', () => {
+                mediaInputs.forEach(input => input.value = '');
+                calcularMedia(); // Recalcula para zerar o resultado
+            });
+
 
             // Aba 3: Soma de Valores
             const somaInputs = document.querySelectorAll('.soma-valor-input');
             const subInputs = document.querySelectorAll('.sub-valor-input');
+            const limparSomaBtn = document.getElementById('limpar_soma');
+
             function calcularSomaTotal() {
                 let totalSoma = 0;
                 somaInputs.forEach(inp => totalSoma += parseFloat(inp.value) || 0);
@@ -422,6 +432,11 @@
             }
             somaInputs.forEach(input => input.addEventListener('input', calcularSomaTotal));
             subInputs.forEach(input => input.addEventListener('input', calcularSomaTotal));
+            limparSomaBtn.addEventListener('click', () => {
+                somaInputs.forEach(input => input.value = '');
+                subInputs.forEach(input => input.value = '');
+                calcularSomaTotal(); // Recalcula para zerar os resultados
+            });
 
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
