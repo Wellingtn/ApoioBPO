@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<!-- A classe 'dark' na tag <html> define o modo escuro como o padrão inicial -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP de Cálculos - Neumórfico</title>
+
+    <!-- Inclusão do Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fontes do Google (Poppins) para um visual mais limpo e profissional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- 
+      Configuração customizada do Tailwind e Estilos CSS.
+      As variáveis de cor foram centralizadas para garantir o funcionamento
+      correto dos modos claro e escuro.
+    -->
+    <style type="text/tailwindcss">
+        /*
+         * Definição das variáveis de cor para os temas.
+         * :root define as cores do modo claro (padrão).
+         * html.dark redefine essas mesmas variáveis para o modo escuro.
+         * Esta abordagem centralizada corrige o problema do modo claro.
+        */
+        :root {
+            --color-bg: #e0e5ec;
+            --color-text: #5a6474;
+            --color-shadow-1: #ffffff;
+            --color-shadow-2: #a3b1c6;
+            --color-accent: #0ea5e9; /* Cor de destaque (Azul Céu 500) */
+        }
+
+        html.dark {
+            --color-bg: #2c3036;
+            --color-text: #d1d9e6;
+            --color-shadow-1: #353a41;
+            --color-shadow-2: #23262b;
+            --color-accent: #38bdf8; /* Cor de destaque (Azul Céu 400) */
+        }
+
+        /* Estilo base do corpo da página usando as variáveis */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Classes de utilidade para o Neumorfismo usando variáveis */
+        .neumorphic-outset {
+            box-shadow: 7px 7px 15px var(--color-shadow-2), -7px -7px 15px var(--color-shadow-1);
+        }
+        .neumorphic-inset {
+            box-shadow: inset 7px 7px 15px var(--color-shadow-2), inset -7px -7px 15px var(--color-shadow-1);
+        }
+        .neumorphic-outset-sm {
+            box-shadow: 4px 4px 8px var(--color-shadow-2), -4px -4px 8px var(--color-shadow-1);
+        }
+        
+        /* Classe para a cor de destaque do texto */
+        .text-accent {
+            color: var(--color-accent);
+        }
+
+        /* Estilização para o placeholder dos inputs */
+        ::placeholder {
+            color: #9ca3af;
+        }
+        .dark ::placeholder {
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<!-- As classes de cor foram removidas do body, pois agora são controladas pelo CSS acima -->
+<body>
+
+    <!-- Container Principal: Centralizado e com largura máxima -->
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden">
+
+        <main class="w-full max-w-2xl mx-auto flex flex-col gap-8">
+            <!-- Cabeçalho da Aplicação -->
+            <header class="flex justify-between items-center w-full px-2">
+                <h1 id="module-title" class="text-xl md:text-2xl font-semibold transition-all duration-300">
+                    <!-- O título será preenchido via JavaScript -->
+                </h1>
+                <button id="theme-toggle" class="p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95">
+                    <!-- Ícone de Sol (Modo Claro) -->
+                    <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Ícone de Lua (Modo Escuro) -->
+                    <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Container dos Módulos -->
+            <div class="relative w-full h-80">
+                <!-- Módulo 1: Cálculo de Faturamento -->
+                <div id="faturamento-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out">
+                    <form class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label for="receita" class="font-medium">Receita Bruta (R$)</label>
+                            <input type="number" id="receita" placeholder="Ex: 15000.00" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="custos" class="font-medium">Custos e Despesas (R$)</label>
+                            <input type="number" id="custos" placeholder="Ex: 4500.50" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                        </div>
+                        <button type="button" class="mt-4 w-full p-4 rounded-xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
+                    </form>
+                </div>
+
+                <!-- Módulo 2: Cálculo de IRPF -->
+                <div id="irpf-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
+                    <form class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label for="rendimento" class="font-medium">Rendimento Tributável (R$)</label>
+                            <input type="number" id="rendimento" placeholder="Ex: 75000.00" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="deducoes" class="font-medium">Deduções (R$)</label>
+                            <input type="number" id="deducoes" placeholder="Ex: 12000.00" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                        </div>
+                        <button type="button" class="mt-4 w-full p-4 rounded-xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
+                    </form>
+                </div>
+
+                <!-- Módulo 3: Regras IRPF -->
+                <div id="regras-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
+                    <div class="flex flex-col gap-4 text-sm md:text-base">
+                        <h2 class="text-lg font-semibold mb-2">Principais Regras do IRPF</h2>
+                        <p>A declaração do Imposto de Renda é obrigatória para quem recebeu rendimentos tributáveis acima de um determinado teto no ano anterior.</p>
+                        <p>As alíquotas são progressivas, variando de 0% a 27,5%, de acordo com a faixa de renda.</p>
+                        <p>Despesas com educação, saúde e dependentes podem ser deduzidas para reduzir a base de cálculo do imposto.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Dock de Navegação Fixo -->
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto">
+            <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
+                <!-- O slider indicador será posicionado aqui -->
+                <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                
+                <!-- Botões de Navegação -->
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo de Faturamento">
+                    Faturamento
+                </button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="irpf-module" data-title="Cálculo de IRPF">
+                    IRPF
+                </button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">
+                    Regras
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- SELEÇÃO DOS ELEMENTOS DO DOM ---
+            const themeToggleButton = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const dockSlider = document.getElementById('dock-slider');
+            const dockButtons = document.querySelectorAll('.dock-button');
+            const moduleTitle = document.getElementById('module-title');
+            const modules = document.querySelectorAll('.module-content');
+
+            // --- LÓGICA DO MODO CLARO/ESCURO ---
+            themeToggleButton.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                updateThemeIcons();
+            });
+            
+            function updateThemeIcons() {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                sunIcon.classList.toggle('hidden', isDarkMode);
+                moonIcon.classList.toggle('hidden', !isDarkMode);
+            }
+
+            // Função para atualizar a posição e tamanho do slider
+            function updateSlider(button) {
+                if (!button) return;
+                dockSlider.style.width = `${button.offsetWidth}px`;
+                dockSlider.style.left = `${button.offsetLeft}px`;
+
+                // Atualiza a cor do texto dos botões
+                dockButtons.forEach(btn => {
+                    // Usa a nova classe .text-accent
+                    btn.classList.remove('text-accent', 'font-semibold');
+                });
+                button.classList.add('text-accent', 'font-semibold');
+            }
+
+            // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
+            dockButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetModuleId = button.dataset.target;
+                    const targetTitle = button.dataset.title;
+
+                    updateSlider(button);
+                    moduleTitle.textContent = targetTitle;
+
+                    modules.forEach(module => {
+                        const isActive = module.id === targetModuleId;
+                        module.classList.toggle('opacity-100', isActive);
+                        module.classList.toggle('visible', isActive);
+                        module.classList.toggle('translate-y-0', isActive);
+                        
+                        module.classList.toggle('opacity-0', !isActive);
+                        module.classList.toggle('invisible', !isActive);
+                        module.classList.toggle('-translate-y-4', !isActive);
+                    });
+                });
+            });
+
+            // --- ESTADO INICIAL DA APLICAÇÃO ---
+            function initializeApp() {
+                // Sincroniza o ícone do tema no carregamento
+                updateThemeIcons();
+
+                // Ativa o primeiro botão por padrão
+                if (dockButtons.length > 0) {
+                    requestAnimationFrame(() => {
+                         dockButtons[0].click();
+                    });
+                }
+            }
+
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
