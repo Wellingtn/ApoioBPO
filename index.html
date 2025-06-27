@@ -381,6 +381,22 @@
                         <!-- Pareceres serão renderizados aqui -->
                     </div>
                 </div>
+                <!-- Módulo 5: Contador -->
+                <div id="contador-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col items-center justify-center">
+                    <div class="w-full max-w-xs flex flex-col items-center gap-8">
+                        <!-- Display -->
+                        <div id="contador-display" class="w-full p-6 rounded-lg neumorphic-inset text-center text-6xl font-bold">
+                            0
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="w-full grid grid-cols-2 gap-4">
+                            <button id="contador-plus" class="p-4 rounded-lg neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform">+</button>
+                            <button id="contador-minus" class="p-4 rounded-lg neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform">-</button>
+                        </div>
+                        <!-- Reset Button -->
+                        <button id="contador-reset" class="w-full p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Redefinir</button>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -388,10 +404,11 @@
         <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto flex-shrink-0">
             <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
                 <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">Regras</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="contador-module" data-title="Contador">Contador</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="regras-module" data-title="Regras IRPF">Regras</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
             </div>
         </nav>
     </div>
@@ -691,6 +708,32 @@
             }
 
             searchInput.addEventListener('input', filterPareceres);
+
+            // --- LÓGICA DO MÓDULO CONTADOR ---
+            const contadorDisplay = document.getElementById('contador-display');
+            const contadorPlusBtn = document.getElementById('contador-plus');
+            const contadorMinusBtn = document.getElementById('contador-minus');
+            const contadorResetBtn = document.getElementById('contador-reset');
+            let count = 0;
+
+            function updateContadorDisplay() {
+                contadorDisplay.textContent = count;
+            }
+
+            contadorPlusBtn.addEventListener('click', () => {
+                count++;
+                updateContadorDisplay();
+            });
+
+            contadorMinusBtn.addEventListener('click', () => {
+                count--;
+                updateContadorDisplay();
+            });
+
+            contadorResetBtn.addEventListener('click', () => {
+                count = 0;
+                updateContadorDisplay();
+            });
 
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
