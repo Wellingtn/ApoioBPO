@@ -171,6 +171,7 @@
             const themeToggleButton = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('sun-icon');
             const moonIcon = document.getElementById('moon-icon');
+            const dockContainer = document.getElementById('dock-container'); // Seleciona o container do dock
             const dockSlider = document.getElementById('dock-slider');
             const dockButtons = document.querySelectorAll('.dock-button');
             const moduleTitle = document.getElementById('module-title');
@@ -191,12 +192,22 @@
             // Função para atualizar a posição e tamanho do slider
             function updateSlider(button) {
                 if (!button) return;
-                dockSlider.style.width = `${button.offsetWidth}px`;
-                dockSlider.style.left = `${button.offsetLeft}px`;
+
+                // CORREÇÃO APRIMORADA: Lógica para preencher completamente os vãos nas bordas.
+                const containerPadding = parseFloat(getComputedStyle(dockContainer).paddingLeft);
+                
+                // O "sangramento" (bleed) é o dobro do padding para cobrir ambos os lados do botão.
+                const bleed = containerPadding * 2;
+
+                // A nova largura é a do botão mais o sangramento.
+                dockSlider.style.width = `${button.offsetWidth + bleed}px`;
+                
+                // A nova posição é a do botão (relativa ao container) menos o padding.
+                // Isso alinha a borda do slider com a borda interna do container, eliminando o vão.
+                dockSlider.style.left = `${button.offsetLeft - containerPadding}px`;
 
                 // Atualiza a cor do texto dos botões
                 dockButtons.forEach(btn => {
-                    // Usa a nova classe .text-accent
                     btn.classList.remove('text-accent', 'font-semibold');
                 });
                 button.classList.add('text-accent', 'font-semibold');
@@ -231,6 +242,7 @@
 
                 // Ativa o primeiro botão por padrão
                 if (dockButtons.length > 0) {
+                    // Usamos requestAnimationFrame para garantir que o layout foi calculado antes do clique.
                     requestAnimationFrame(() => {
                          dockButtons[0].click();
                     });
