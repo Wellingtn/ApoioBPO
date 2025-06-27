@@ -103,23 +103,26 @@
 
             <!-- Container dos Módulos com altura dinâmica -->
             <div id="module-container" class="relative w-full transition-[height] duration-350 ease-in-out">
-                <!-- Módulo 1: Cálculo de Faturamento -->
+                <!-- Módulo 1: Renda PJ (antigo Faturamento) -->
                 <div id="faturamento-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out">
-                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mb-4">
+                        <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Entradas</h3>
+                        <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Resultados</h3>
+                    </div>
+                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                         <!-- Coluna de Entradas -->
                         <div class="flex flex-col gap-4">
-                            <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Entradas</h3>
                             <div class="flex flex-col gap-2">
                                 <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
-                                <input type="number" id="rbt12" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
-                                <input type="number" id="rpa" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
-                                <input type="number" id="mes_anterior" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
@@ -132,8 +135,7 @@
                         </div>
 
                         <!-- Coluna de Resultados -->
-                        <div class="flex flex-col gap-4">
-                            <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Resultados</h3>
+                        <div class="flex flex-col gap-4 pt-7">
                             <div class="p-4 rounded-lg neumorphic-inset">
                                 <p class="text-sm font-medium">1º Cálculo (Somente RBT12)</p>
                                 <p id="resultado1" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
@@ -150,7 +152,7 @@
                     </form>
                 </div>
 
-                <!-- Módulo 2: Renda PF (antigo IRPF) -->
+                <!-- Módulo 2: Renda PF -->
                 <div id="renda-pf-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
                     <!-- Navegação por Abas Internas -->
                     <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600">
@@ -163,25 +165,23 @@
                     <div class="relative">
                         <!-- Aba 1: Calculadora -->
                         <div id="calculadora-tab" class="renda-pf-tab-content">
-                           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                               <!-- Coluna Esquerda: Input e Botão -->
-                               <div class="flex flex-col justify-between gap-4">
-                                    <div class="flex flex-col gap-2">
-                                        <label for="valor_sisbr" class="text-sm font-medium">Valor do SISBR</label>
-                                        <input type="number" id="valor_sisbr" placeholder="1404.33" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                    </div>
-                                    <button id="limpar_sisbr" type="button" class="p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                           <h3 class="text-lg font-semibold mb-4">Valor do SISBR</h3>
+                           <div class="flex flex-col gap-6">
+                               <!-- Linha 1 -->
+                               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-end">
+                                   <input type="text" inputmode="decimal" id="valor_sisbr" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm h-full">
+                                   <div class="p-4 rounded-lg neumorphic-inset">
+                                       <p class="text-sm font-medium">Multiplicado por 12</p>
+                                       <p id="sisbr_mult" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                   </div>
                                </div>
-                               <!-- Coluna Direita: Resultados -->
-                               <div class="flex flex-col justify-between gap-4">
-                                    <div class="p-4 rounded-lg neumorphic-inset">
-                                        <p class="text-sm font-medium">Multiplicado por 12</p>
-                                        <p id="sisbr_mult" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
-                                    </div>
-                                    <div class="p-4 rounded-lg neumorphic-inset">
-                                        <p class="text-sm font-medium">Dividido por 12</p>
-                                        <p id="sisbr_div" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
-                                    </div>
+                               <!-- Linha 2 -->
+                               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-stretch">
+                                   <button id="limpar_sisbr" type="button" class="h-full p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                                   <div class="p-4 rounded-lg neumorphic-inset">
+                                       <p class="text-sm font-medium">Dividido por 12</p>
+                                       <p id="sisbr_div" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                   </div>
                                </div>
                            </div>
                         </div>
@@ -190,16 +190,17 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-4">
                                     <h3 class="text-lg font-semibold">Valores dos Holerites</h3>
-                                    <input type="number" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                    <input type="number" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                    <input type="number" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                    <button id="limpar_media" type="button" class="mt-2 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                                    <input type="text" inputmode="decimal" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    <input type="text" inputmode="decimal" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    <input type="text" inputmode="decimal" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                 </div>
-                                <div class="flex flex-col gap-4 justify-center">
+                                <div class="flex flex-col gap-4">
+                                    <h3 class="text-lg font-semibold invisible">Resultados</h3> <!-- Título invisível para alinhamento -->
                                     <div class="p-4 rounded-lg neumorphic-inset">
                                         <p class="text-sm font-medium">Média dos Valores</p>
                                         <p id="media_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
                                     </div>
+                                    <button id="limpar_media" type="button" class="mt-2 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
                                 </div>
                             </div>
                         </div>
@@ -209,21 +210,21 @@
                                 <div class="flex flex-col gap-2">
                                     <h3 class="text-lg font-semibold mb-2">Valores a Somar</h3>
                                     <div id="soma-inputs-container" class="flex flex-col gap-2">
-                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-2">
                                     <h3 class="text-lg font-semibold mb-2">Valores a Subtrair</h3>
                                     <div id="sub-inputs-container" class="flex flex-col gap-2">
-                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
                                     </div>
                                 </div>
                                 <div class="md:col-span-2 flex flex-col md:flex-row gap-4 mt-4">
@@ -246,11 +247,100 @@
 
                 <!-- Módulo 3: Regras IRPF -->
                 <div id="regras-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
-                    <div class="flex flex-col gap-4 text-sm md:text-base">
-                        <h2 class="text-lg font-semibold mb-2">Principais Regras do IRPF</h2>
-                        <p>A declaração do Imposto de Renda é obrigatória para quem recebeu rendimentos tributáveis acima de um determinado teto no ano anterior.</p>
-                        <p>As alíquotas são progressivas, variando de 0% a 27,5%, de acordo com a faixa de renda.</p>
-                        <p>Despesas com educação, saúde e dependentes podem ser deduzidas para reduzir a base de cálculo do imposto.</p>
+                    <!-- Navegação por Abas Internas -->
+                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600">
+                        <button class="regras-tab-button py-2 px-4 font-semibold" data-tab="itens-ir">Itens do IR</button>
+                        <button class="regras-tab-button py-2 px-4 font-semibold" data-tab="recebidos-pf">Recebidos de PF</button>
+                    </div>
+
+                    <!-- Conteúdo das Abas de Regras -->
+                    <div class="relative">
+                        <!-- Aba 1: Itens do IR -->
+                        <div id="itens-ir-tab" class="regras-tab-content">
+                            <h2 class="text-lg font-semibold mb-4">Itens do Imposto de Renda e Tipo Correto Aceito</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="border-b-2 border-slate-300 dark:border-slate-600">
+                                        <tr>
+                                            <th class="p-2">Item</th>
+                                            <th class="p-2">Referência</th>
+                                            <th class="p-2">Tipo de Renda Aceito</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">01</td><td class="p-2">Bolsa de estudo e de pesquisa caracterizada como doação</td><td class="p-2">Outros - Bolsa de estudo - Bolsa do governo</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">02</td><td class="p-2">Ganho de capital na alienação de bens ou direito</td><td class="p-2">Não aceito como renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">03</td><td class="p-2">Capital das apólices de seguro ou pecúlio pago por morte do segurado</td><td class="p-2">Não aceito como renda, reprovar informando</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">04</td><td class="p-2">Indenização por rescisão de contrato de trabalho, inclusive a título de PDV</td><td class="p-2">Não aceito como renda em regra, salvo se o associado constar no QSA</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">06</td><td class="p-2">Rendimento de aplicação financeira</td><td class="p-2">Outros e aplicação</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">07</td><td class="p-2">Ganho de capital na venda de imóveis</td><td class="p-2">Não aceito como renda, reprovar informando!</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">08</td><td class="p-2">Ganho de capital na alienação de moeda estrangeira</td><td class="p-2">Não aceito como renda, reprovar informando!</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">09</td><td class="p-2">Lucros e dividendos recebidos</td><td class="p-2">Outros ou Pró-labore</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">10</td><td class="p-2">Parcela isenta de proventos de aposentadoria, reserva remunerada, reforma e pensão de declarante com 65 anos</td><td class="p-2">Aposentadoria (Obs: pode ser somando com fundo do regime geral da previdência)</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">10</td><td class="p-2">Juros sobre capital próprio</td><td class="p-2">Outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">11</td><td class="p-2">Participação nos lucros e resultados</td><td class="p-2">Outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">11</td><td class="p-2">Pensão, Proventos de aposentadoria ou reforma por moléstia</td><td class="p-2">Aposentadoria ou Pensão</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">12</td><td class="p-2">Rendimento de caderneta de poupança, letras, LCA, LCI</td><td class="p-2">Outros ou Aplicação</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">13</td><td class="p-2">Rendimento de sócio ou titular de microempresa ou empresa de pequeno porte optante do simples</td><td class="p-2">Outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">14</td><td class="p-2">Doações e herança</td><td class="p-2">Não aceito como renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">15</td><td class="p-2">Parcela não tributável correspondente à atividade rural</td><td class="p-2">Agropecuária</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">16</td><td class="p-2">Imposto de renda de anos calendário anteriores</td><td class="p-2">Não é renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">18</td><td class="p-2">Incorporação de reserva de capital</td><td class="p-2">Não é aceito como renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">19</td><td class="p-2">Transferências patrimoniais - meação e dissolução de sociedade conjugal</td><td class="p-2">Não aceito como renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">20</td><td class="p-2">Ganhos líquidos em operações de mercado à vista de ações</td><td class="p-2">Aplicação e outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">21</td><td class="p-2">Ganhos líquidos em operações com ouro, ativo financeiro</td><td class="p-2">Outros e prestação de serviço</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">22</td><td class="p-2">Recuperação de prejuízos em renda variável</td><td class="p-2">Não é renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">23</td><td class="p-2">Rendimento bruto até no máximo 90% da prestação de se..</td><td class="p-2">Prestação de serviço e outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">24</td><td class="p-2">Rendimento bruto, até o máximo 40%, da prestação de serv</td><td class="p-2">Prestação de serviços e outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">25</td><td class="p-2">Restituição de imposto sobre rendas anos-calendários anteriores</td><td class="p-2">Não aceito como renda</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">28</td><td class="p-2">Pensão alimentícia beneficiário</td><td class="p-2">Pensão e outros</td></tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">99</td><td class="p-2">Outros</td><td class="p-2">Outros</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Aba 2: Recebidos de PF e Exterior -->
+                        <div id="recebidos-pf-tab" class="regras-tab-content hidden">
+                            <h2 class="text-lg font-semibold mb-4">Recebido de Pessoas Física e do Exterior</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="border-b-2 border-slate-300 dark:border-slate-600">
+                                        <tr>
+                                            <th class="p-2">Referência</th>
+                                            <th class="p-2">Tipo de Renda Aceito</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700">
+                                            <td class="p-2">Trabalho não assalariado</td>
+                                            <td class="p-2">Outros e Prestação de Serviço</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700">
+                                            <td class="p-2">Aluguéis</td>
+                                            <td class="p-2">Outros</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700">
+                                            <td class="p-2">Outros</td>
+                                            <td class="p-2">Outros e Prestação de Serviço</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-300 dark:border-slate-700">
+                                            <td class="p-2">Exterior</td>
+                                            <td class="p-2">Outros</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Módulo 4: Parecer -->
+                <div id="parecer-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4 h-96">
+                    <div class="flex flex-col items-center justify-center h-full text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                        <h2 class="text-2xl font-semibold">Módulo em Construção</h2>
+                        <p class="mt-2 text-slate-500 dark:text-slate-400">Esta funcionalidade estará disponível em breve.</p>
                     </div>
                 </div>
             </div>
@@ -260,9 +350,10 @@
         <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto">
             <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
                 <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo de Faturamento">Faturamento</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">Regras</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="parecer-module" data-title="Parecer">Parecer</button>
             </div>
         </nav>
     </div>
@@ -280,11 +371,17 @@
             const modules = document.querySelectorAll('.module-content');
             const moduleContainer = document.getElementById('module-container');
 
+            // --- FUNÇÕES AUXILIARES ---
             function formatCurrency(value) {
                 if (isNaN(value) || !isFinite(value)) {
                     return "R$ 0,00";
                 }
                 return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            function parseLocalFloat(value) {
+                // Converte o formato de moeda brasileiro (com vírgula) para um float válido em JS (com ponto)
+                return parseFloat(String(value).replace(/\./g, '').replace(',', '.')) || 0;
             }
 
             // --- LÓGICA DO MODO CLARO/ESCURO ---
@@ -333,6 +430,9 @@
                         if(targetModuleId === 'renda-pf-module') {
                             const firstTab = activeModule.querySelector('.renda-pf-tab-button');
                             if(firstTab) firstTab.click();
+                        } else if (targetModuleId === 'regras-module') {
+                            const firstTab = activeModule.querySelector('.regras-tab-button');
+                            if(firstTab) firstTab.click();
                         } else {
                              moduleContainer.style.height = `${activeModule.scrollHeight}px`;
                         }
@@ -342,9 +442,9 @@
             
             // --- LÓGICA DO MÓDULO DE FATURAMENTO ---
             document.getElementById('calcular-faturamento').addEventListener('click', () => {
-                const rbt12 = parseFloat(document.getElementById('rbt12').value) || 0;
-                const rpa = parseFloat(document.getElementById('rpa').value) || 0;
-                const mesAnterior = parseFloat(document.getElementById('mes_anterior').value) || 0;
+                const rbt12 = parseLocalFloat(document.getElementById('rbt12').value);
+                const rpa = parseLocalFloat(document.getElementById('rpa').value);
+                const mesAnterior = parseLocalFloat(document.getElementById('mes_anterior').value);
                 const numMeses = parseInt(document.getElementById('num_meses').value) || 0;
                 document.getElementById('resultado1').textContent = formatCurrency(rbt12 / 12);
                 document.getElementById('resultado2').textContent = formatCurrency(((rbt12 + rpa) - mesAnterior) / 12);
@@ -381,7 +481,7 @@
             // Aba 1: Calculadora SISBR
             const valorSisbrInput = document.getElementById('valor_sisbr');
             valorSisbrInput.addEventListener('input', () => {
-                const valor = parseFloat(valorSisbrInput.value) || 0;
+                const valor = parseLocalFloat(valorSisbrInput.value);
                 document.getElementById('sisbr_mult').textContent = formatCurrency(valor * 12);
                 document.getElementById('sisbr_div').textContent = formatCurrency(valor / 12);
             });
@@ -398,7 +498,7 @@
                 let total = 0;
                 let count = 0;
                 mediaInputs.forEach(inp => {
-                    const val = parseFloat(inp.value);
+                    const val = parseLocalFloat(inp.value);
                     if (!isNaN(val) && val > 0) {
                         total += val;
                         count++;
@@ -421,10 +521,10 @@
 
             function calcularSomaTotal() {
                 let totalSoma = 0;
-                somaInputs.forEach(inp => totalSoma += parseFloat(inp.value) || 0);
+                somaInputs.forEach(inp => totalSoma += parseLocalFloat(inp.value));
                 
                 let totalSub = 0;
-                subInputs.forEach(inp => totalSub += parseFloat(inp.value) || 0);
+                subInputs.forEach(inp => totalSub += parseLocalFloat(inp.value));
 
                 const somaFinal = totalSoma - totalSub;
                 document.getElementById('soma_total_resultado').textContent = formatCurrency(somaFinal);
@@ -436,6 +536,27 @@
                 somaInputs.forEach(input => input.value = '');
                 subInputs.forEach(input => input.value = '');
                 calcularSomaTotal(); // Recalcula para zerar os resultados
+            });
+
+            // --- LÓGICA DO MÓDULO DE REGRAS (ABAS) ---
+            const regrasTabButtons = document.querySelectorAll('.regras-tab-button');
+            const regrasTabContents = document.querySelectorAll('.regras-tab-content');
+
+            regrasTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTabId = `${button.dataset.tab}-tab`;
+
+                    regrasTabButtons.forEach(btn => btn.classList.remove('text-accent'));
+                    button.classList.add('text-accent');
+
+                    regrasTabContents.forEach(content => {
+                        const isActive = content.id === targetTabId;
+                        content.classList.toggle('hidden', !isActive);
+                    });
+
+                    const parentModule = document.getElementById('regras-module');
+                    moduleContainer.style.height = `${parentModule.scrollHeight}px`;
+                });
             });
 
 
