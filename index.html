@@ -80,10 +80,10 @@
 <!-- As classes de cor foram removidas do body, pois agora são controladas pelo CSS acima -->
 <body>
 
-    <!-- Container Principal: Centralizado e com largura máxima -->
-    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden">
+    <!-- Container Principal: Centralizado e com largura máxima. Adicionado padding-bottom (pb-32) para evitar sobreposição com o dock. -->
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 pb-32 overflow-x-hidden">
 
-        <main class="w-full max-w-2xl mx-auto flex flex-col gap-8">
+        <main class="w-full max-w-4xl mx-auto flex flex-col gap-8">
             <!-- Cabeçalho da Aplicação -->
             <header class="flex justify-between items-center w-full px-2">
                 <h1 id="module-title" class="text-xl md:text-2xl font-semibold transition-all duration-300">
@@ -101,20 +101,59 @@
                 </button>
             </header>
 
-            <!-- Container dos Módulos -->
-            <div class="relative w-full h-80">
+            <!-- Container dos Módulos com altura dinâmica -->
+            <div id="module-container" class="relative w-full transition-[height] duration-350 ease-in-out">
                 <!-- Módulo 1: Cálculo de Faturamento -->
                 <div id="faturamento-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out">
-                    <form class="flex flex-col gap-6">
-                        <div class="flex flex-col gap-2">
-                            <label for="receita" class="font-medium">Receita Bruta (R$)</label>
-                            <input type="number" id="receita" placeholder="Ex: 15000.00" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <!-- Coluna de Entradas -->
+                        <div class="flex flex-col gap-4">
+                            <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Entradas</h3>
+
+                            <!-- Inputs para os cálculos -->
+                            <div class="flex flex-col gap-2">
+                                <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
+                                <input type="number" id="rbt12" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
+                                <input type="number" id="rpa" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
+                                <input type="number" id="mes_anterior" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
+                                <input type="number" id="num_meses" placeholder="1" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                            </div>
+
+                            <!-- Botões de Ação -->
+                            <div class="flex gap-4 mt-4">
+                                <button id="calcular-faturamento" type="button" class="flex-1 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
+                                <button id="limpar-faturamento" type="button" class="flex-1 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <label for="custos" class="font-medium">Custos e Despesas (R$)</label>
-                            <input type="number" id="custos" placeholder="Ex: 4500.50" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+
+                        <!-- Coluna de Resultados -->
+                        <div class="flex flex-col gap-4">
+                            <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Resultados</h3>
+                            
+                            <div class="p-4 rounded-lg neumorphic-inset">
+                                <p class="text-sm font-medium">1º Cálculo (Somente RBT12)</p>
+                                <p id="resultado1" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                            </div>
+                            
+                            <div class="p-4 rounded-lg neumorphic-inset">
+                                <p class="text-sm font-medium">2º Cálculo (+12 Meses)</p>
+                                <p id="resultado2" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                            </div>
+
+                            <div class="p-4 rounded-lg neumorphic-inset">
+                                <p class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</p>
+                                <p id="resultado3" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                            </div>
                         </div>
-                        <button type="button" class="mt-4 w-full p-4 rounded-xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
                     </form>
                 </div>
 
@@ -148,19 +187,10 @@
         <!-- Dock de Navegação Fixo -->
         <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto">
             <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
-                <!-- O slider indicador será posicionado aqui -->
                 <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                
-                <!-- Botões de Navegação -->
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo de Faturamento">
-                    Faturamento
-                </button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="irpf-module" data-title="Cálculo de IRPF">
-                    IRPF
-                </button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">
-                    Regras
-                </button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo de Faturamento">Faturamento</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="irpf-module" data-title="Cálculo de IRPF">IRPF</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">Regras</button>
             </div>
         </nav>
     </div>
@@ -171,11 +201,12 @@
             const themeToggleButton = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('sun-icon');
             const moonIcon = document.getElementById('moon-icon');
-            const dockContainer = document.getElementById('dock-container'); // Seleciona o container do dock
+            const dockContainer = document.getElementById('dock-container');
             const dockSlider = document.getElementById('dock-slider');
             const dockButtons = document.querySelectorAll('.dock-button');
             const moduleTitle = document.getElementById('module-title');
             const modules = document.querySelectorAll('.module-content');
+            const moduleContainer = document.getElementById('module-container'); // Container dos módulos
 
             // --- LÓGICA DO MODO CLARO/ESCURO ---
             themeToggleButton.addEventListener('click', () => {
@@ -189,27 +220,14 @@
                 moonIcon.classList.toggle('hidden', !isDarkMode);
             }
 
-            // Função para atualizar a posição e tamanho do slider
+            // --- LÓGICA DO SLIDER DA NAVEGAÇÃO ---
             function updateSlider(button) {
                 if (!button) return;
-
-                // CORREÇÃO APRIMORADA: Lógica para preencher completamente os vãos nas bordas.
                 const containerPadding = parseFloat(getComputedStyle(dockContainer).paddingLeft);
-                
-                // O "sangramento" (bleed) é o dobro do padding para cobrir ambos os lados do botão.
                 const bleed = containerPadding * 2;
-
-                // A nova largura é a do botão mais o sangramento.
                 dockSlider.style.width = `${button.offsetWidth + bleed}px`;
-                
-                // A nova posição é a do botão (relativa ao container) menos o padding.
-                // Isso alinha a borda do slider com a borda interna do container, eliminando o vão.
                 dockSlider.style.left = `${button.offsetLeft - containerPadding}px`;
-
-                // Atualiza a cor do texto dos botões
-                dockButtons.forEach(btn => {
-                    btn.classList.remove('text-accent', 'font-semibold');
-                });
+                dockButtons.forEach(btn => btn.classList.remove('text-accent', 'font-semibold'));
                 button.classList.add('text-accent', 'font-semibold');
             }
 
@@ -218,31 +236,75 @@
                 button.addEventListener('click', () => {
                     const targetModuleId = button.dataset.target;
                     const targetTitle = button.dataset.title;
-
                     updateSlider(button);
                     moduleTitle.textContent = targetTitle;
+
+                    // Ajusta a altura do container para o módulo ativo
+                    const activeModule = document.getElementById(targetModuleId);
+                    if (activeModule) {
+                        moduleContainer.style.height = `${activeModule.scrollHeight}px`;
+                    }
 
                     modules.forEach(module => {
                         const isActive = module.id === targetModuleId;
                         module.classList.toggle('opacity-100', isActive);
                         module.classList.toggle('visible', isActive);
                         module.classList.toggle('translate-y-0', isActive);
-                        
                         module.classList.toggle('opacity-0', !isActive);
                         module.classList.toggle('invisible', !isActive);
                         module.classList.toggle('-translate-y-4', !isActive);
                     });
                 });
             });
+            
+            // --- LÓGICA DO MÓDULO DE FATURAMENTO ---
+            const calcularFaturamentoBtn = document.getElementById('calcular-faturamento');
+            const limparFaturamentoBtn = document.getElementById('limpar-faturamento');
+            const faturamentoForm = document.getElementById('faturamento-form');
+            const resultado1Out = document.getElementById('resultado1');
+            const resultado2Out = document.getElementById('resultado2');
+            const resultado3Out = document.getElementById('resultado3');
+
+            function formatCurrency(value) {
+                if (isNaN(value) || !isFinite(value)) {
+                    return "R$ 0,00";
+                }
+                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            function calcularFaturamento() {
+                const rbt12 = parseFloat(document.getElementById('rbt12').value) || 0;
+                const rpa = parseFloat(document.getElementById('rpa').value) || 0;
+                const mesAnterior = parseFloat(document.getElementById('mes_anterior').value) || 0;
+                const numMeses = parseInt(document.getElementById('num_meses').value) || 0;
+
+                // Cálculo 1: rbt12 / 12
+                const resultado1 = rbt12 / 12;
+                resultado1Out.textContent = formatCurrency(resultado1);
+
+                // Cálculo 2: ((rbt12 + rpa) - mes_anterior) / 12
+                const resultado2 = ((rbt12 + rpa) - mesAnterior) / 12;
+                resultado2Out.textContent = formatCurrency(resultado2);
+
+                // Cálculo 3: (rpa + rbt12) / num_meses
+                const resultado3 = numMeses > 0 ? (rpa + rbt12) / numMeses : 0;
+                resultado3Out.textContent = formatCurrency(resultado3);
+            }
+
+            function limparFaturamento() {
+                faturamentoForm.reset(); // Limpa todos os inputs do formulário
+                resultado1Out.textContent = formatCurrency(0);
+                resultado2Out.textContent = formatCurrency(0);
+                resultado3Out.textContent = formatCurrency(0);
+            }
+
+            calcularFaturamentoBtn.addEventListener('click', calcularFaturamento);
+            limparFaturamentoBtn.addEventListener('click', limparFaturamento);
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
             function initializeApp() {
-                // Sincroniza o ícone do tema no carregamento
                 updateThemeIcons();
-
-                // Ativa o primeiro botão por padrão
                 if (dockButtons.length > 0) {
-                    // Usamos requestAnimationFrame para garantir que o layout foi calculado antes do clique.
                     requestAnimationFrame(() => {
                          dockButtons[0].click();
                     });
