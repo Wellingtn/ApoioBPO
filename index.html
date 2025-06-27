@@ -109,8 +109,6 @@
                         <!-- Coluna de Entradas -->
                         <div class="flex flex-col gap-4">
                             <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Entradas</h3>
-
-                            <!-- Inputs para os cálculos -->
                             <div class="flex flex-col gap-2">
                                 <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
                                 <input type="number" id="rbt12" placeholder="0.00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
@@ -127,8 +125,6 @@
                                 <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
                                 <input type="number" id="num_meses" placeholder="1" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
                             </div>
-
-                            <!-- Botões de Ação -->
                             <div class="flex gap-4 mt-4">
                                 <button id="calcular-faturamento" type="button" class="flex-1 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
                                 <button id="limpar-faturamento" type="button" class="flex-1 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
@@ -138,17 +134,14 @@
                         <!-- Coluna de Resultados -->
                         <div class="flex flex-col gap-4">
                             <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Resultados</h3>
-                            
                             <div class="p-4 rounded-lg neumorphic-inset">
                                 <p class="text-sm font-medium">1º Cálculo (Somente RBT12)</p>
                                 <p id="resultado1" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
                             </div>
-                            
                             <div class="p-4 rounded-lg neumorphic-inset">
                                 <p class="text-sm font-medium">2º Cálculo (+12 Meses)</p>
                                 <p id="resultado2" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
                             </div>
-
                             <div class="p-4 rounded-lg neumorphic-inset">
                                 <p class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</p>
                                 <p id="resultado3" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
@@ -157,19 +150,96 @@
                     </form>
                 </div>
 
-                <!-- Módulo 2: Cálculo de IRPF -->
-                <div id="irpf-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
-                    <form class="flex flex-col gap-6">
-                        <div class="flex flex-col gap-2">
-                            <label for="rendimento" class="font-medium">Rendimento Tributável (R$)</label>
-                            <input type="number" id="rendimento" placeholder="Ex: 75000.00" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                <!-- Módulo 2: Renda PF (antigo IRPF) -->
+                <div id="renda-pf-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
+                    <!-- Navegação por Abas Internas -->
+                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600">
+                        <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="calculadora">Calculadora</button>
+                        <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="media">Média de Holerites</button>
+                        <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="soma">Soma de Valores</button>
+                    </div>
+
+                    <!-- Conteúdo das Abas -->
+                    <div class="relative">
+                        <!-- Aba 1: Calculadora -->
+                        <div id="calculadora-tab" class="renda-pf-tab-content">
+                           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                               <!-- Coluna Esquerda: Input e Botão -->
+                               <div class="flex flex-col justify-between gap-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="valor_sisbr" class="text-sm font-medium">Valor do SISBR</label>
+                                        <input type="number" id="valor_sisbr" placeholder="1404.33" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    </div>
+                                    <button id="limpar_sisbr" type="button" class="p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                               </div>
+                               <!-- Coluna Direita: Resultados -->
+                               <div class="flex flex-col justify-between gap-4">
+                                    <div class="p-4 rounded-lg neumorphic-inset">
+                                        <p class="text-sm font-medium">Multiplicado por 12</p>
+                                        <p id="sisbr_mult" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                    </div>
+                                    <div class="p-4 rounded-lg neumorphic-inset">
+                                        <p class="text-sm font-medium">Dividido por 12</p>
+                                        <p id="sisbr_div" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                    </div>
+                               </div>
+                           </div>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <label for="deducoes" class="font-medium">Deduções (R$)</label>
-                            <input type="number" id="deducoes" placeholder="Ex: 12000.00" class="w-full bg-transparent p-4 rounded-xl neumorphic-inset focus:outline-none">
+                        <!-- Aba 2: Média de Holerites -->
+                        <div id="media-tab" class="renda-pf-tab-content hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div class="flex flex-col gap-4">
+                                    <h3 class="text-lg font-semibold">Valores dos Holerites</h3>
+                                    <input type="number" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    <input type="number" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    <input type="number" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                </div>
+                                <div class="flex flex-col gap-4 justify-center">
+                                    <div class="p-4 rounded-lg neumorphic-inset">
+                                        <p class="text-sm font-medium">Média dos Valores</p>
+                                        <p id="media_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button type="button" class="mt-4 w-full p-4 rounded-xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
-                    </form>
+                        <!-- Aba 3: Soma de Valores -->
+                        <div id="soma-tab" class="renda-pf-tab-content hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div class="flex flex-col gap-2">
+                                    <h3 class="text-lg font-semibold mb-2">Valores a Somar</h3>
+                                    <div id="soma-inputs-container" class="flex flex-col gap-2">
+                                        <!-- 5 inputs para somar -->
+                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <h3 class="text-lg font-semibold mb-2">Valores a Subtrair</h3>
+                                    <div id="sub-inputs-container" class="flex flex-col gap-2">
+                                         <!-- 5 inputs para subtrair -->
+                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="number" placeholder="0.00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2 flex flex-col md:flex-row gap-4 mt-4">
+                                     <div class="flex-1 p-4 rounded-lg neumorphic-inset">
+                                        <p class="text-sm font-medium">Soma Total</p>
+                                        <p id="soma_total_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                    </div>
+                                     <div class="flex-1 p-4 rounded-lg neumorphic-inset">
+                                        <p class="text-sm font-medium">Divisão por 12</p>
+                                        <p id="soma_div12_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Módulo 3: Regras IRPF -->
@@ -189,7 +259,7 @@
             <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
                 <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo de Faturamento">Faturamento</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="irpf-module" data-title="Cálculo de IRPF">IRPF</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">Regras</button>
             </div>
         </nav>
@@ -206,7 +276,14 @@
             const dockButtons = document.querySelectorAll('.dock-button');
             const moduleTitle = document.getElementById('module-title');
             const modules = document.querySelectorAll('.module-content');
-            const moduleContainer = document.getElementById('module-container'); // Container dos módulos
+            const moduleContainer = document.getElementById('module-container');
+
+            function formatCurrency(value) {
+                if (isNaN(value) || !isFinite(value)) {
+                    return "R$ 0,00";
+                }
+                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
 
             // --- LÓGICA DO MODO CLARO/ESCURO ---
             themeToggleButton.addEventListener('click', () => {
@@ -238,13 +315,7 @@
                     const targetTitle = button.dataset.title;
                     updateSlider(button);
                     moduleTitle.textContent = targetTitle;
-
-                    // Ajusta a altura do container para o módulo ativo
-                    const activeModule = document.getElementById(targetModuleId);
-                    if (activeModule) {
-                        moduleContainer.style.height = `${activeModule.scrollHeight}px`;
-                    }
-
+                    
                     modules.forEach(module => {
                         const isActive = module.id === targetModuleId;
                         module.classList.toggle('opacity-100', isActive);
@@ -254,52 +325,104 @@
                         module.classList.toggle('invisible', !isActive);
                         module.classList.toggle('-translate-y-4', !isActive);
                     });
+                    
+                    const activeModule = document.getElementById(targetModuleId);
+                    if (activeModule) {
+                        if(targetModuleId === 'renda-pf-module') {
+                            const firstTab = activeModule.querySelector('.renda-pf-tab-button');
+                            if(firstTab) firstTab.click();
+                        } else {
+                             moduleContainer.style.height = `${activeModule.scrollHeight}px`;
+                        }
+                    }
                 });
             });
             
             // --- LÓGICA DO MÓDULO DE FATURAMENTO ---
-            const calcularFaturamentoBtn = document.getElementById('calcular-faturamento');
-            const limparFaturamentoBtn = document.getElementById('limpar-faturamento');
-            const faturamentoForm = document.getElementById('faturamento-form');
-            const resultado1Out = document.getElementById('resultado1');
-            const resultado2Out = document.getElementById('resultado2');
-            const resultado3Out = document.getElementById('resultado3');
-
-            function formatCurrency(value) {
-                if (isNaN(value) || !isFinite(value)) {
-                    return "R$ 0,00";
-                }
-                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            }
-
-            function calcularFaturamento() {
+            document.getElementById('calcular-faturamento').addEventListener('click', () => {
                 const rbt12 = parseFloat(document.getElementById('rbt12').value) || 0;
                 const rpa = parseFloat(document.getElementById('rpa').value) || 0;
                 const mesAnterior = parseFloat(document.getElementById('mes_anterior').value) || 0;
                 const numMeses = parseInt(document.getElementById('num_meses').value) || 0;
+                document.getElementById('resultado1').textContent = formatCurrency(rbt12 / 12);
+                document.getElementById('resultado2').textContent = formatCurrency(((rbt12 + rpa) - mesAnterior) / 12);
+                document.getElementById('resultado3').textContent = formatCurrency(numMeses > 0 ? (rpa + rbt12) / numMeses : 0);
+            });
+            document.getElementById('limpar-faturamento').addEventListener('click', () => {
+                document.getElementById('faturamento-form').reset();
+                document.getElementById('resultado1').textContent = formatCurrency(0);
+                document.getElementById('resultado2').textContent = formatCurrency(0);
+                document.getElementById('resultado3').textContent = formatCurrency(0);
+            });
 
-                // Cálculo 1: rbt12 / 12
-                const resultado1 = rbt12 / 12;
-                resultado1Out.textContent = formatCurrency(resultado1);
+            // --- LÓGICA DO MÓDULO RENDA PF (ABAS E CÁLCULOS) ---
+            const rendaPfTabButtons = document.querySelectorAll('.renda-pf-tab-button');
+            const rendaPfTabContents = document.querySelectorAll('.renda-pf-tab-content');
 
-                // Cálculo 2: ((rbt12 + rpa) - mes_anterior) / 12
-                const resultado2 = ((rbt12 + rpa) - mesAnterior) / 12;
-                resultado2Out.textContent = formatCurrency(resultado2);
+            rendaPfTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTabId = `${button.dataset.tab}-tab`;
 
-                // Cálculo 3: (rpa + rbt12) / num_meses
-                const resultado3 = numMeses > 0 ? (rpa + rbt12) / numMeses : 0;
-                resultado3Out.textContent = formatCurrency(resultado3);
+                    rendaPfTabButtons.forEach(btn => btn.classList.remove('text-accent'));
+                    button.classList.add('text-accent');
+
+                    rendaPfTabContents.forEach(content => {
+                        // CORREÇÃO: Usa a classe 'hidden' para controlar a visibilidade
+                        const isActive = content.id === targetTabId;
+                        content.classList.toggle('hidden', !isActive);
+                    });
+
+                    // CORREÇÃO: Recalcula a altura do container PAI do conteúdo das abas
+                    const parentModule = document.getElementById('renda-pf-module');
+                    moduleContainer.style.height = `${parentModule.scrollHeight}px`;
+                });
+            });
+
+            // Aba 1: Calculadora SISBR
+            const valorSisbrInput = document.getElementById('valor_sisbr');
+            valorSisbrInput.addEventListener('input', () => {
+                const valor = parseFloat(valorSisbrInput.value) || 0;
+                document.getElementById('sisbr_mult').textContent = formatCurrency(valor * 12);
+                document.getElementById('sisbr_div').textContent = formatCurrency(valor / 12);
+            });
+            document.getElementById('limpar_sisbr').addEventListener('click', () => {
+                valorSisbrInput.value = '';
+                valorSisbrInput.dispatchEvent(new Event('input'));
+            });
+
+            // Aba 2: Média Holerites
+            const mediaInputs = document.querySelectorAll('.media-holerite-input');
+            mediaInputs.forEach(input => input.addEventListener('input', () => {
+                let total = 0;
+                let count = 0;
+                mediaInputs.forEach(inp => {
+                    const val = parseFloat(inp.value);
+                    if (!isNaN(val) && val > 0) {
+                        total += val;
+                        count++;
+                    }
+                });
+                const media = count > 0 ? total / count : 0;
+                document.getElementById('media_resultado').textContent = formatCurrency(media);
+            }));
+
+            // Aba 3: Soma de Valores
+            const somaInputs = document.querySelectorAll('.soma-valor-input');
+            const subInputs = document.querySelectorAll('.sub-valor-input');
+            function calcularSomaTotal() {
+                let totalSoma = 0;
+                somaInputs.forEach(inp => totalSoma += parseFloat(inp.value) || 0);
+                
+                let totalSub = 0;
+                subInputs.forEach(inp => totalSub += parseFloat(inp.value) || 0);
+
+                const somaFinal = totalSoma - totalSub;
+                document.getElementById('soma_total_resultado').textContent = formatCurrency(somaFinal);
+                document.getElementById('soma_div12_resultado').textContent = formatCurrency(somaFinal / 12);
             }
+            somaInputs.forEach(input => input.addEventListener('input', calcularSomaTotal));
+            subInputs.forEach(input => input.addEventListener('input', calcularSomaTotal));
 
-            function limparFaturamento() {
-                faturamentoForm.reset(); // Limpa todos os inputs do formulário
-                resultado1Out.textContent = formatCurrency(0);
-                resultado2Out.textContent = formatCurrency(0);
-                resultado3Out.textContent = formatCurrency(0);
-            }
-
-            calcularFaturamentoBtn.addEventListener('click', calcularFaturamento);
-            limparFaturamentoBtn.addEventListener('click', limparFaturamento);
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
             function initializeApp() {
