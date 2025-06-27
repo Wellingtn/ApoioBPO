@@ -33,6 +33,8 @@
             --color-shadow-1: #ffffff;
             --color-shadow-2: #a3b1c6;
             --color-accent: #0ea5e9; /* Cor de destaque (Azul Céu 500) */
+            --scrollbar-thumb: #a3b1c6;
+            --scrollbar-thumb-hover: #5a6474;
         }
 
         html.dark {
@@ -41,6 +43,8 @@
             --color-shadow-1: #353a41;
             --color-shadow-2: #23262b;
             --color-accent: #38bdf8; /* Cor de destaque (Azul Céu 400) */
+            --scrollbar-thumb: #5a6474;
+            --scrollbar-thumb-hover: #9ca3af;
         }
 
         /* Estilo base do corpo da página usando as variáveis */
@@ -49,6 +53,7 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden; /* Previne a barra de rolagem principal */
         }
 
         /* Classes de utilidade para o Neumorfismo usando variáveis */
@@ -74,18 +79,47 @@
         .dark ::placeholder {
             color: #6b7280;
         }
+        
+        /* Correção para iluminação da barra de busca em modo escuro */
+        .dark .search-input-fix {
+            background-color: #3a4049;
+        }
+
+        .copied-message {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .copied-message.show {
+            opacity: 1;
+        }
+
+        /* Custom Scrollbar Styling */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+            border-radius: 20px;
+            border: 2px solid var(--color-bg);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-thumb-hover);
+        }
     </style>
 </head>
 
 <!-- As classes de cor foram removidas do body, pois agora são controladas pelo CSS acima -->
 <body>
 
-    <!-- Container Principal: Centralizado e com largura máxima. Adicionado padding-bottom (pb-32) para evitar sobreposição com o dock. -->
-    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 pb-32 overflow-x-hidden">
+    <!-- Container Principal: Centralizado e com largura máxima -->
+    <div class="h-screen w-screen flex flex-col items-center p-4">
 
-        <main class="w-full max-w-4xl mx-auto flex flex-col gap-8">
+        <main class="w-full max-w-4xl mx-auto flex flex-col gap-4 flex-1 min-h-0 pb-24">
             <!-- Cabeçalho da Aplicação -->
-            <header class="flex justify-between items-center w-full px-2">
+            <header class="flex justify-between items-center w-full px-2 flex-shrink-0">
                 <h1 id="module-title" class="text-xl md:text-2xl font-semibold transition-all duration-300">
                     <!-- O título será preenchido via JavaScript -->
                 </h1>
@@ -102,9 +136,9 @@
             </header>
 
             <!-- Container dos Módulos com altura dinâmica -->
-            <div id="module-container" class="relative w-full transition-[height] duration-350 ease-in-out">
+            <div id="module-container" class="relative w-full flex-1 min-h-0">
                 <!-- Módulo 1: Renda PJ (antigo Faturamento) -->
-                <div id="faturamento-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out">
+                <div id="faturamento-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mb-4">
                         <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Entradas</h3>
                         <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Resultados</h3>
@@ -153,18 +187,18 @@
                 </div>
 
                 <!-- Módulo 2: Renda PF -->
-                <div id="renda-pf-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
+                <div id="renda-pf-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col">
                     <!-- Navegação por Abas Internas -->
-                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600">
+                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600 flex-shrink-0">
                         <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="calculadora">Calculadora</button>
                         <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="media">Média de Holerites</button>
                         <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="soma">Soma de Valores</button>
                     </div>
 
                     <!-- Conteúdo das Abas -->
-                    <div class="relative">
+                    <div class="relative flex-1 min-h-0">
                         <!-- Aba 1: Calculadora -->
-                        <div id="calculadora-tab" class="renda-pf-tab-content">
+                        <div id="calculadora-tab" class="renda-pf-tab-content h-full">
                            <h3 class="text-lg font-semibold mb-4">Valor do SISBR</h3>
                            <div class="flex flex-col gap-6">
                                <!-- Linha 1 -->
@@ -186,7 +220,7 @@
                            </div>
                         </div>
                         <!-- Aba 2: Média de Holerites -->
-                        <div id="media-tab" class="renda-pf-tab-content hidden">
+                        <div id="media-tab" class="renda-pf-tab-content hidden h-full">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-4">
                                     <h3 class="text-lg font-semibold">Valores dos Holerites</h3>
@@ -205,7 +239,7 @@
                             </div>
                         </div>
                         <!-- Aba 3: Soma de Valores -->
-                        <div id="soma-tab" class="renda-pf-tab-content hidden">
+                        <div id="soma-tab" class="renda-pf-tab-content hidden h-full overflow-y-auto custom-scrollbar">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-2">
                                     <h3 class="text-lg font-semibold mb-2">Valores a Somar</h3>
@@ -246,15 +280,15 @@
                 </div>
 
                 <!-- Módulo 3: Regras IRPF -->
-                <div id="regras-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4">
+                <div id="regras-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col">
                     <!-- Navegação por Abas Internas -->
-                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600">
+                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600 flex-shrink-0">
                         <button class="regras-tab-button py-2 px-4 font-semibold" data-tab="itens-ir">Itens do IR</button>
                         <button class="regras-tab-button py-2 px-4 font-semibold" data-tab="recebidos-pf">Recebidos de PF</button>
                     </div>
 
                     <!-- Conteúdo das Abas de Regras -->
-                    <div class="relative">
+                    <div class="relative flex-1 min-h-0 overflow-y-auto custom-scrollbar">
                         <!-- Aba 1: Itens do IR -->
                         <div id="itens-ir-tab" class="regras-tab-content">
                             <h2 class="text-lg font-semibold mb-4">Itens do Imposto de Renda e Tipo Correto Aceito</h2>
@@ -334,31 +368,52 @@
                     </div>
                 </div>
                 <!-- Módulo 4: Parecer -->
-                <div id="parecer-module" class="module-content absolute w-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible -translate-y-4 h-96">
-                    <div class="flex flex-col items-center justify-center h-full text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                <div id="parecer-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col">
+                    <div class="mb-4 relative flex-shrink-0">
+                        <input type="text" id="searchInput" placeholder="Pesquisar pareceres por tipo ou descrição..."
+                               class="w-full px-5 py-3 pr-12 rounded-lg neumorphic-inset focus:outline-none text-sm search-input-fix">
+                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <h2 class="text-2xl font-semibold">Módulo em Construção</h2>
-                        <p class="mt-2 text-slate-500 dark:text-slate-400">Esta funcionalidade estará disponível em breve.</p>
+                    </div>
+            
+                    <div id="pareceresContainer" class="space-y-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar p-1">
+                        <!-- Pareceres serão renderizados aqui -->
                     </div>
                 </div>
             </div>
         </main>
 
         <!-- Dock de Navegação Fixo -->
-        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto">
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto flex-shrink-0">
             <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
                 <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
                 <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="regras-module" data-title="Regras IRPF">Regras</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="parecer-module" data-title="Parecer">Parecer</button>
+                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
             </div>
         </nav>
     </div>
 
     <script>
+        // --- FUNÇÕES GLOBAIS ---
+        function copyParecer(text, messageElementId) {
+            const messageElement = document.getElementById(messageElementId);
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = 0;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            messageElement.classList.add('show');
+            setTimeout(() => {
+                messageElement.classList.remove('show');
+            }, 1500);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // --- SELEÇÃO DOS ELEMENTOS DO DOM ---
             const themeToggleButton = document.getElementById('theme-toggle');
@@ -380,7 +435,6 @@
             }
 
             function parseLocalFloat(value) {
-                // Converte o formato de moeda brasileiro (com vírgula) para um float válido em JS (com ponto)
                 return parseFloat(String(value).replace(/\./g, '').replace(',', '.')) || 0;
             }
 
@@ -396,7 +450,7 @@
                 moonIcon.classList.toggle('hidden', !isDarkMode);
             }
 
-            // --- LÓGICA DO SLIDER DA NAVEGAÇÃO ---
+            // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
             function updateSlider(button) {
                 if (!button) return;
                 const containerPadding = parseFloat(getComputedStyle(dockContainer).paddingLeft);
@@ -407,7 +461,6 @@
                 button.classList.add('text-accent', 'font-semibold');
             }
 
-            // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
             dockButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetModuleId = button.dataset.target;
@@ -419,10 +472,8 @@
                         const isActive = module.id === targetModuleId;
                         module.classList.toggle('opacity-100', isActive);
                         module.classList.toggle('visible', isActive);
-                        module.classList.toggle('translate-y-0', isActive);
                         module.classList.toggle('opacity-0', !isActive);
                         module.classList.toggle('invisible', !isActive);
-                        module.classList.toggle('-translate-y-4', !isActive);
                     });
                     
                     const activeModule = document.getElementById(targetModuleId);
@@ -433,8 +484,8 @@
                         } else if (targetModuleId === 'regras-module') {
                             const firstTab = activeModule.querySelector('.regras-tab-button');
                             if(firstTab) firstTab.click();
-                        } else {
-                             moduleContainer.style.height = `${activeModule.scrollHeight}px`;
+                        } else if (targetModuleId === 'parecer-module') {
+                            filterPareceres();
                         }
                     }
                 });
@@ -460,21 +511,14 @@
             // --- LÓGICA DO MÓDULO RENDA PF (ABAS E CÁLCULOS) ---
             const rendaPfTabButtons = document.querySelectorAll('.renda-pf-tab-button');
             const rendaPfTabContents = document.querySelectorAll('.renda-pf-tab-content');
-
             rendaPfTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetTabId = `${button.dataset.tab}-tab`;
-
                     rendaPfTabButtons.forEach(btn => btn.classList.remove('text-accent'));
                     button.classList.add('text-accent');
-
                     rendaPfTabContents.forEach(content => {
-                        const isActive = content.id === targetTabId;
-                        content.classList.toggle('hidden', !isActive);
+                        content.classList.toggle('hidden', content.id !== targetTabId);
                     });
-
-                    const parentModule = document.getElementById('renda-pf-module');
-                    moduleContainer.style.height = `${parentModule.scrollHeight}px`;
                 });
             });
 
@@ -493,7 +537,6 @@
             // Aba 2: Média Holerites
             const mediaInputs = document.querySelectorAll('.media-holerite-input');
             const limparMediaBtn = document.getElementById('limpar_media');
-            
             function calcularMedia() {
                 let total = 0;
                 let count = 0;
@@ -510,22 +553,18 @@
             mediaInputs.forEach(input => input.addEventListener('input', calcularMedia));
             limparMediaBtn.addEventListener('click', () => {
                 mediaInputs.forEach(input => input.value = '');
-                calcularMedia(); // Recalcula para zerar o resultado
+                calcularMedia();
             });
-
 
             // Aba 3: Soma de Valores
             const somaInputs = document.querySelectorAll('.soma-valor-input');
             const subInputs = document.querySelectorAll('.sub-valor-input');
             const limparSomaBtn = document.getElementById('limpar_soma');
-
             function calcularSomaTotal() {
                 let totalSoma = 0;
                 somaInputs.forEach(inp => totalSoma += parseLocalFloat(inp.value));
-                
                 let totalSub = 0;
                 subInputs.forEach(inp => totalSub += parseLocalFloat(inp.value));
-
                 const somaFinal = totalSoma - totalSub;
                 document.getElementById('soma_total_resultado').textContent = formatCurrency(somaFinal);
                 document.getElementById('soma_div12_resultado').textContent = formatCurrency(somaFinal / 12);
@@ -535,29 +574,123 @@
             limparSomaBtn.addEventListener('click', () => {
                 somaInputs.forEach(input => input.value = '');
                 subInputs.forEach(input => input.value = '');
-                calcularSomaTotal(); // Recalcula para zerar os resultados
+                calcularSomaTotal();
             });
 
             // --- LÓGICA DO MÓDULO DE REGRAS (ABAS) ---
             const regrasTabButtons = document.querySelectorAll('.regras-tab-button');
             const regrasTabContents = document.querySelectorAll('.regras-tab-content');
-
             regrasTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const targetTabId = `${button.dataset.tab}-tab`;
-
+                    const targetTabId = button.dataset.tab;
                     regrasTabButtons.forEach(btn => btn.classList.remove('text-accent'));
                     button.classList.add('text-accent');
-
                     regrasTabContents.forEach(content => {
-                        const isActive = content.id === targetTabId;
-                        content.classList.toggle('hidden', !isActive);
+                        content.classList.toggle('hidden', content.id !== `${targetTabId}-tab`);
                     });
-
-                    const parentModule = document.getElementById('regras-module');
-                    moduleContainer.style.height = `${parentModule.scrollHeight}px`;
                 });
             });
+
+            // --- LÓGICA DO MÓDULO DE PARECERES ---
+            const pareceresData = {
+                "Pareceres Gerais": {"Pareceres Gerais": [{"DOCUMENTO ILEGÍVEL":"Quando não é possível a leitura, ou ainda, não se pode ter certeza sobre a informação específica que necessita de validação."},{"DOCUMENTO INVÁLIDO":"Documento em anexo não é válido para a comprovação do fluxo em específico."},{"PRAZO DE VALIDADE":"Solicitar o envio de um documento com prazo de validade adequado, conforme os requisitos específicos do fluxo."},{"CHAVES INCORRETAS":"Documentos em chaves trocadas ou erradas se aplicam aqui."},{"ASSINATURAS":"Assinaturas corrompidas, ilegíveis ou faltando (tanto assinaturas manuscritas quanto digitais), assinaturas híbridas se aplicam aqui."},{"VÍNCULO NÃO ENCONTRADO":"Não foi possível encontrar vínculo entre o associado e o terceiro informado no comprovante em anexo."},{"FALTA DE DOCUMENTO COMPROBATÓRIO":"Falta de documentos obrigatórios ou necessários para a validação do fluxo."},{"DESCRIÇÃO DIVERGENTE":"Descrição informada no fluxo não condiz com os comprovantes."},{"DOCUMENTO CORTADO / RASURADO":"Documento com dados e informações relevantes para o cadastro cortadas / rasurado."},{"EXCLUSÃO NÃO PERMITIDA":"Quando não é possível realizar a exclusão do fluxo."},{"CADASTRO DIVERGENTE DO COMPROVANTE EM ANEXO":"Quando as informações cadastradas são completamente divergentes do anexo / não foram atualizadas de acordo."},{"CAPTURA DE TELA":"Anexo de captura de tela como comprovante."},{"APROVAÇÃO SEM VALIDAÇÃO":"Não havia documentos na aba “NOVO”. Aprovado conforme documentação vigente."},{"ASSINATURA DIGITAL VALIDADA PELA COOPERATIVA":"Quando enviam a validação da assinatura."}]},
+                "Fluxos de Fontes de Renda": {"Pareceres gerais de renda": [{"RENDA MENSAL INVÁLIDA":"Quando existir uma renda incorreta, não condizendo com o comprovante apresentado."},{"TIPO DE RENDA":"Necessário ajuste do tipo de renda."},{"DIVISÃO DE RENDA MENSAL INCORRETA":"Renda mensal informada é divergente do tempo de faturamento encontrado do documento em anexo."},{"RENDA PROVENIENTE DE FONTES PAGADORES DIVERGENTES":"Quando é realizada a soma de duas fontes pagadoras diferentes."}],"Pareceres de renda Agropecuária": [{"RENDA NÃO É PROVENIENTE DE ATIVIDADE RURAL":"Quando a renda informada não corresponde ao tipo de atividade rural desempenhada (ex um produtor rural informando renda de uma atividade não agrícola)."},{"DIVISÃO DE RENDA AGROPECUÁRIA INCORRETA":"Quando a renda agropecuária não está corretamente dividida entre os membros da composição familiar ou grupo familiar."},{"LAUDO DE PRODUÇÃO AGROPECUÁRIA":"Ajuste necessário no laudo de produção."},{"RENDA EFETIVA SOMADA COM PREVISÃO":"Ajuste necessário quando é somada renda agropecuária de previsão com a efetiva."}],"Pareceres de renda, PJ": [],"Pareceres de renda, SIMPLES": [{"COMPROVANTE DO SIMPLES NACIONAL":"Solicitar o ajuste do documento referente ao SIMPLES. Enquadra-se aqui qualquer tipo (declaratório, extrato e recibo) de ajuste, desde que seja sobre esses documentos."},{"CONSULTA DE OPÇÃO DO SIMPLES":"Falta da consulta de opção do simples em sua chave adequada / ajuste na consulta."},{"CAMPO DE OPTANTE DO SIMPLES":"Solicitar ajuste da opção do simples nacional no SISBR, de não para sim ou de sim para não."},{"CÁLCULO DO SIMPLES":"Quando o cálculo do faturamento do Simples não está correto ou não foi feito de acordo com a regra. Fórmula RBT12 + RPA conforme os meses de apuração, levando em conta o número de meses faturados. A fórmula geral é RBT12 / 12 meses ou RBT12 + RPA de apuração – PA do ano anterior / 12."}],"Pareceres de renda, pessoa física": [{"PRÓ-LABORE ACIMA DO LIMITE":"Quando o documento pró-labore anexado, em caso de MEI, ultrapassa os R$ 6.750,00."},{"RENDA DE TERCEIRO":"Quando associado usa um documento de renda em nome de outra pessoa para tentar comprovar uma renda dele. (Ex filho querendo colocar para ele a renda de aposentadoria da mãe, com o documento estando em nome dela)."},{"RENDA INFORMADA NÃO RECORRENTE":"Valor somado ou declarado no cadastro não é considerado recorrente. Exemplo 13° e férias."}]},
+                "Fluxos de Pessoa": {"Pareceres gerais de pessoa": [{"TIPO DE DOCUMENTO":"Tipo de documento informado diferente do comprovante."},{"NÚMERO DO DOCUMENTO":"Número do documento incorreto ou não registrado corretamente."},{"DATA DE EMISSÃO":"A data de emissão do documento não corresponde ao esperado ou não é válida."},{"FICHA CADASTRAL":"Falta de preenchimento correto na ficha cadastral."},{"FICHA PEP":"Falta de preenchimento correto na ficha PEP."},{"UF DO ORGAO EXPEDIDOR":"A UF do documento não corresponde"}],"Pareceres de pessoa física": [{"ESTADO CIVIL":"Quando há divergência do documento com o estado civil declarado no SISBR. Aplica-se também a divergência de cônjuge e regime do casamento."},{"ÓRGÃO EXPEDIDOR":"Órgão expedidor incorreto ou não informado."},{"NATURALIDADE":"Quando documento anexado menciona a naturalidade da pessoa e está diferente do SISBR."}],"Pareceres de pessoa jurídica": [{"DATA DE CONSTITUIÇÃO":"Data de constituição inválida ou fora do esperado."},{"NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE":"Número de registro inválido ou não existe."},{"NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL":"Falta de número da última alteração do contrato social."},{"DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL":"Data de alteração do contrato social incorreta ou não atualizada."},{"NÚMERO DE REGISTRO DE REPRESENTAÇÃO":"Falta de número de registro de representação."},{"DATA DE REGISTRO REPRESENTAÇÃO":"Falta de data de registro de representação."},{"OPÇÃO MEI":"Necessário ajuste na opção do campo MEI."},{"NÚMERO DO CONTRATO SOCIAL":"Número do contrato social não registrado corretamente ou faltando."},{"CAPITAL SOCIAL":"Valor do capital social incorreto ou não condizente com o contrato social."},{"INSCRIÇÃO ESTADUAL":"Inscrição estadual incorreta ou não registrada corretamente."},{"DATA DE REGISTRO NO ÓRGÃO COMPETENTE":"Data de registro do órgão competente inconsistente."}]},
+                "Fluxos de Endereço": {"Fluxos de Endereço": [{"TIPO DE ENDEREÇO":"Tipo de endereço não especificado corretamente (residencial, comercial etc.)."},{"LOGRADOURO":"Nome do logradouro incorreto ou incompleto."},{"NÚMERO":"Número do imóvel faltando ou incorreto."}]},
+                "Fluxos de Relacionamento": {"Pareceres gerais de relacionamento": [{"TIPO DE RELACIONAMENTO":"Tipo de relacionamento não condiz com a documentação fornecida."},{"DATA DE INÍCIO DO MANDATO":"Data de início do mandato inválida ou não condiz com o documento."},{"DATA DE FIM DO MANDATO":"Data de fim do mandato incorreta ou não compatível com o documento de registro."},{"NÚMERO DO REGISTRO":"Falta de número de registro."},{"NÚMERO DO LIVRO":"Falta de número do livro."},{"NÚMERO DA FOLHA":"Falta de número da folha."},{"NOME DO CARTÓRIO":"Falta de nome do cartório."}],"Pareceres de relacionamento, pessoa jurídica": [{"PERCENTUAL NO CAPITAL SOCIAL":"Percentual informado incorreto ou inconsistente."}]},
+                "Fluxos de Bem": {"Pareceres gerais de bem": [{"TIPO DO BEM":"Tipo de bem não informado ou incorreto."},{"VALOR DE AVALIAÇÃO":"Valor de avaliação incorreto ou não condizente com o laudo de avaliação."},{"ÁREA DIVERGENTE":"Área divergente do que foi documentado."},{"DATA DE AVALIAÇÃO":"Data da avaliação não corresponde à data de realização do laudo."},{"VALOR DO BEM":"O valor informado não está correto, de acordo com a documentação apresentada."},{"DESCRIÇÃO DO BEM":"Descrição do bem não condiz com o tipo de bem ou está incompleta."},{"BEM EM PROCESSO DE AQUISIÇÃO":"Tentativa de cadastro de bem em aquisição como se fosse de posse plena."},{"BEM NÃO COMPROVADO COMO PATRIMÔNIO":"Bem-informado não é patrimônio do indivíduo ou da empresa. Aplica-se também nos casos de tentativa de comprovação de bens de uma entidade PJ por uma pessoa física."},{"LAUDO DE AVALIAÇÃO":"Laudo de avaliação não está válido ou não corresponde ao bem-informado."},{"PERCENTUAL DE PROPRIEDADE":"Percentual de propriedade do bem não informado ou incorreto."},{"CADASTRO DE BENS EM CONJUNTO":"Tentativa de registrar bens que devem ser cadastrados separadamente, mas estão sendo informados em conjunto."},{"EXCLUSÃO DE BEM":"Por se tratar de exclusão, o percentual deve ser zerado."},{"EMPREENDIMENTO NÃO É VÁLIDO COMO BEM":"Empreendimentos não são aceitos como bens, mas sim nos fluxos de produtor."}],"Pareceres de Bens Móveis": [{"TIPO DO CHASSI":"Tipo de chassi incorreto."},{"NÚMERO DO CHASSI":"Número do chassi inválido ou não registrado corretamente."},{"RENAVAM":"Número do RENAVAM incorreto ou não correspondente ao veículo."},{"PLACA":"Placa do veículo inválida ou não registrada corretamente."},{"ANO DE FABRICAÇÃO":"Ano de fabricação informado incorreto."},{"ANO MODELO":"Ano modelo não corresponde ao veículo registrado."}],"Pareceres de Bens Imóveis": [{"ÁREA DIVERGENTE":"Área divergente do que foi documentado."},{"UNIDADE DE MEDIDA":"Quando a unidade de medida não está coerente com o documento anexado."}],"Pareceres de Bens Agropecuários": [{"QUANTIDADE DE SEMOVENTES DIVERGENTE":"Número informado de semoventes divergente do comprovante em anexo."},{"PERCENTUAL DE ARRENDAMENTO":"Percentual de arrendamento não informado ou incorreto."},{"DESCRIÇÃO DE SEMOVENTES DIFERENTE DO DOCUMENTO":"Quando na descrição do SISBR o tipo de semoventes é diferente do documento (ex ao invés de novilhas no documento, estão matrizes)."}]}
+            };
+
+            const searchInput = document.getElementById('searchInput');
+            const pareceresContainer = document.getElementById('pareceresContainer');
+
+            function renderPareceres(data) {
+                pareceresContainer.innerHTML = '';
+                let hasResults = false;
+                for (const mainCategory in data) {
+                    const subCategories = data[mainCategory];
+                    let mainCategoryHasResults = false;
+                    let mainCategoryHtml = '';
+
+                    for (const subCategory in subCategories) {
+                        const pareceres = subCategories[subCategory];
+                        if (pareceres.length > 0) {
+                            mainCategoryHasResults = true;
+                            hasResults = true;
+                            
+                            mainCategoryHtml += `<h4 class="text-xl font-semibold mb-3 mt-4">${subCategory}</h4>`;
+                            const pareceresList = document.createElement('div');
+                            pareceresList.className = 'space-y-4';
+
+                            pareceres.forEach((parecerObj, index) => {
+                                const key = Object.keys(parecerObj)[0];
+                                const fullParecerText = `${key} : \n`;
+                                const uniqueId = `copiedMessage-${mainCategory.replace(/\s/g, '-')}-${subCategory.replace(/\s/g, '-')}-${index}`;
+                                
+                                pareceresList.innerHTML += `
+                                    <div class="neumorphic-inset p-4 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div class="flex-1 min-w-0">
+                                            <h5 class="font-semibold text-lg mb-1">${key}</h5>
+                                            <p class="text-sm whitespace-normal break-words">${parecerObj[key]}</p>
+                                        </div>
+                                        <div class="flex-shrink-0 flex items-center self-start sm:self-center">
+                                            <button class="neumorphic-outset-sm text-sm font-bold py-2 px-4 rounded-lg transition duration-200 active:scale-95"
+                                                    onclick="copyParecer(decodeURIComponent('${encodeURIComponent(fullParecerText)}'), '${uniqueId}')">
+                                                Copiar
+                                            </button>
+                                            <span id="${uniqueId}" class="copied-message text-sm text-green-600 dark:text-green-400 ml-2">Copiado!</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                             mainCategoryHtml += pareceresList.outerHTML;
+                        }
+                    }
+
+                    if (mainCategoryHasResults) {
+                        const mainCategoryElement = document.createElement('div');
+                        mainCategoryElement.className = 'mb-6';
+                        mainCategoryElement.innerHTML = `<h3 class="text-2xl font-bold mb-4 border-b-2 border-slate-300 dark:border-slate-600 pb-2">${mainCategory}</h3>${mainCategoryHtml}`;
+                        pareceresContainer.appendChild(mainCategoryElement);
+                    }
+                }
+                if (!hasResults) {
+                    pareceresContainer.innerHTML = `
+                        <div class="text-center text-lg py-8">
+                            Nenhum parecer encontrado para a sua pesquisa.
+                        </div>
+                    `;
+                }
+            }
+
+            function filterPareceres() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredData = {};
+                for (const mainCategory in pareceresData) {
+                    const subCategories = pareceresData[mainCategory];
+                    const filteredSubCategories = {};
+                    for (const subCategory in subCategories) {
+                        const pareceres = subCategories[subCategory];
+                        const filteredPareceres = pareceres.filter(parecerObj => {
+                            const key = Object.keys(parecerObj)[0];
+                            const value = parecerObj[key];
+                            return key.toLowerCase().includes(searchTerm) ||
+                                   value.toLowerCase().includes(searchTerm) ||
+                                   subCategory.toLowerCase().includes(searchTerm) ||
+                                   mainCategory.toLowerCase().includes(searchTerm);
+                        });
+                        if (filteredPareceres.length > 0) {
+                            filteredSubCategories[subCategory] = filteredPareceres;
+                        }
+                    }
+                    if (Object.keys(filteredSubCategories).length > 0) {
+                        filteredData[mainCategory] = filteredSubCategories;
+                    }
+                }
+                renderPareceres(filteredData);
+            }
+
+            searchInput.addEventListener('input', filterPareceres);
 
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
