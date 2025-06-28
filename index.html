@@ -5,15 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP de Cálculos - Neumórfico</title>
+    <title>ERP de Cálculos - UI/UX Aprimorado</title>
 
     <!-- Inclusão do Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Fontes do Google (Poppins) para um visual mais limpo e profissional -->
+    <!-- Fontes do Google (Poppins) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Biblioteca de Ícones (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- 
       Configuração customizada do Tailwind e Estilos CSS.
@@ -23,26 +26,25 @@
     <style type="text/tailwindcss">
         /*
          * Definição das variáveis de cor para os temas.
-         * :root define as cores do modo claro (padrão).
-         * html.dark redefine essas mesmas variáveis para o modo escuro.
-         * Esta abordagem centralizada corrige o problema do modo claro.
-        */
+         */
         :root {
             --color-bg: #e0e5ec;
             --color-text: #5a6474;
             --color-shadow-1: #ffffff;
             --color-shadow-2: #a3b1c6;
             --color-accent: #0ea5e9; /* Cor de destaque (Azul Céu 500) */
+            --color-subtle: #9ca3af;
             --scrollbar-thumb: #a3b1c6;
             --scrollbar-thumb-hover: #5a6474;
         }
 
         html.dark {
-            --color-bg: #2c3036;
+            --color-bg: #1f2937;
             --color-text: #d1d9e6;
-            --color-shadow-1: #353a41;
-            --color-shadow-2: #23262b;
+            --color-shadow-1: #374151;
+            --color-shadow-2: #111827;
             --color-accent: #38bdf8; /* Cor de destaque (Azul Céu 400) */
+            --color-subtle: #6b7280;
             --scrollbar-thumb: #5a6474;
             --scrollbar-thumb-hover: #9ca3af;
         }
@@ -71,6 +73,9 @@
         .text-accent {
             color: var(--color-accent);
         }
+        .text-subtle {
+            color: var(--color-subtle);
+        }
 
         /* Estilização para o placeholder dos inputs */
         ::placeholder {
@@ -80,11 +85,6 @@
             color: #6b7280;
         }
         
-        /* Correção para iluminação da barra de busca em modo escuro */
-        .dark .search-input-fix {
-            background-color: #3a4049;
-        }
-
         .copied-message {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
@@ -108,6 +108,22 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background-color: var(--scrollbar-thumb-hover);
         }
+
+        /* Toggle Switch */
+        .toggle-checkbox:checked {
+            transform: translateX(100%);
+            background-color: var(--color-accent);
+        }
+        .toggle-label {
+            background-color: #ccc;
+        }
+        html.dark .toggle-label {
+             background-color: #4a5568;
+        }
+        html.dark .toggle-checkbox:checked + .toggle-label {
+            background-color: var(--color-accent);
+        }
+
     </style>
 </head>
 
@@ -120,159 +136,147 @@
         <main class="w-full max-w-4xl mx-auto flex flex-col gap-4 flex-1 min-h-0 pb-24">
             <!-- Cabeçalho da Aplicação -->
             <header class="flex justify-between items-center w-full px-2 flex-shrink-0">
-                <h1 id="module-title" class="text-xl md:text-2xl font-semibold transition-all duration-300">
+                <h1 id="module-title" class="text-2xl font-bold transition-all duration-300">
                     <!-- O título será preenchido via JavaScript -->
                 </h1>
-                <button id="theme-toggle" class="p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95">
-                    <!-- Ícone de Sol (Modo Claro) -->
-                    <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <!-- Ícone de Lua (Modo Escuro) -->
-                    <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
+                <button id="theme-toggle" class="p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">
+                    <i data-lucide="sun" id="sun-icon"></i>
+                    <i data-lucide="moon" id="moon-icon" class="hidden"></i>
                 </button>
             </header>
 
-            <!-- Container dos Módulos com altura dinâmica -->
-            <div id="module-container" class="relative w-full flex-1 min-h-0">
+            <!-- Container dos Módulos com altura flexível e sombra única -->
+            <div id="module-container" class="w-full flex-1 min-h-0 overflow-y-auto custom-scrollbar p-6 md:p-8 rounded-2xl neumorphic-outset">
                 <!-- Módulo 1: Renda PJ (antigo Faturamento) -->
-                <div id="faturamento-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mb-4">
-                        <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Entradas</h3>
-                        <h3 class="text-lg font-semibold border-b border-slate-300 dark:border-slate-600 pb-2">Resultados</h3>
-                    </div>
-                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                <div id="faturamento-module" class="module-content hidden">
+                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         <!-- Coluna de Entradas -->
-                        <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-6">
+                            <h3 class="text-sm text-subtle uppercase tracking-wide">Entradas</h3>
                             <div class="flex flex-col gap-2">
                                 <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
-                                <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
-                                <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
-                                <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
-                                <input type="number" id="num_meses" placeholder="1" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                            </div>
-                            <div class="flex gap-4 mt-4">
-                                <button id="calcular-faturamento" type="button" class="flex-1 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Calcular</button>
-                                <button id="limpar-faturamento" type="button" class="flex-1 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                                <input type="number" id="num_meses" placeholder="1" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                             </div>
                         </div>
 
                         <!-- Coluna de Resultados -->
-                        <div class="flex flex-col gap-4 pt-7">
-                            <div class="p-4 rounded-lg neumorphic-inset">
+                        <div class="flex flex-col gap-6 mt-0 md:mt-[44px]">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm font-medium">1º Cálculo (Somente RBT12)</p>
-                                <p id="resultado1" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                <p id="resultado1" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                             </div>
-                            <div class="p-4 rounded-lg neumorphic-inset">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm font-medium">2º Cálculo (+12 Meses)</p>
-                                <p id="resultado2" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                <p id="resultado2" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                             </div>
-                            <div class="p-4 rounded-lg neumorphic-inset">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</p>
-                                <p id="resultado3" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                <p id="resultado3" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                             </div>
+                        </div>
+                        <div class="md:col-span-2 flex gap-4 mt-4">
+                            <button id="calcular-faturamento" type="button" class="flex-1 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                <i data-lucide="calculator" class="w-5 h-5"></i> Calcular
+                            </button>
+                            <button id="limpar-faturamento" type="button" class="flex-1 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                            </button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Módulo 2: Renda PF -->
-                <div id="renda-pf-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col">
-                    <!-- Navegação por Abas Internas -->
+                <div id="renda-pf-module" class="module-content hidden">
                     <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600 flex-shrink-0">
                         <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="calculadora">Calculadora</button>
-                        <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="media">Média de Holerites</button>
-                        <button class="renda-pf-tab-button py-2 px-4 font-semibold" data-tab="soma">Soma de Valores</button>
+                        <button class="renda-pf-tab-button py-2 px-4 font-semibold text-subtle" data-tab="media">Média de Holerites</button>
+                        <button class="renda-pf-tab-button py-2 px-4 font-semibold text-subtle" data-tab="soma">Soma de Valores</button>
                     </div>
-
-                    <!-- Conteúdo das Abas -->
-                    <div class="relative flex-1 min-h-0">
-                        <!-- Aba 1: Calculadora -->
-                        <div id="calculadora-tab" class="renda-pf-tab-content h-full">
-                           <h3 class="text-lg font-semibold mb-4">Valor do SISBR</h3>
+                    <div>
+                        <div id="calculadora-tab" class="renda-pf-tab-content">
+                           <h3 class="text-2xl font-bold mb-6">Calculadora Simples</h3>
                            <div class="flex flex-col gap-6">
-                               <!-- Linha 1 -->
                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-end">
-                                   <input type="text" inputmode="decimal" id="valor_sisbr" placeholder="0,00" class="w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm h-full">
-                                   <div class="p-4 rounded-lg neumorphic-inset">
-                                       <p class="text-sm font-medium">Multiplicado por 12</p>
-                                       <p id="sisbr_mult" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                   <input type="text" inputmode="decimal" id="valor_sisbr" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-full">
+                                   <div class="p-4 rounded-2xl neumorphic-inset">
+                                       <p class="text-sm text-subtle uppercase tracking-wide">Multiplicado por 12</p>
+                                       <p id="sisbr_mult" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                                    </div>
                                </div>
-                               <!-- Linha 2 -->
                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-stretch">
-                                   <button id="limpar_sisbr" type="button" class="h-full p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
-                                   <div class="p-4 rounded-lg neumorphic-inset">
-                                       <p class="text-sm font-medium">Dividido por 12</p>
-                                       <p id="sisbr_div" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                   <button id="limpar_sisbr" type="button" class="h-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">Limpar</button>
+                                   <div class="p-4 rounded-2xl neumorphic-inset">
+                                       <p class="text-sm text-subtle uppercase tracking-wide">Dividido por 12</p>
+                                       <p id="sisbr_div" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                                    </div>
                                </div>
                            </div>
                         </div>
-                        <!-- Aba 2: Média de Holerites -->
-                        <div id="media-tab" class="renda-pf-tab-content hidden h-full">
+                        <div id="media-tab" class="renda-pf-tab-content hidden">
+                            <h3 class="text-2xl font-bold mb-6">Média de Holerites</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-4">
-                                    <h3 class="text-lg font-semibold">Valores dos Holerites</h3>
-                                    <input type="text" inputmode="decimal" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                    <input type="text" inputmode="decimal" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                    <input type="text" inputmode="decimal" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                    <h4 class="text-sm text-subtle uppercase tracking-wide">Valores</h4>
+                                    <input type="text" inputmode="decimal" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                    <input type="text" inputmode="decimal" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                    <input type="text" inputmode="decimal" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                 </div>
                                 <div class="flex flex-col gap-4">
-                                    <h3 class="text-lg font-semibold invisible">Resultados</h3> <!-- Título invisível para alinhamento -->
-                                    <div class="p-4 rounded-lg neumorphic-inset">
+                                    <h4 class="text-sm text-subtle uppercase tracking-wide">Resultado</h4>
+                                    <div class="p-4 rounded-2xl neumorphic-inset">
                                         <p class="text-sm font-medium">Média dos Valores</p>
-                                        <p id="media_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
+                                        <p id="media_resultado" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                                     </div>
-                                    <button id="limpar_media" type="button" class="mt-2 p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                                    <button id="limpar_media" type="button" class="mt-2 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">Limpar</button>
                                 </div>
                             </div>
                         </div>
-                        <!-- Aba 3: Soma de Valores -->
-                        <div id="soma-tab" class="renda-pf-tab-content hidden h-full overflow-y-auto custom-scrollbar">
+                        <div id="soma-tab" class="renda-pf-tab-content hidden">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-2">
-                                    <h3 class="text-lg font-semibold mb-2">Valores a Somar</h3>
+                                    <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Valores a Somar</h4>
                                     <div id="soma-inputs-container" class="flex flex-col gap-2">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-2">
-                                    <h3 class="text-lg font-semibold mb-2">Valores a Subtrair</h3>
+                                    <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Valores a Subtrair</h4>
                                     <div id="sub-inputs-container" class="flex flex-col gap-2">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-lg neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                     </div>
                                 </div>
                                 <div class="md:col-span-2 flex flex-col md:flex-row gap-4 mt-4">
-                                     <div class="flex-1 p-4 rounded-lg neumorphic-inset">
-                                        <p class="text-sm font-medium">Soma Total</p>
-                                        <p id="soma_total_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
-                                    </div>
-                                     <div class="flex-1 p-4 rounded-lg neumorphic-inset">
-                                        <p class="text-sm font-medium">Divisão por 12</p>
-                                        <p id="soma_div12_resultado" class="text-2xl font-semibold text-accent mt-1">R$ 0,00</p>
-                                    </div>
+                                     <div class="flex-1 p-4 rounded-2xl neumorphic-inset">
+                                         <p class="text-sm font-medium">Soma Total</p>
+                                         <p id="soma_total_resultado" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
+                                     </div>
+                                     <div class="flex-1 p-4 rounded-2xl neumorphic-inset">
+                                         <p class="text-sm font-medium">Divisão por 12</p>
+                                         <p id="soma_div12_resultado" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
+                                     </div>
                                 </div>
                                 <div class="md:col-span-2 mt-4">
-                                    <button id="limpar_soma" type="button" class="w-full p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Limpar</button>
+                                    <button id="limpar_soma" type="button" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">Limpar</button>
                                 </div>
                             </div>
                         </div>
@@ -280,138 +284,120 @@
                 </div>
 
                 <!-- Módulo 3: Regras IRPF -->
-                <div id="regras-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col">
-                    <!-- Navegação por Abas Internas -->
-                    <div class="flex mb-6 border-b border-slate-300 dark:border-slate-600 flex-shrink-0">
-                        <button class="regras-tab-button py-2 px-4 font-semibold" data-tab="itens-ir">Itens do IR</button>
-                        <button class="regras-tab-button py-2 px-4 font-semibold" data-tab="recebidos-pf">Recebidos de PF</button>
-                    </div>
-
-                    <!-- Conteúdo das Abas de Regras -->
-                    <div class="relative flex-1 min-h-0 overflow-y-auto custom-scrollbar">
-                        <!-- Aba 1: Itens do IR -->
-                        <div id="itens-ir-tab" class="regras-tab-content">
-                            <h2 class="text-lg font-semibold mb-4">Itens do Imposto de Renda e Tipo Correto Aceito</h2>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm">
-                                    <thead class="border-b-2 border-slate-300 dark:border-slate-600">
-                                        <tr>
-                                            <th class="p-2">Item</th>
-                                            <th class="p-2">Referência</th>
-                                            <th class="p-2">Tipo de Renda Aceito</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">01</td><td class="p-2">Bolsa de estudo e de pesquisa caracterizada como doação</td><td class="p-2">Outros - Bolsa de estudo - Bolsa do governo</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">02</td><td class="p-2">Ganho de capital na alienação de bens ou direito</td><td class="p-2">Não aceito como renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">03</td><td class="p-2">Capital das apólices de seguro ou pecúlio pago por morte do segurado</td><td class="p-2">Não aceito como renda, reprovar informando</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">04</td><td class="p-2">Indenização por rescisão de contrato de trabalho, inclusive a título de PDV</td><td class="p-2">Não aceito como renda em regra, salvo se o associado constar no QSA</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">06</td><td class="p-2">Rendimento de aplicação financeira</td><td class="p-2">Outros e aplicação</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">07</td><td class="p-2">Ganho de capital na venda de imóveis</td><td class="p-2">Não aceito como renda, reprovar informando!</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">08</td><td class="p-2">Ganho de capital na alienação de moeda estrangeira</td><td class="p-2">Não aceito como renda, reprovar informando!</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">09</td><td class="p-2">Lucros e dividendos recebidos</td><td class="p-2">Outros ou Pró-labore</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">10</td><td class="p-2">Parcela isenta de proventos de aposentadoria, reserva remunerada, reforma e pensão de declarante com 65 anos</td><td class="p-2">Aposentadoria (Obs: pode ser somando com fundo do regime geral da previdência)</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">10</td><td class="p-2">Juros sobre capital próprio</td><td class="p-2">Outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">11</td><td class="p-2">Participação nos lucros e resultados</td><td class="p-2">Outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">11</td><td class="p-2">Pensão, Proventos de aposentadoria ou reforma por moléstia</td><td class="p-2">Aposentadoria ou Pensão</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">12</td><td class="p-2">Rendimento de caderneta de poupança, letras, LCA, LCI</td><td class="p-2">Outros ou Aplicação</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">13</td><td class="p-2">Rendimento de sócio ou titular de microempresa ou empresa de pequeno porte optante do simples</td><td class="p-2">Outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">14</td><td class="p-2">Doações e herança</td><td class="p-2">Não aceito como renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">15</td><td class="p-2">Parcela não tributável correspondente à atividade rural</td><td class="p-2">Agropecuária</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">16</td><td class="p-2">Imposto de renda de anos calendário anteriores</td><td class="p-2">Não é renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">18</td><td class="p-2">Incorporação de reserva de capital</td><td class="p-2">Não é aceito como renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">19</td><td class="p-2">Transferências patrimoniais - meação e dissolução de sociedade conjugal</td><td class="p-2">Não aceito como renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">20</td><td class="p-2">Ganhos líquidos em operações de mercado à vista de ações</td><td class="p-2">Aplicação e outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">21</td><td class="p-2">Ganhos líquidos em operações com ouro, ativo financeiro</td><td class="p-2">Outros e prestação de serviço</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">22</td><td class="p-2">Recuperação de prejuízos em renda variável</td><td class="p-2">Não é renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">23</td><td class="p-2">Rendimento bruto até no máximo 90% da prestação de se..</td><td class="p-2">Prestação de serviço e outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">24</td><td class="p-2">Rendimento bruto, até o máximo 40%, da prestação de serv</td><td class="p-2">Prestação de serviços e outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">25</td><td class="p-2">Restituição de imposto sobre rendas anos-calendários anteriores</td><td class="p-2">Não aceito como renda</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">28</td><td class="p-2">Pensão alimentícia beneficiário</td><td class="p-2">Pensão e outros</td></tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700"><td class="p-2 font-semibold">99</td><td class="p-2">Outros</td><td class="p-2">Outros</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <!-- Aba 2: Recebidos de PF e Exterior -->
-                        <div id="recebidos-pf-tab" class="regras-tab-content hidden">
-                            <h2 class="text-lg font-semibold mb-4">Recebido de Pessoas Física e do Exterior</h2>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm">
-                                    <thead class="border-b-2 border-slate-300 dark:border-slate-600">
-                                        <tr>
-                                            <th class="p-2">Referência</th>
-                                            <th class="p-2">Tipo de Renda Aceito</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700">
-                                            <td class="p-2">Trabalho não assalariado</td>
-                                            <td class="p-2">Outros e Prestação de Serviço</td>
-                                        </tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700">
-                                            <td class="p-2">Aluguéis</td>
-                                            <td class="p-2">Outros</td>
-                                        </tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700">
-                                            <td class="p-2">Outros</td>
-                                            <td class="p-2">Outros e Prestação de Serviço</td>
-                                        </tr>
-                                        <tr class="border-b border-slate-300 dark:border-slate-700">
-                                            <td class="p-2">Exterior</td>
-                                            <td class="p-2">Outros</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                <div id="regras-module" class="module-content hidden">
+                    <h2 class="text-2xl font-bold mb-6">Regras do Imposto de Renda</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="border-b-2 border-slate-300 dark:border-slate-600">
+                                <tr>
+                                    <th class="p-2">Item</th>
+                                    <th class="p-2">Referência</th>
+                                    <th class="p-2">Tipo de Renda Aceito</th>
+                                </tr>
+                            </thead>
+                            <tbody id="regras-irpf-tbody">
+                                <!-- Linhas da tabela serão inseridas aqui via JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <!-- Módulo 4: Parecer -->
-                <div id="parecer-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col">
-                    <div class="mb-4 relative flex-shrink-0">
-                        <input type="text" id="searchInput" placeholder="Pesquisar pareceres por tipo ou descrição..."
-                               class="w-full px-5 py-3 pr-12 rounded-lg neumorphic-inset focus:outline-none text-sm search-input-fix">
-                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
+
+                <!-- Módulo 4: Consulta CNPJ -->
+                <div id="cnpj-module" class="module-content hidden">
+                    <h3 class="text-2xl font-bold mb-6">Consultar CNPJ</h3>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" id="cnpj-input" placeholder="00.000.000/0000-00" class="flex-grow p-3 rounded-2xl bg-transparent neumorphic-inset focus:outline-none text-sm">
+                        <button id="consultar-cnpj" class="p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                            <i data-lucide="search" class="w-5 h-5"></i> Consultar
+                        </button>
+                        <button id="limpar-cnpj" class="p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                            <i data-lucide="x" class="w-5 h-5"></i> Limpar
+                        </button>
                     </div>
-            
-                    <div id="pareceresContainer" class="space-y-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar p-1">
+                    <div id="cnpj-results-container" class="mt-6">
+                        <!-- Os resultados da consulta serão exibidos aqui -->
+                    </div>
+                </div>
+
+                <!-- Módulo 5: Parecer -->
+                <div id="parecer-module" class="module-content hidden">
+                    <div class="flex flex-col sm:flex-row items-center mb-6 gap-4">
+                        <div class="relative flex-grow w-full">
+                            <input type="text" id="searchInput" placeholder="Pesquisar pareceres por tipo ou descrição..." class="w-full p-3 pr-12 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                            <i data-lucide="search" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-subtle"></i>
+                        </div>
+                        <div class="w-full sm:w-auto">
+                            <select id="parecer-category-filter" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm bg-transparent">
+                                <!-- Opções de categoria serão inseridas aqui -->
+                            </select>
+                        </div>
+                    </div>
+                    <div id="pareceresContainer" class="space-y-4">
                         <!-- Pareceres serão renderizados aqui -->
                     </div>
                 </div>
-                <!-- Módulo 5: Contador -->
-                <div id="contador-module" class="module-content absolute w-full h-full p-6 md:p-8 rounded-2xl neumorphic-outset transition-all duration-350 ease-in-out opacity-0 invisible flex flex-col items-center justify-center">
-                    <div class="w-full max-w-xs flex flex-col items-center gap-8">
-                        <!-- Display -->
-                        <div id="contador-display" class="w-full p-6 rounded-lg neumorphic-inset text-center text-6xl font-bold">
-                            0
+                <!-- Módulo 6: Contador -->
+                <div id="contador-module" class="module-content hidden h-full">
+                     <div class="grid md:grid-cols-2 gap-8 items-center h-full">
+                        <div id="counters-grid" class="grid grid-cols-1 sm:grid-cols-2 grid-rows-2 gap-6 h-full">
+                           <!-- Contadores serão inseridos aqui -->
                         </div>
-                        <!-- Action Buttons -->
-                        <div class="w-full grid grid-cols-2 gap-4">
-                            <button id="contador-plus" class="p-4 rounded-lg neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform">+</button>
-                            <button id="contador-minus" class="p-4 rounded-lg neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform">-</button>
+                        <div class="flex flex-col gap-6 p-6 rounded-2xl neumorphic-inset">
+                            <h3 class="text-sm text-subtle uppercase tracking-wide">Settings</h3>
+                            <div class="flex items-center justify-between">
+                                <label for="timer-toggle" class="font-medium">Timer Mode</label>
+                                <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+                                    <input type="checkbox" name="toggle" id="timer-toggle" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="timer-toggle" class="toggle-label block overflow-hidden h-7 rounded-full cursor-pointer"></label>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="increment-by-input" class="text-sm font-medium">Increment By</label>
+                                <input type="number" id="increment-by-input" value="1" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label for="counter-start-input" class="text-sm font-medium">Start Value</label>
+                                <input type="number" id="counter-start-input" value="0" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                            </div>
+                             <button id="add-counter-btn" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add Counter
+                            </button>
+                             <button id="contador-reset" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                <i data-lucide="rotate-cw" class="w-5 h-5"></i> Reset All
+                            </button>
                         </div>
-                        <!-- Reset Button -->
-                        <button id="contador-reset" class="w-full p-3 rounded-lg neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95">Redefinir</button>
-                    </div>
+                     </div>
                 </div>
             </div>
         </main>
 
         <!-- Dock de Navegação Fixo -->
         <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto flex-shrink-0">
-            <div id="dock-container" class="relative flex items-center justify-center gap-2 p-2 rounded-full neumorphic-outset">
-                <div id="dock-slider" class="absolute top-0 left-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="contador-module" data-title="Contador">Contador</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="regras-module" data-title="Regras IRPF">Regras</button>
-                <button class="dock-button relative z-10 px-6 py-3 rounded-full transition-colors duration-300 whitespace-nowrap" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
+            <div id="dock-container" class="relative flex items-center justify-center p-2 rounded-full neumorphic-outset">
+                <div id="dock-slider" class="absolute top-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
+                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
+                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="cnpj-module" data-title="Consulta CNPJ">Consulta CNPJ</button>
+                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="contador-module" data-title="Contador">Contador</button>
+                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="regras-module" data-title="Regras IRPF">Regras</button>
+                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
             </div>
         </nav>
     </div>
+
+    <template id="counter-template">
+        <div class="counter-card p-4 rounded-2xl neumorphic-inset flex flex-col items-center justify-center gap-4 relative h-full">
+            <button class="remove-counter-btn absolute top-2 right-2 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <h4 class="counter-title font-semibold text-center w-full px-4 truncate" contenteditable="true">Contador</h4>
+            <span class="counter-display font-bold text-7xl text-accent cursor-pointer" contenteditable="false">0</span>
+            <div class="flex items-center gap-4">
+                <button class="counter-minus w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
+                <button class="counter-plus w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
+            </div>
+        </div>
+    </template>
 
     <script>
         // --- FUNÇÕES GLOBAIS ---
@@ -465,15 +451,16 @@
                 const isDarkMode = document.documentElement.classList.contains('dark');
                 sunIcon.classList.toggle('hidden', isDarkMode);
                 moonIcon.classList.toggle('hidden', !isDarkMode);
+                lucide.createIcons();
             }
 
             // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
             function updateSlider(button) {
                 if (!button) return;
-                const containerPadding = parseFloat(getComputedStyle(dockContainer).paddingLeft);
-                const bleed = containerPadding * 2;
-                dockSlider.style.width = `${button.offsetWidth + bleed}px`;
-                dockSlider.style.left = `${button.offsetLeft - containerPadding}px`;
+                const buttonRect = button.getBoundingClientRect();
+                const containerRect = dockContainer.getBoundingClientRect();
+                dockSlider.style.width = `${buttonRect.width}px`;
+                dockSlider.style.left = `${buttonRect.left - containerRect.left}px`;
                 dockButtons.forEach(btn => btn.classList.remove('text-accent', 'font-semibold'));
                 button.classList.add('text-accent', 'font-semibold');
             }
@@ -486,22 +473,19 @@
                     moduleTitle.textContent = targetTitle;
                     
                     modules.forEach(module => {
-                        const isActive = module.id === targetModuleId;
-                        module.classList.toggle('opacity-100', isActive);
-                        module.classList.toggle('visible', isActive);
-                        module.classList.toggle('opacity-0', !isActive);
-                        module.classList.toggle('invisible', !isActive);
+                        module.classList.add('hidden');
                     });
                     
                     const activeModule = document.getElementById(targetModuleId);
                     if (activeModule) {
+                       activeModule.classList.remove('hidden');
                         if(targetModuleId === 'renda-pf-module') {
                             const firstTab = activeModule.querySelector('.renda-pf-tab-button');
                             if(firstTab) firstTab.click();
                         } else if (targetModuleId === 'regras-module') {
-                            const firstTab = activeModule.querySelector('.regras-tab-button');
-                            if(firstTab) firstTab.click();
+                            renderRegrasTable();
                         } else if (targetModuleId === 'parecer-module') {
+                            populateParecerFilter();
                             filterPareceres();
                         }
                     }
@@ -509,7 +493,21 @@
             });
             
             // --- LÓGICA DO MÓDULO DE FATURAMENTO ---
+            const faturamentoForm = document.getElementById('faturamento-form');
+            const faturamentoInputs = faturamentoForm.querySelectorAll('#faturamento-form input');
+            
             document.getElementById('calcular-faturamento').addEventListener('click', () => {
+                let allValid = true;
+                faturamentoInputs.forEach(input => {
+                    input.classList.remove('border-red-500');
+                    if(input.value.trim() === '') {
+                        input.classList.add('border', 'border-red-500');
+                        allValid = false;
+                    }
+                });
+
+                if (!allValid) return;
+
                 const rbt12 = parseLocalFloat(document.getElementById('rbt12').value);
                 const rpa = parseLocalFloat(document.getElementById('rpa').value);
                 const mesAnterior = parseLocalFloat(document.getElementById('mes_anterior').value);
@@ -519,7 +517,8 @@
                 document.getElementById('resultado3').textContent = formatCurrency(numMeses > 0 ? (rpa + rbt12) / numMeses : 0);
             });
             document.getElementById('limpar-faturamento').addEventListener('click', () => {
-                document.getElementById('faturamento-form').reset();
+                faturamentoForm.reset();
+                 faturamentoInputs.forEach(input => input.classList.remove('border', 'border-red-500'));
                 document.getElementById('resultado1').textContent = formatCurrency(0);
                 document.getElementById('resultado2').textContent = formatCurrency(0);
                 document.getElementById('resultado3').textContent = formatCurrency(0);
@@ -531,8 +530,8 @@
             rendaPfTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetTabId = `${button.dataset.tab}-tab`;
-                    rendaPfTabButtons.forEach(btn => btn.classList.remove('text-accent'));
-                    button.classList.add('text-accent');
+                    rendaPfTabButtons.forEach(btn => btn.classList.add('text-subtle'));
+                    button.classList.remove('text-subtle');
                     rendaPfTabContents.forEach(content => {
                         content.classList.toggle('hidden', content.id !== targetTabId);
                     });
@@ -594,18 +593,155 @@
                 calcularSomaTotal();
             });
 
-            // --- LÓGICA DO MÓDULO DE REGRAS (ABAS) ---
-            const regrasTabButtons = document.querySelectorAll('.regras-tab-button');
-            const regrasTabContents = document.querySelectorAll('.regras-tab-content');
-            regrasTabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetTabId = button.dataset.tab;
-                    regrasTabButtons.forEach(btn => btn.classList.remove('text-accent'));
-                    button.classList.add('text-accent');
-                    regrasTabContents.forEach(content => {
-                        content.classList.toggle('hidden', content.id !== `${targetTabId}-tab`);
-                    });
+            // --- LÓGICA DO MÓDULO DE REGRAS (ABAS E FILTRO) ---
+            const regrasData = [
+                { item: '01', ref: 'Bolsa de estudo e de pesquisa', type: ['Outros', 'Bolsa de estudo', 'Bolsa do governo'] },
+                { item: '02', ref: 'Ganho de capital na alienação de bens', type: ['Outros'] },
+                { item: '03', ref: 'Capital das apólices de seguro', type: ['Outros'] },
+                { item: '04', ref: 'Indenizações por rescisão', type: ['Outros'] },
+                { item: '06', ref: 'Ganho de capital na alienação do único imóvel', type: ['Outros'] },
+                { item: '06', ref: 'Rendimentos de aplicações financeiras', type: ['Outros', 'Aplicação'] },
+                { item: '07', ref: 'Ganho de capital na venda de imóveis residenciais', type: ['Outros'] },
+                { item: '08', ref: 'Ganho de capital na alienação de moeda estrangeira', type: ['Outros'] },
+                { item: '09', ref: 'Lucros e dividendos recebidos', type: ['Outros', 'Pró-labore'] },
+                { item: '10', ref: 'Parcela isenta de proventos de aposentadoria', type: ['Aposentadoria'] },
+                { item: '10', ref: 'Juros sobre capital próprio', type: ['Outros'] },
+                { item: '11', ref: 'Participação nos lucros e dividendos', type: ['Outros'] },
+                { item: '11', ref: 'Pensão, proventos de aposentadoria por moléstia grave', type: ['Aposentadoria', 'Pensão alimentícia'] },
+                { item: '12', ref: 'Rendimentos de caderneta de poupança (LCA, LCI)', type: ['Outros', 'Aplicação'] },
+                { item: '13', ref: 'Rendimento de sócio ou titular de microempresa', type: ['Outros'] },
+                { item: '14', ref: 'Transferências patrimoniais - doações e heranças', type: ['Outros'] },
+                { item: '15', ref: 'Parcelas não tributáveis (atividade rural)', type: ['Agropecuária'] },
+                { item: '16', ref: 'Imposto sobre a renda de anos anteriores', type: ['Outros'] },
+                { item: '17', ref: 'Rendimento assalariado em moeda estrangeira', type: ['Salário e outros'] },
+                { item: '18', ref: 'Incorporações de reserva ao capital', type: ['Outros'] },
+                { item: '19', ref: 'Transferências patrimoniais', type: ['Outros'] },
+                { item: '20', ref: 'Ganhos líquidos de operações no mercado à vista', type: ['Outros', 'Aplicação'] },
+                { item: '21', ref: 'Ganhos com operações com ouro', type: ['Outros', 'Prestação de serviço'] },
+                { item: '22', ref: 'Recuperação de prejuízos em renda variável', type: ['Outros'] },
+                { item: '23', ref: 'Rendimento bruto, transporte de carga', type: ['Outros', 'Prestação de serviço'] },
+                { item: '24', ref: 'Rendimento bruto, transporte de passageiros', type: ['Outros', 'Prestação de serviço'] },
+                { item: '25', ref: 'Restituição do imposto de renda', type: ['Outros'] },
+                { item: '28', ref: 'Pensão alimentícia', type: ['Outros', 'Pensão alimentícia'] },
+                { item: '99', ref: 'Outros', type: ['Outros'] },
+            ];
+            
+            const regrasTbody = document.getElementById('regras-irpf-tbody');
+            
+            function renderRegrasTable() {
+                regrasTbody.innerHTML = '';
+                regrasData.forEach(regra => {
+                    const row = `
+                        <tr class="border-b border-slate-300 dark:border-slate-700">
+                            <td class="p-2 font-semibold">${regra.item}</td>
+                            <td class="p-2">${regra.ref}</td>
+                            <td class="p-2">${regra.type.join(', ')}</td>
+                        </tr>
+                    `;
+                    regrasTbody.innerHTML += row;
                 });
+            }
+
+            // --- LÓGICA DO MÓDULO DE CONSULTA CNPJ ---
+            const cnpjInput = document.getElementById('cnpj-input');
+            const consultarCnpjBtn = document.getElementById('consultar-cnpj');
+            const limparCnpjBtn = document.getElementById('limpar-cnpj');
+            const cnpjResultsContainer = document.getElementById('cnpj-results-container');
+
+            cnpjInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                e.target.value = value.slice(0, 18);
+            });
+
+            consultarCnpjBtn.addEventListener('click', async () => {
+                const cnpj = cnpjInput.value.replace(/\D/g, '');
+                if (cnpj.length !== 14) {
+                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">Por favor, insira um CNPJ válido.</div>`;
+                    return;
+                }
+
+                cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center">Consultando...</div>`;
+
+                try {
+                    const response = await fetch(`https://open.cnpja.com/office/${cnpj}`);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => null);
+                        let errorMessage = `Erro ${response.status}: Não foi possível consultar o CNPJ.`;
+                        if (errorData && errorData.message) errorMessage = errorData.message;
+                        else if (response.status === 404) errorMessage = "CNPJ não encontrado.";
+                        throw new Error(errorMessage);
+                    }
+                    const data = await response.json();
+                    displayCnpjResults(data);
+                } catch (error) {
+                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">${error.message}</div>`;
+                }
+            });
+
+            function displayCnpjResults(data) {
+                const isSimples = data.company?.simples?.optant ? 'Sim' : 'Não';
+                const isSimei = data.company?.simei?.optant ? 'Sim' : 'Não';
+                const porteEmpresa = data.company?.size?.text || 'Não informado';
+                const lastUpdated = data.updated ? new Date(data.updated).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Não informado';
+                
+                let sociosHtml = '<p class="text-subtle">Nenhum sócio encontrado.</p>';
+                if (data.company?.members && data.company.members.length > 0) {
+                    sociosHtml = `<ul class="list-disc list-inside">${data.company.members.map(socio => `<li>${socio.person.name} <span class="text-subtle">(${socio.role?.text || 'Sócio'})</span></li>`).join('')}</ul>`;
+                }
+
+                const rawJsonHtml = `
+                    <details class="mt-4">
+                        <summary class="cursor-pointer font-semibold text-sm text-subtle">Ver resposta JSON completa</summary>
+                        <pre class="mt-2 p-4 rounded-2xl neumorphic-inset text-xs overflow-auto custom-scrollbar"><code>${JSON.stringify(data, null, 2)}</code></pre>
+                    </details>
+                `;
+
+                cnpjResultsContainer.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-2xl neumorphic-inset">
+                            <p class="text-sm text-subtle uppercase tracking-wide">Última Atualização</p>
+                            <p class="font-semibold mt-1">${lastUpdated}</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Situação Cadastral</p>
+                                <p class="text-lg font-bold text-accent mt-1">${data.status?.text || 'Não informado'}</p>
+                            </div>
+                             <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Porte da Empresa</p>
+                                <p class="text-lg font-bold text-accent mt-1">${porteEmpresa}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Optante Simples</p>
+                                <p class="text-lg font-bold text-accent mt-1">${isSimples}</p>
+                            </div>
+                            <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Optante SIMEI</p>
+                                <p class="text-lg font-bold text-accent mt-1">${isSimei}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-2xl neumorphic-inset">
+                            <p class="text-sm text-subtle uppercase tracking-wide">Atividade Principal (CNAE)</p>
+                            <p class="font-semibold mt-1">${data.mainActivity?.text || 'Não informado'}</p>
+                        </div>
+                        <div class="p-4 rounded-2xl neumorphic-inset">
+                            <p class="text-sm text-subtle uppercase tracking-wide mb-2">Sócios</p>
+                            <div class="font-semibold">${sociosHtml}</div>
+                        </div>
+                        ${rawJsonHtml}
+                    </div>
+                `;
+            }
+
+            limparCnpjBtn.addEventListener('click', () => {
+                cnpjInput.value = '';
+                cnpjResultsContainer.innerHTML = '';
             });
 
             // --- LÓGICA DO MÓDULO DE PARECERES ---
@@ -619,7 +755,15 @@
             };
 
             const searchInput = document.getElementById('searchInput');
+            const parecerCategoryFilter = document.getElementById('parecer-category-filter');
             const pareceresContainer = document.getElementById('pareceresContainer');
+
+            function populateParecerFilter() {
+                parecerCategoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
+                for (const mainCategory in pareceresData) {
+                    parecerCategoryFilter.innerHTML += `<option value="${mainCategory}">${mainCategory}</option>`;
+                }
+            }
 
             function renderPareceres(data) {
                 pareceresContainer.innerHTML = '';
@@ -645,17 +789,17 @@
                                 const uniqueId = `copiedMessage-${mainCategory.replace(/\s/g, '-')}-${subCategory.replace(/\s/g, '-')}-${index}`;
                                 
                                 pareceresList.innerHTML += `
-                                    <div class="neumorphic-inset p-4 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div class="p-4 rounded-2xl neumorphic-inset flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div class="flex-1 min-w-0">
-                                            <h5 class="font-semibold text-lg mb-1">${key}</h5>
-                                            <p class="text-sm whitespace-normal break-words">${parecerObj[key]}</p>
+                                            <h5 class="font-semibold mb-1">${key}</h5>
+                                            <p class="text-sm whitespace-normal break-words text-subtle">${parecerObj[key]}</p>
                                         </div>
                                         <div class="flex-shrink-0 flex items-center self-start sm:self-center">
-                                            <button class="neumorphic-outset-sm text-sm font-bold py-2 px-4 rounded-lg transition duration-200 active:scale-95"
+                                            <button class="p-2 rounded-2xl neumorphic-outset-sm text-sm font-bold transition duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5"
                                                     onclick="copyParecer(decodeURIComponent('${encodeURIComponent(fullParecerText)}'), '${uniqueId}')">
                                                 Copiar
                                             </button>
-                                            <span id="${uniqueId}" class="copied-message text-sm text-green-600 dark:text-green-400 ml-2">Copiado!</span>
+                                            <span id="${uniqueId}" class="copied-message text-sm text-green-500 ml-2">Copiado!</span>
                                         </div>
                                     </div>
                                 `;
@@ -673,7 +817,7 @@
                 }
                 if (!hasResults) {
                     pareceresContainer.innerHTML = `
-                        <div class="text-center text-lg py-8">
+                        <div class="text-center text-lg py-8 text-subtle">
                             Nenhum parecer encontrado para a sua pesquisa.
                         </div>
                     `;
@@ -682,9 +826,15 @@
 
             function filterPareceres() {
                 const searchTerm = searchInput.value.toLowerCase();
+                const selectedCategory = parecerCategoryFilter.value;
+                
+                const sourceData = selectedCategory === 'all' 
+                    ? pareceresData 
+                    : { [selectedCategory]: pareceresData[selectedCategory] };
+
                 const filteredData = {};
-                for (const mainCategory in pareceresData) {
-                    const subCategories = pareceresData[mainCategory];
+                for (const mainCategory in sourceData) {
+                    const subCategories = sourceData[mainCategory];
                     const filteredSubCategories = {};
                     for (const subCategory in subCategories) {
                         const pareceres = subCategories[subCategory];
@@ -692,9 +842,7 @@
                             const key = Object.keys(parecerObj)[0];
                             const value = parecerObj[key];
                             return key.toLowerCase().includes(searchTerm) ||
-                                   value.toLowerCase().includes(searchTerm) ||
-                                   subCategory.toLowerCase().includes(searchTerm) ||
-                                   mainCategory.toLowerCase().includes(searchTerm);
+                                   value.toLowerCase().includes(searchTerm);
                         });
                         if (filteredPareceres.length > 0) {
                             filteredSubCategories[subCategory] = filteredPareceres;
@@ -708,36 +856,157 @@
             }
 
             searchInput.addEventListener('input', filterPareceres);
+            parecerCategoryFilter.addEventListener('change', filterPareceres);
 
             // --- LÓGICA DO MÓDULO CONTADOR ---
-            const contadorDisplay = document.getElementById('contador-display');
-            const contadorPlusBtn = document.getElementById('contador-plus');
-            const contadorMinusBtn = document.getElementById('contador-minus');
-            const contadorResetBtn = document.getElementById('contador-reset');
-            let count = 0;
+            const countersGrid = document.getElementById('counters-grid');
+            const addCounterBtn = document.getElementById('add-counter-btn');
+            const counterTemplate = document.getElementById('counter-template');
+            const incrementInput = document.getElementById('increment-by-input');
+            const startInput = document.getElementById('counter-start-input');
+            const timerToggle = document.getElementById('timer-toggle');
+            const resetAllBtn = document.getElementById('contador-reset');
 
-            function updateContadorDisplay() {
-                contadorDisplay.textContent = count;
+            let counters = [];
+
+            function updateCountersLayout() {
+                const count = counters.length;
+                const cards = countersGrid.querySelectorAll('.counter-card');
+                cards.forEach(card => {
+                    card.classList.remove('sm:col-span-2', 'sm:row-span-2');
+                });
+                
+                if (count === 1) {
+                    cards[0].classList.add('sm:col-span-2', 'sm:row-span-2');
+                } else if (count === 2) {
+                    cards.forEach(card => card.classList.add('sm:row-span-2'));
+                } else if (count === 3) {
+                    cards[2].classList.add('sm:col-span-2');
+                }
             }
 
-            contadorPlusBtn.addEventListener('click', () => {
-                count++;
-                updateContadorDisplay();
-            });
+            function createCounterInstance(id, initialValue, isTimer) {
+                const counterElement = counterTemplate.content.cloneNode(true).firstElementChild;
+                counterElement.dataset.id = id;
+                countersGrid.appendChild(counterElement);
+                lucide.createIcons({
+                    nodes: [counterElement]
+                });
 
-            contadorMinusBtn.addEventListener('click', () => {
-                count--;
-                updateContadorDisplay();
-            });
+                const titleElement = counterElement.querySelector('.counter-title');
+                const display = counterElement.querySelector('.counter-display');
+                const plusBtn = counterElement.querySelector('.counter-plus');
+                const minusBtn = counterElement.querySelector('.counter-minus');
+                const removeBtn = counterElement.querySelector('.remove-counter-btn');
 
-            contadorResetBtn.addEventListener('click', () => {
-                count = 0;
-                updateContadorDisplay();
+                if (isTimer) {
+                    titleElement.textContent = `Timer ${counters.length + 1}`;
+                } else {
+                    titleElement.textContent = `Contador ${counters.length + 1}`;
+                }
+
+                let value = initialValue;
+                let timerInterval = null;
+
+                const instance = {
+                    id,
+                    element: counterElement,
+                    value,
+                    isTimer,
+                    timerInterval,
+                    updateDisplay() {
+                        if (this.isTimer) {
+                            const minutes = Math.floor(this.value / 60).toString().padStart(2, '0');
+                            const seconds = (this.value % 60).toString().padStart(2, '0');
+                            display.textContent = `${minutes}:${seconds}`;
+                        } else {
+                            display.textContent = this.value;
+                        }
+                    },
+                    remove() {
+                        clearInterval(this.timerInterval);
+                        this.element.remove();
+                        counters = counters.filter(c => c.id !== this.id);
+                        updateCountersLayout();
+                    }
+                };
+                
+                if (isTimer) {
+                    display.setAttribute('contenteditable', true);
+                    plusBtn.onclick = () => { instance.value += 60; instance.updateDisplay(); };
+                    minusBtn.onclick = () => { instance.value = Math.max(0, instance.value - 60); instance.updateDisplay(); };
+                    
+                    display.addEventListener('blur', () => {
+                        const parts = display.textContent.split(':').map(part => parseInt(part) || 0);
+                        if(parts.length === 2) {
+                            instance.value = (parts[0] * 60) + parts[1];
+                        } else if (parts.length === 1) {
+                            instance.value = parts[0];
+                        }
+                        instance.updateDisplay();
+                    });
+
+                    display.addEventListener('click', () => {
+                        if (instance.timerInterval) {
+                            clearInterval(instance.timerInterval);
+                            instance.timerInterval = null;
+                        } else {
+                            if (instance.value > 0) {
+                                instance.timerInterval = setInterval(() => {
+                                    instance.value--;
+                                    instance.updateDisplay();
+                                    if (instance.value <= 0) {
+                                        clearInterval(instance.timerInterval);
+                                        instance.timerInterval = null;
+                                    }
+                                }, 1000);
+                            }
+                        }
+                    });
+                } else {
+                    plusBtn.addEventListener('click', () => {
+                        const incrementValue = parseInt(incrementInput.value) || 1;
+                        instance.value += incrementValue;
+                        instance.updateDisplay();
+                    });
+
+                    minusBtn.addEventListener('click', () => {
+                        const incrementValue = parseInt(incrementInput.value) || 1;
+                        instance.value -= incrementValue;
+                        if (instance.value < 0) instance.value = 0;
+                        instance.updateDisplay();
+                    });
+                }
+                
+                removeBtn.addEventListener('click', () => instance.remove());
+                
+                instance.updateDisplay();
+                return instance;
+            }
+
+            addCounterBtn.addEventListener('click', () => {
+                if (counters.length >= 4) return;
+                const initialValue = parseInt(startInput.value) || 0;
+                const isTimer = timerToggle.checked;
+                const newCounter = createCounterInstance(Date.now(), initialValue, isTimer);
+                counters.push(newCounter);
+                updateCountersLayout();
+            });
+            
+            resetAllBtn.addEventListener('click', () => {
+                const startValue = parseInt(startInput.value) || 0;
+                counters.forEach(counter => {
+                    clearInterval(counter.timerInterval);
+                    counter.timerInterval = null;
+                    counter.value = startValue;
+                    counter.updateDisplay();
+                });
             });
 
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
             function initializeApp() {
+                lucide.createIcons();
                 updateThemeIcons();
                 if (dockButtons.length > 0) {
                     requestAnimationFrame(() => {
