@@ -20,8 +20,6 @@
 
     <!-- 
       Configuração customizada do Tailwind e Estilos CSS.
-      As variáveis de cor foram centralizadas para garantir o funcionamento
-      correto dos modos claro e escuro.
     -->
     <style type="text/tailwindcss">
         /*
@@ -60,13 +58,13 @@
 
         /* Classes de utilidade para o Neumorfismo usando variáveis */
         .neumorphic-outset {
-            box-shadow: 7px 7px 15px var(--color-shadow-2), -7px -7px 15px var(--color-shadow-1);
+            box-shadow: 6px 6px 12px var(--color-shadow-2), -6px -6px 12px var(--color-shadow-1);
         }
         .neumorphic-inset {
-            box-shadow: inset 7px 7px 15px var(--color-shadow-2), inset -7px -7px 15px var(--color-shadow-1);
+            box-shadow: inset 6px 6px 12px var(--color-shadow-2), inset -6px -6px 12px var(--color-shadow-1);
         }
         .neumorphic-outset-sm {
-            box-shadow: 4px 4px 8px var(--color-shadow-2), -4px -4px 8px var(--color-shadow-1);
+            box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1);
         }
         
         /* Classe para a cor de destaque do texto */
@@ -124,6 +122,32 @@
             background-color: var(--color-accent);
         }
 
+        /* Animações simples */
+        @keyframes fade-in {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+        @keyframes fade-out {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-in forwards;
+        }
+        
+        /* Estilo para inputs e selects */
+        input, select {
+            background-color: transparent !important;
+            color: var(--color-text);
+        }
+        select option {
+            background: var(--color-bg);
+            color: var(--color-text);
+        }
+
     </style>
 </head>
 
@@ -151,37 +175,38 @@
                 <div id="faturamento-module" class="module-content hidden">
                     <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         <!-- Coluna de Entradas -->
-                        <div class="flex flex-col gap-6">
-                            <h3 class="text-sm text-subtle uppercase tracking-wide">Entradas</h3>
-                            <div class="flex flex-col gap-2">
+                        <div class="flex flex-col gap-4">
+                            <h3 class="text-sm text-subtle uppercase tracking-wide mb-2">Entradas</h3>
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
-                                <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full mt-1 p-2 focus:outline-none text-lg">
                             </div>
-                            <div class="flex flex-col gap-2">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
-                                <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full mt-1 p-2 focus:outline-none text-lg">
                             </div>
-                            <div class="flex flex-col gap-2">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
-                                <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full mt-1 p-2 focus:outline-none text-lg">
                             </div>
-                            <div class="flex flex-col gap-2">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
-                                <input type="number" id="num_meses" placeholder="1" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                <input type="number" id="num_meses" placeholder="1" class="w-full mt-1 p-2 focus:outline-none text-lg">
                             </div>
                         </div>
 
                         <!-- Coluna de Resultados -->
-                        <div class="flex flex-col gap-6 mt-0 md:mt-[44px]">
-                            <div class="p-4 rounded-2xl neumorphic-inset">
+                        <div class="flex flex-col gap-4">
+                            <h3 class="text-sm text-subtle uppercase tracking-wide mb-2">Resultados</h3>
+                            <div class="p-4 rounded-2xl neumorphic-inset flex-grow flex flex-col justify-center">
                                 <p class="text-sm font-medium">1º Cálculo (Somente RBT12)</p>
                                 <p id="resultado1" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                             </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
+                            <div class="p-4 rounded-2xl neumorphic-inset flex-grow flex flex-col justify-center">
                                 <p class="text-sm font-medium">2º Cálculo (+12 Meses)</p>
                                 <p id="resultado2" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                             </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
+                            <div class="p-4 rounded-2xl neumorphic-inset flex-grow flex flex-col justify-center">
                                 <p class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</p>
                                 <p id="resultado3" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                             </div>
@@ -209,7 +234,7 @@
                            <h3 class="text-2xl font-bold mb-6">Calculadora Simples</h3>
                            <div class="flex flex-col gap-6">
                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-end">
-                                   <input type="text" inputmode="decimal" id="valor_sisbr" placeholder="0,00" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-full">
+                                   <input type="text" inputmode="decimal" id="valor_sisbr" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-full">
                                    <div class="p-4 rounded-2xl neumorphic-inset">
                                        <p class="text-sm text-subtle uppercase tracking-wide">Multiplicado por 12</p>
                                        <p id="sisbr_mult" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
@@ -229,8 +254,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-4">
                                     <h4 class="text-sm text-subtle uppercase tracking-wide">Valores</h4>
-                                    <input type="text" inputmode="decimal" placeholder="Valor 1" class="media-holerite-input w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                    <input type="text" inputmode="decimal" placeholder="Valor 2" class="media-holerite-input w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                    <input type="text" inputmode="decimal" placeholder="Valor 1" class="media-holerite-input w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                    <input type="text" inputmode="decimal" placeholder="Valor 2" class="media-holerite-input w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                     <input type="text" inputmode="decimal" placeholder="Valor 3" class="media-holerite-input w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                 </div>
                                 <div class="flex flex-col gap-4">
@@ -248,21 +273,21 @@
                                 <div class="flex flex-col gap-2">
                                     <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Valores a Somar</h4>
                                     <div id="soma-inputs-container" class="flex flex-col gap-2">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-2">
                                     <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Valores a Subtrair</h4>
                                     <div id="sub-inputs-container" class="flex flex-col gap-2">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full bg-transparent p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                     </div>
                                 </div>
                                 <div class="md:col-span-2 flex flex-col md:flex-row gap-4 mt-4">
@@ -286,9 +311,9 @@
                 <!-- Módulo 3: Regras IRPF -->
                 <div id="regras-module" class="module-content hidden">
                     <h2 class="text-2xl font-bold mb-6">Regras do Imposto de Renda</h2>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-y-auto custom-scrollbar h-full">
                         <table class="w-full text-left text-sm">
-                            <thead class="border-b-2 border-slate-300 dark:border-slate-600">
+                            <thead class="border-b-2 border-slate-300 dark:border-slate-600 sticky top-0 bg-[var(--color-bg)]">
                                 <tr>
                                     <th class="p-2">Item</th>
                                     <th class="p-2">Referência</th>
@@ -296,7 +321,7 @@
                                 </tr>
                             </thead>
                             <tbody id="regras-irpf-tbody">
-                                <!-- Linhas da tabela serão inseridas aqui via JS -->
+                                <!-- Conteúdo inserido estaticamente -->
                             </tbody>
                         </table>
                     </div>
@@ -306,7 +331,7 @@
                 <div id="cnpj-module" class="module-content hidden">
                     <h3 class="text-2xl font-bold mb-6">Consultar CNPJ</h3>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <input type="text" id="cnpj-input" placeholder="00.000.000/0000-00" class="flex-grow p-3 rounded-2xl bg-transparent neumorphic-inset focus:outline-none text-sm">
+                        <input type="text" id="cnpj-input" placeholder="00.000.000/0000-00" class="flex-grow p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                         <button id="consultar-cnpj" class="p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
                             <i data-lucide="search" class="w-5 h-5"></i> Consultar
                         </button>
@@ -320,26 +345,26 @@
                 </div>
 
                 <!-- Módulo 5: Parecer -->
-                <div id="parecer-module" class="module-content hidden">
-                    <div class="flex flex-col sm:flex-row items-center mb-6 gap-4">
+                <div id="parecer-module" class="module-content hidden flex flex-col">
+                    <div class="flex flex-col sm:flex-row items-center mb-6 gap-4 flex-shrink-0">
                         <div class="relative flex-grow w-full">
                             <input type="text" id="searchInput" placeholder="Pesquisar pareceres por tipo ou descrição..." class="w-full p-3 pr-12 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                             <i data-lucide="search" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-subtle"></i>
                         </div>
                         <div class="w-full sm:w-auto">
-                            <select id="parecer-category-filter" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm bg-transparent">
+                            <select id="parecer-category-filter" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
                                 <!-- Opções de categoria serão inseridas aqui -->
                             </select>
                         </div>
                     </div>
-                    <div id="pareceresContainer" class="space-y-4">
-                        <!-- Pareceres serão renderizados aqui -->
+                    <div id="pareceresContainer" class="space-y-4 overflow-y-auto custom-scrollbar flex-grow">
+                        <!-- Conteúdo dos pareceres será inserido aqui -->
                     </div>
                 </div>
                 <!-- Módulo 6: Contador -->
                 <div id="contador-module" class="module-content hidden h-full">
                      <div class="grid md:grid-cols-2 gap-8 items-center h-full">
-                        <div id="counters-grid" class="grid grid-cols-1 sm:grid-cols-2 grid-rows-2 gap-6 h-full">
+                        <div id="counters-grid" class="grid grid-cols-1 sm:grid-cols-2 grid-rows-2 gap-6 h-full min-h-[300px]">
                            <!-- Contadores serão inseridos aqui -->
                         </div>
                         <div class="flex flex-col gap-6 p-6 rounded-2xl neumorphic-inset">
@@ -395,6 +420,9 @@
             <div class="flex items-center gap-4">
                 <button class="counter-minus w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
                 <button class="counter-plus w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
+                
+                <button class="timer-play w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play"></i></button>
+                <button class="timer-reset w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw"></i></button>
             </div>
         </div>
     </template>
@@ -455,6 +483,8 @@
             }
 
             // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
+            let currentModuleId = null;
+
             function updateSlider(button) {
                 if (!button) return;
                 const buttonRect = button.getBoundingClientRect();
@@ -468,26 +498,25 @@
             dockButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetModuleId = button.dataset.target;
+                    if (targetModuleId === currentModuleId) return;
+                    currentModuleId = targetModuleId;
+                    
                     const targetTitle = button.dataset.title;
                     updateSlider(button);
                     moduleTitle.textContent = targetTitle;
                     
-                    modules.forEach(module => {
-                        module.classList.add('hidden');
-                    });
-                    
+                    modules.forEach(module => module.classList.add('hidden'));
                     const activeModule = document.getElementById(targetModuleId);
                     if (activeModule) {
                        activeModule.classList.remove('hidden');
-                        if(targetModuleId === 'renda-pf-module') {
-                            const firstTab = activeModule.querySelector('.renda-pf-tab-button');
-                            if(firstTab) firstTab.click();
-                        } else if (targetModuleId === 'regras-module') {
-                            renderRegrasTable();
-                        } else if (targetModuleId === 'parecer-module') {
+                       if (targetModuleId === 'regras-module') renderRegrasTable();
+                       if (targetModuleId === 'parecer-module') {
                             populateParecerFilter();
                             filterPareceres();
-                        }
+                       }
+                       if (targetModuleId === 'contador-module' && counters.length === 0) {
+                           addCounterBtn.click();
+                       }
                     }
                 });
             });
@@ -594,41 +623,40 @@
             });
 
             // --- LÓGICA DO MÓDULO DE REGRAS (ABAS E FILTRO) ---
-            const regrasData = [
-                { item: '01', ref: 'Bolsa de estudo e de pesquisa', type: ['Outros', 'Bolsa de estudo', 'Bolsa do governo'] },
-                { item: '02', ref: 'Ganho de capital na alienação de bens', type: ['Outros'] },
-                { item: '03', ref: 'Capital das apólices de seguro', type: ['Outros'] },
-                { item: '04', ref: 'Indenizações por rescisão', type: ['Outros'] },
-                { item: '06', ref: 'Ganho de capital na alienação do único imóvel', type: ['Outros'] },
-                { item: '06', ref: 'Rendimentos de aplicações financeiras', type: ['Outros', 'Aplicação'] },
-                { item: '07', ref: 'Ganho de capital na venda de imóveis residenciais', type: ['Outros'] },
-                { item: '08', ref: 'Ganho de capital na alienação de moeda estrangeira', type: ['Outros'] },
-                { item: '09', ref: 'Lucros e dividendos recebidos', type: ['Outros', 'Pró-labore'] },
-                { item: '10', ref: 'Parcela isenta de proventos de aposentadoria', type: ['Aposentadoria'] },
-                { item: '10', ref: 'Juros sobre capital próprio', type: ['Outros'] },
-                { item: '11', ref: 'Participação nos lucros e dividendos', type: ['Outros'] },
-                { item: '11', ref: 'Pensão, proventos de aposentadoria por moléstia grave', type: ['Aposentadoria', 'Pensão alimentícia'] },
-                { item: '12', ref: 'Rendimentos de caderneta de poupança (LCA, LCI)', type: ['Outros', 'Aplicação'] },
-                { item: '13', ref: 'Rendimento de sócio ou titular de microempresa', type: ['Outros'] },
-                { item: '14', ref: 'Transferências patrimoniais - doações e heranças', type: ['Outros'] },
-                { item: '15', ref: 'Parcelas não tributáveis (atividade rural)', type: ['Agropecuária'] },
-                { item: '16', ref: 'Imposto sobre a renda de anos anteriores', type: ['Outros'] },
-                { item: '17', ref: 'Rendimento assalariado em moeda estrangeira', type: ['Salário e outros'] },
-                { item: '18', ref: 'Incorporações de reserva ao capital', type: ['Outros'] },
-                { item: '19', ref: 'Transferências patrimoniais', type: ['Outros'] },
-                { item: '20', ref: 'Ganhos líquidos de operações no mercado à vista', type: ['Outros', 'Aplicação'] },
-                { item: '21', ref: 'Ganhos com operações com ouro', type: ['Outros', 'Prestação de serviço'] },
-                { item: '22', ref: 'Recuperação de prejuízos em renda variável', type: ['Outros'] },
-                { item: '23', ref: 'Rendimento bruto, transporte de carga', type: ['Outros', 'Prestação de serviço'] },
-                { item: '24', ref: 'Rendimento bruto, transporte de passageiros', type: ['Outros', 'Prestação de serviço'] },
-                { item: '25', ref: 'Restituição do imposto de renda', type: ['Outros'] },
-                { item: '28', ref: 'Pensão alimentícia', type: ['Outros', 'Pensão alimentícia'] },
-                { item: '99', ref: 'Outros', type: ['Outros'] },
-            ];
-            
             const regrasTbody = document.getElementById('regras-irpf-tbody');
             
             function renderRegrasTable() {
+                const regrasData = [
+                    { item: '01', ref: 'Bolsa de estudo e de pesquisa', type: ['Outros', 'Bolsa de estudo', 'Bolsa do governo'] },
+                    { item: '02', ref: 'Ganho de capital na alienação de bens', type: ['Outros'] },
+                    { item: '03', ref: 'Capital das apólices de seguro', type: ['Outros'] },
+                    { item: '04', ref: 'Indenizações por rescisão', type: ['Outros'] },
+                    { item: '06', ref: 'Ganho de capital na alienação do único imóvel', type: ['Outros'] },
+                    { item: '06', ref: 'Rendimentos de aplicações financeiras', type: ['Outros', 'Aplicação'] },
+                    { item: '07', ref: 'Ganho de capital na venda de imóveis residenciais', type: ['Outros'] },
+                    { item: '08', ref: 'Ganho de capital na alienação de moeda estrangeira', type: ['Outros'] },
+                    { item: '09', ref: 'Lucros e dividendos recebidos', type: ['Outros', 'Pró-labore'] },
+                    { item: '10', ref: 'Parcela isenta de proventos de aposentadoria', type: ['Aposentadoria'] },
+                    { item: '10', ref: 'Juros sobre capital próprio', type: ['Outros'] },
+                    { item: '11', ref: 'Participação nos lucros e dividendos', type: ['Outros'] },
+                    { item: '11', ref: 'Pensão, proventos de aposentadoria por moléstia grave', type: ['Aposentadoria', 'Pensão alimentícia'] },
+                    { item: '12', ref: 'Rendimentos de caderneta de poupança (LCA, LCI)', type: ['Outros', 'Aplicação'] },
+                    { item: '13', ref: 'Rendimento de sócio ou titular de microempresa', type: ['Outros'] },
+                    { item: '14', ref: 'Transferências patrimoniais - doações e heranças', type: ['Outros'] },
+                    { item: '15', ref: 'Parcelas não tributáveis (atividade rural)', type: ['Agropecuária'] },
+                    { item: '16', ref: 'Imposto sobre a renda de anos anteriores', type: ['Outros'] },
+                    { item: '17', ref: 'Rendimento assalariado em moeda estrangeira', type: ['Salário e outros'] },
+                    { item: '18', ref: 'Incorporações de reserva ao capital', type: ['Outros'] },
+                    { item: '19', ref: 'Transferências patrimoniais', type: ['Outros'] },
+                    { item: '20', ref: 'Ganhos líquidos de operações no mercado à vista', type: ['Outros', 'Aplicação'] },
+                    { item: '21', ref: 'Ganhos com operações com ouro', type: ['Outros', 'Prestação de serviço'] },
+                    { item: '22', ref: 'Recuperação de prejuízos em renda variável', type: ['Outros'] },
+                    { item: '23', ref: 'Rendimento bruto, transporte de carga', type: ['Outros', 'Prestação de serviço'] },
+                    { item: '24', ref: 'Rendimento bruto, transporte de passageiros', type: ['Outros', 'Prestação de serviço'] },
+                    { item: '25', ref: 'Restituição do imposto de renda', type: ['Outros'] },
+                    { item: '28', ref: 'Pensão alimentícia', type: ['Outros', 'Pensão alimentícia'] },
+                    { item: '99', ref: 'Outros', type: ['Outros'] },
+                ];
                 regrasTbody.innerHTML = '';
                 regrasData.forEach(regra => {
                     const row = `
@@ -746,12 +774,12 @@
 
             // --- LÓGICA DO MÓDULO DE PARECERES ---
             const pareceresData = {
-                "Pareceres Gerais": {"Pareceres Gerais": [{"DOCUMENTO ILEGÍVEL":"Quando não é possível a leitura, ou ainda, não se pode ter certeza sobre a informação específica que necessita de validação."},{"DOCUMENTO INVÁLIDO":"Documento em anexo não é válido para a comprovação do fluxo em específico."},{"PRAZO DE VALIDADE":"Solicitar o envio de um documento com prazo de validade adequado, conforme os requisitos específicos do fluxo."},{"CHAVES INCORRETAS":"Documentos em chaves trocadas ou erradas se aplicam aqui."},{"ASSINATURAS":"Assinaturas corrompidas, ilegíveis ou faltando (tanto assinaturas manuscritas quanto digitais), assinaturas híbridas se aplicam aqui."},{"VÍNCULO NÃO ENCONTRADO":"Não foi possível encontrar vínculo entre o associado e o terceiro informado no comprovante em anexo."},{"FALTA DE DOCUMENTO COMPROBATÓRIO":"Falta de documentos obrigatórios ou necessários para a validação do fluxo."},{"DESCRIÇÃO DIVERGENTE":"Descrição informada no fluxo não condiz com os comprovantes."},{"DOCUMENTO CORTADO / RASURADO":"Documento com dados e informações relevantes para o cadastro cortadas / rasurado."},{"EXCLUSÃO NÃO PERMITIDA":"Quando não é possível realizar a exclusão do fluxo."},{"CADASTRO DIVERGENTE DO COMPROVANTE EM ANEXO":"Quando as informações cadastradas são completamente divergentes do anexo / não foram atualizadas de acordo."},{"CAPTURA DE TELA":"Anexo de captura de tela como comprovante."},{"APROVAÇÃO SEM VALIDAÇÃO":"Não havia documentos na aba “NOVO”. Aprovado conforme documentação vigente."},{"ASSINATURA DIGITAL VALIDADA PELA COOPERATIVA":"Quando enviam a validação da assinatura."}]},
-                "Fluxos de Fontes de Renda": {"Pareceres gerais de renda": [{"RENDA MENSAL INVÁLIDA":"Quando existir uma renda incorreta, não condizendo com o comprovante apresentado."},{"TIPO DE RENDA":"Necessário ajuste do tipo de renda."},{"DIVISÃO DE RENDA MENSAL INCORRETA":"Renda mensal informada é divergente do tempo de faturamento encontrado do documento em anexo."},{"RENDA PROVENIENTE DE FONTES PAGADORES DIVERGENTES":"Quando é realizada a soma de duas fontes pagadoras diferentes."}],"Pareceres de renda Agropecuária": [{"RENDA NÃO É PROVENIENTE DE ATIVIDADE RURAL":"Quando a renda informada não corresponde ao tipo de atividade rural desempenhada (ex um produtor rural informando renda de uma atividade não agrícola)."},{"DIVISÃO DE RENDA AGROPECUÁRIA INCORRETA":"Quando a renda agropecuária não está corretamente dividida entre os membros da composição familiar ou grupo familiar."},{"LAUDO DE PRODUÇÃO AGROPECUÁRIA":"Ajuste necessário no laudo de produção."},{"RENDA EFETIVA SOMADA COM PREVISÃO":"Ajuste necessário quando é somada renda agropecuária de previsão com a efetiva."}],"Pareceres de renda, PJ": [],"Pareceres de renda, SIMPLES": [{"COMPROVANTE DO SIMPLES NACIONAL":"Solicitar o ajuste do documento referente ao SIMPLES. Enquadra-se aqui qualquer tipo (declaratório, extrato e recibo) de ajuste, desde que seja sobre esses documentos."},{"CONSULTA DE OPÇÃO DO SIMPLES":"Falta da consulta de opção do simples em sua chave adequada / ajuste na consulta."},{"CAMPO DE OPTANTE DO SIMPLES":"Solicitar ajuste da opção do simples nacional no SISBR, de não para sim ou de sim para não."},{"CÁLCULO DO SIMPLES":"Quando o cálculo do faturamento do Simples não está correto ou não foi feito de acordo com a regra. Fórmula RBT12 + RPA conforme os meses de apuração, levando em conta o número de meses faturados. A fórmula geral é RBT12 / 12 meses ou RBT12 + RPA de apuração – PA do ano anterior / 12."}],"Pareceres de renda, pessoa física": [{"PRÓ-LABORE ACIMA DO LIMITE":"Quando o documento pró-labore anexado, em caso de MEI, ultrapassa os R$ 6.750,00."},{"RENDA DE TERCEIRO":"Quando associado usa um documento de renda em nome de outra pessoa para tentar comprovar uma renda dele. (Ex filho querendo colocar para ele a renda de aposentadoria da mãe, com o documento estando em nome dela)."},{"RENDA INFORMADA NÃO RECORRENTE":"Valor somado ou declarado no cadastro não é considerado recorrente. Exemplo 13° e férias."}]},
-                "Fluxos de Pessoa": {"Pareceres gerais de pessoa": [{"TIPO DE DOCUMENTO":"Tipo de documento informado diferente do comprovante."},{"NÚMERO DO DOCUMENTO":"Número do documento incorreto ou não registrado corretamente."},{"DATA DE EMISSÃO":"A data de emissão do documento não corresponde ao esperado ou não é válida."},{"FICHA CADASTRAL":"Falta de preenchimento correto na ficha cadastral."},{"FICHA PEP":"Falta de preenchimento correto na ficha PEP."},{"UF DO ORGAO EXPEDIDOR":"A UF do documento não corresponde"}],"Pareceres de pessoa física": [{"ESTADO CIVIL":"Quando há divergência do documento com o estado civil declarado no SISBR. Aplica-se também a divergência de cônjuge e regime do casamento."},{"ÓRGÃO EXPEDIDOR":"Órgão expedidor incorreto ou não informado."},{"NATURALIDADE":"Quando documento anexado menciona a naturalidade da pessoa e está diferente do SISBR."}],"Pareceres de pessoa jurídica": [{"DATA DE CONSTITUIÇÃO":"Data de constituição inválida ou fora do esperado."},{"NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE":"Número de registro inválido ou não existe."},{"NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL":"Falta de número da última alteração do contrato social."},{"DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL":"Data de alteração do contrato social incorreta ou não atualizada."},{"NÚMERO DE REGISTRO DE REPRESENTAÇÃO":"Falta de número de registro de representação."},{"DATA DE REGISTRO REPRESENTAÇÃO":"Falta de data de registro de representação."},{"OPÇÃO MEI":"Necessário ajuste na opção do campo MEI."},{"NÚMERO DO CONTRATO SOCIAL":"Número do contrato social não registrado corretamente ou faltando."},{"CAPITAL SOCIAL":"Valor do capital social incorreto ou não condizente com o contrato social."},{"INSCRIÇÃO ESTADUAL":"Inscrição estadual incorreta ou não registrada corretamente."},{"DATA DE REGISTRO NO ÓRGÃO COMPETENTE":"Data de registro do órgão competente inconsistente."}]},
-                "Fluxos de Endereço": {"Fluxos de Endereço": [{"TIPO DE ENDEREÇO":"Tipo de endereço não especificado corretamente (residencial, comercial etc.)."},{"LOGRADOURO":"Nome do logradouro incorreto ou incompleto."},{"NÚMERO":"Número do imóvel faltando ou incorreto."}]},
-                "Fluxos de Relacionamento": {"Pareceres gerais de relacionamento": [{"TIPO DE RELACIONAMENTO":"Tipo de relacionamento não condiz com a documentação fornecida."},{"DATA DE INÍCIO DO MANDATO":"Data de início do mandato inválida ou não condiz com o documento."},{"DATA DE FIM DO MANDATO":"Data de fim do mandato incorreta ou não compatível com o documento de registro."},{"NÚMERO DO REGISTRO":"Falta de número de registro."},{"NÚMERO DO LIVRO":"Falta de número do livro."},{"NÚMERO DA FOLHA":"Falta de número da folha."},{"NOME DO CARTÓRIO":"Falta de nome do cartório."}],"Pareceres de relacionamento, pessoa jurídica": [{"PERCENTUAL NO CAPITAL SOCIAL":"Percentual informado incorreto ou inconsistente."}]},
-                "Fluxos de Bem": {"Pareceres gerais de bem": [{"TIPO DO BEM":"Tipo de bem não informado ou incorreto."},{"VALOR DE AVALIAÇÃO":"Valor de avaliação incorreto ou não condizente com o laudo de avaliação."},{"ÁREA DIVERGENTE":"Área divergente do que foi documentado."},{"DATA DE AVALIAÇÃO":"Data da avaliação não corresponde à data de realização do laudo."},{"VALOR DO BEM":"O valor informado não está correto, de acordo com a documentação apresentada."},{"DESCRIÇÃO DO BEM":"Descrição do bem não condiz com o tipo de bem ou está incompleta."},{"BEM EM PROCESSO DE AQUISIÇÃO":"Tentativa de cadastro de bem em aquisição como se fosse de posse plena."},{"BEM NÃO COMPROVADO COMO PATRIMÔNIO":"Bem-informado não é patrimônio do indivíduo ou da empresa. Aplica-se também nos casos de tentativa de comprovação de bens de uma entidade PJ por uma pessoa física."},{"LAUDO DE AVALIAÇÃO":"Laudo de avaliação não está válido ou não corresponde ao bem-informado."},{"PERCENTUAL DE PROPRIEDADE":"Percentual de propriedade do bem não informado ou incorreto."},{"CADASTRO DE BENS EM CONJUNTO":"Tentativa de registrar bens que devem ser cadastrados separadamente, mas estão sendo informados em conjunto."},{"EXCLUSÃO DE BEM":"Por se tratar de exclusão, o percentual deve ser zerado."},{"EMPREENDIMENTO NÃO É VÁLIDO COMO BEM":"Empreendimentos não são aceitos como bens, mas sim nos fluxos de produtor."}],"Pareceres de Bens Móveis": [{"TIPO DO CHASSI":"Tipo de chassi incorreto."},{"NÚMERO DO CHASSI":"Número do chassi inválido ou não registrado corretamente."},{"RENAVAM":"Número do RENAVAM incorreto ou não correspondente ao veículo."},{"PLACA":"Placa do veículo inválida ou não registrada corretamente."},{"ANO DE FABRICAÇÃO":"Ano de fabricação informado incorreto."},{"ANO MODELO":"Ano modelo não corresponde ao veículo registrado."}],"Pareceres de Bens Imóveis": [{"ÁREA DIVERGENTE":"Área divergente do que foi documentado."},{"UNIDADE DE MEDIDA":"Quando a unidade de medida não está coerente com o documento anexado."}],"Pareceres de Bens Agropecuários": [{"QUANTIDADE DE SEMOVENTES DIVERGENTE":"Número informado de semoventes divergente do comprovante em anexo."},{"PERCENTUAL DE ARRENDAMENTO":"Percentual de arrendamento não informado ou incorreto."},{"DESCRIÇÃO DE SEMOVENTES DIFERENTE DO DOCUMENTO":"Quando na descrição do SISBR o tipo de semoventes é diferente do documento (ex ao invés de novilhas no documento, estão matrizes)."}]}
+                 "Pareceres Gerais": {"DOCUMENTO ILEGÍVEL":"Quando não é possível a leitura, ou ainda, não se pode ter certeza sobre a informação específica que necessita de validação.","DOCUMENTO INVÁLIDO":"Documento em anexo não é válido para a comprovação do fluxo em específico.","PRAZO DE VALIDADE":"Solicitar o envio de um documento com prazo de validade adequado, conforme os requisitos específicos do fluxo.","CHAVES INCORRETAS":"Documentos em chaves trocadas ou erradas se aplicam aqui.","ASSINATURAS":"Assinaturas corrompidas, ilegíveis ou faltando (tanto assinaturas manuscritas quanto digitais), assinaturas híbridas se aplicam aqui.","VÍNCULO NÃO ENCONTRADO":"Não foi possível encontrar vínculo entre o associado e o terceiro informado no comprovante em anexo.","FALTA DE DOCUMENTO COMPROBATÓRIO":"Falta de documentos obrigatórios ou necessários para a validação do fluxo.","DESCRIÇÃO DIVERGENTE":"Descrição informada no fluxo não condiz com os comprovantes.","DOCUMENTO CORTADO / RASURADO":"Documento com dados e informações relevantes para o cadastro cortadas / rasurado.","EXCLUSÃO NÃO PERMITIDA":"Quando não é possível realizar a exclusão do fluxo.","CADASTRO DIVERGENTE DO COMPROVANTE EM ANEXO":"Quando as informações cadastradas são completamente divergentes do anexo / não foram atualizadas de acordo.","CAPTURA DE TELA":"Anexo de captura de tela como comprovante.","APROVAÇÃO SEM VALIDAÇÃO":"Não havia documentos na aba “NOVO”. Aprovado conforme documentação vigente."},
+                "Fluxos de Fontes de Renda": {"Pareceres gerais de renda":{"RENDA MENSAL INVÁLIDA":"Quando existir uma renda incorreta, não condizendo com o comprovante apresentado.","TIPO DE RENDA":"Necessário ajuste do tipo de renda.","DIVISÃO DE RENDA MENSAL INCORRETA":"Renda mensal informada é divergente do tempo de faturamento encontrado do documento em anexo.","RENDA PROVENIENTE DE FONTES PAGADORES DIVERGENTES":"Quando é realizada a soma de duas fontes pagadoras diferentes."},"Pareceres de renda Agropecuária":{"RENDA NÃO É PROVENIENTE DE ATIVIDADE RURAL":"Quando a renda informada não corresponde ao tipo de atividade rural desempenhada.","DIVISÃO DE RENDA AGROPECUÁRIA INCORRETA":"Quando a renda agropecuária não está corretamente dividida entre os membros da composição familiar ou grupo familiar.","LAUDO DE PRODUÇÃO AGROPECUÁRIA":"Ajuste necessário no laudo de produção.","RENDA EFETIVA SOMADA COM PREVISÃO":"Ajuste necessário quando é somada renda agropecuária de previsão com a efetiva."},"Pareceres de renda, SIMPLES":{"COMPROVANTE DO SIMPLES NACIONAL":"Solicitar o ajuste do documento referente ao SIMPLES.","CONSULTA DE OPÇÃO DO SIMPLES":"Falta da consulta de opção do simples em sua chave adequada / ajuste na consulta.","CAMPO DE OPTANTE DO SIMPLES":"Solicitar ajuste da opção do simples nacional no SIRBR.","CÁLCULO DO SIMPLES":"Quando o cálculo do faturamento do Simples não está correto ou não foi feito de acordo com a regra."},"Pareceres de renda, pessoa física":{"PRÓ-LABORE ACIMA DO LIMITE":"Quando o documento pró-labore anexado, em caso de MEI, ultrapassa os R$ 6.750,00.","RENDA DE TERCEIRO":"Quando associado usa um documento de renda em nome de outra pessoa.","RENDA INFORMADA NÃO RECORRENTE":"Valor somado ou declarado no cadastro não é considerado recorrente."}},
+                "Fluxos de Pessoa": {"Pareceres gerais de pessoa":{"TIPO DE DOCUMENTO":"Tipo de documento informado diferente do comprovante.","NÚMERO DO DOCUMENTO":"Número do documento incorreto ou não registrado corretamente.","DATA DE EMISSÃO":"A data de emissão do documento não corresponde ao esperado ou não é válida.","FICHA CADASTRAL":"Falta de preenchimento correto na ficha cadastral.","FICHA PEP":"Falta de preenchimento correto na ficha PEP.","UF DO ORGAO EXPEDIDOR":"A UF do documento não corresponde"},"Pareceres de pessoa física":{"ESTADO CIVIL":"Divergência do documento com o estado civil declarado no SISBR.","ÓRGÃO EXPEDIDOR":"Órgão expedidor incorreto ou não informado.","NATURALIDADE":"Naturalidade do documento está diferente do SISBR."},"Pareceres de pessoa jurídica":{"DATA DE CONSTITUIÇÃO":"Data de constituição inválida ou fora do esperado.","NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE":"Número de registro inválido ou não existe.","NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL":"Falta de número da última alteração do contrato social.","DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL":"Data de alteração do contrato social incorreta ou não atualizada.","NÚMERO DE REGISTRO DE REPRESENTAÇÃO":"Falta de número de registro de representação.","DATA DE REGISTRO REPRESENTAÇÃO":"Falta de data de registro de representação.","OPÇÃO MEI":"Necessário ajuste na opção do campo MEI.","NÚMERO DO CONTRATO SOCIAL":"Número do contrato social não registrado corretamente ou faltando.","CAPITAL SOCIAL":"Valor do capital social incorreto ou não condizente com o contrato social.","INSCRIÇÃO ESTADUAL":"Inscrição estadual incorreta ou não registrada corretamente.","DATA DE REGISTRO NO ÓRGÃO COMPETENTE":"Data de registro do órgão competente inconsistente."}},
+                "Fluxos de Endereço": {"TIPO DE ENDEREÇO":"Tipo de endereço não especificado corretamente.","LOGRADOURO":"Nome do logradouro incorreto ou incompleto.","NÚMERO":"Número do imóvel faltando ou incorreto."},
+                "Fluxos de Relacionamento": {"Pareceres gerais de relacionamento":{"TIPO DE RELACIONAMENTO":"Tipo de relacionamento não condiz com a documentação fornecida.","DATA DE INÍCIO DO MANDATO":"Data de início do mandato inválida ou não condiz com o documento.","DATA DE FIM DO MANDATO":"Data de fim do mandato incorreta ou não compatível com o documento.","NÚMERO DO REGISTRO":"Falta de número de registro.","NÚMERO DO LIVRO":"Falta de número do livro.","NÚMERO DA FOLHA":"Falta de número da folha.","NOME DO CARTÓRIO":"Falta de nome do cartório."},"Pareceres de relacionamento, pessoa jurídica":{"PERCENTUAL NO CAPITAL SOCIAL":"Percentual informado incorreto ou inconsistente."}},
+                "Fluxos de Bem": {"Pareceres gerais de bem":{"TIPO DO BEM":"Tipo de bem não informado ou incorreto.","VALOR DE AVALIAÇÃO":"Valor de avaliação incorreto ou não condizente com o laudo.","ÁREA DIVERGENTE":"Área divergente do que foi documentado.","DATA DE AVALIAÇÃO":"Data da avaliação não corresponde à data do laudo.","VALOR DO BEM":"O valor informado não está correto, de acordo com a documentação.","DESCRIÇÃO DO BEM":"Descrição do bem não condiz com o tipo de bem ou está incompleta.","BEM EM PROCESSO DE AQUISIÇÃO":"Tentativa de cadastro de bem em aquisição como se fosse de posse plena.","BEM NÃO COMPROVADO COMO PATRIMÔNIO":"Bem-informado não é patrimônio do indivíduo ou da empresa.","LAUDO DE AVALIAÇÃO":"Laudo de avaliação não está válido ou não corresponde ao bem-informado.","PERCENTUAL DE PROPRIEDADE":"Percentual de propriedade do bem não informado ou incorreto.","CADASTRO DE BENS EM CONJUNTO":"Bens informados em conjunto quando deveriam ser cadastrados separadamente.","EXCLUSÃO DE BEM":"Por se tratar de exclusão, o percentual deve ser zerado.","EMPREENDIMENTO NÃO É VÁLIDO COMO BEM":"Empreendimentos não são aceitos como bens."},"Pareceres de Bens Móveis":{"TIPO DO CHASSI":"Tipo de chassi incorreto.","NÚMERO DO CHASSI":"Número do chassi inválido ou não registrado corretamente.","RENAVAM":"Número do RENAVAM incorreto ou não correspondente ao veículo.","PLACA":"Placa do veículo inválida ou não registrada corretamente.","ANO DE FABRICAÇÃO":"Ano de fabricação informado incorreto.","ANO MODELO":"Ano modelo não corresponde ao veículo registrado."},"Pareceres de Bens Imóveis":{"ÁREA DIVERGENTE":"Área divergente do que foi documentado.","UNIDADE DE MEDIDA":"Unidade de medida não está coerente com o documento."},"Pareceres de Bens Agropecuários":{"QUANTIDADE DE SEMOVENTES DIVERGENTE":"Número informado de semoventes divergente do comprovante.","PERCENTUAL DE ARRENDAMENTO":"Percentual de arrendamento não informado ou incorreto.","DESCRIÇÃO DE SEMOVENTES DIFERENTE DO DOCUMENTO":"Tipo de semovente está diferente do documento."}}
             };
 
             const searchInput = document.getElementById('searchInput');
@@ -768,53 +796,50 @@
             function renderPareceres(data) {
                 pareceresContainer.innerHTML = '';
                 let hasResults = false;
+
+                function createParecerHTML(key, value, mainCategory, subCategory) {
+                    hasResults = true;
+                    const uniqueId = `copiedMessage-${mainCategory.replace(/\s/g, '-')}-${subCategory.replace(/\s/g, '-')}-${key.replace(/\s/g, '-')}`;
+                    const fullParecerText = `${key}: ${value}`;
+                    return `
+                        <div class="p-4 rounded-2xl neumorphic-inset flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex-1 min-w-0">
+                                <h5 class="font-semibold mb-1">${key}</h5>
+                                <p class="text-sm whitespace-normal break-words text-subtle">${value}</p>
+                            </div>
+                            <div class="flex-shrink-0 flex items-center self-start sm:self-center">
+                                <button class="p-2 rounded-2xl neumorphic-outset-sm text-sm font-bold transition duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5"
+                                        onclick="copyParecer(decodeURIComponent('${encodeURIComponent(fullParecerText)}'), '${uniqueId}')">
+                                    Copiar
+                                </button>
+                                <span id="${uniqueId}" class="copied-message text-sm text-green-500 ml-2">Copiado!</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 for (const mainCategory in data) {
                     const subCategories = data[mainCategory];
-                    let mainCategoryHasResults = false;
-                    let mainCategoryHtml = '';
+                    let mainCategoryHtml = `<h3 class="text-2xl font-bold mb-4 border-b-2 border-slate-300 dark:border-slate-600 pb-2">${mainCategory}</h3>`;
+                    let contentHtml = '<div class="space-y-4">';
 
-                    for (const subCategory in subCategories) {
-                        const pareceres = subCategories[subCategory];
-                        if (pareceres.length > 0) {
-                            mainCategoryHasResults = true;
-                            hasResults = true;
-                            
-                            mainCategoryHtml += `<h4 class="text-xl font-semibold mb-3 mt-4">${subCategory}</h4>`;
-                            const pareceresList = document.createElement('div');
-                            pareceresList.className = 'space-y-4';
-
-                            pareceres.forEach((parecerObj, index) => {
-                                const key = Object.keys(parecerObj)[0];
-                                const fullParecerText = `${key} : \n`;
-                                const uniqueId = `copiedMessage-${mainCategory.replace(/\s/g, '-')}-${subCategory.replace(/\s/g, '-')}-${index}`;
-                                
-                                pareceresList.innerHTML += `
-                                    <div class="p-4 rounded-2xl neumorphic-inset flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                        <div class="flex-1 min-w-0">
-                                            <h5 class="font-semibold mb-1">${key}</h5>
-                                            <p class="text-sm whitespace-normal break-words text-subtle">${parecerObj[key]}</p>
-                                        </div>
-                                        <div class="flex-shrink-0 flex items-center self-start sm:self-center">
-                                            <button class="p-2 rounded-2xl neumorphic-outset-sm text-sm font-bold transition duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5"
-                                                    onclick="copyParecer(decodeURIComponent('${encodeURIComponent(fullParecerText)}'), '${uniqueId}')">
-                                                Copiar
-                                            </button>
-                                            <span id="${uniqueId}" class="copied-message text-sm text-green-500 ml-2">Copiado!</span>
-                                        </div>
-                                    </div>
-                                `;
-                            });
-                             mainCategoryHtml += pareceresList.outerHTML;
+                    for (const subCategoryTitle in subCategories) {
+                        const items = subCategories[subCategoryTitle];
+                        if (typeof items === 'object' && items !== null) {
+                            contentHtml += `<h4 class="text-xl font-semibold mb-3 mt-4">${subCategoryTitle}</h4>`;
+                            for (const key in items) {
+                                contentHtml += createParecerHTML(key, items[key], mainCategory, subCategoryTitle);
+                            }
+                        } else {
+                            contentHtml += createParecerHTML(subCategoryTitle, items, mainCategory, '');
                         }
                     }
-
-                    if (mainCategoryHasResults) {
-                        const mainCategoryElement = document.createElement('div');
-                        mainCategoryElement.className = 'mb-6';
-                        mainCategoryElement.innerHTML = `<h3 class="text-2xl font-bold mb-4 border-b-2 border-slate-300 dark:border-slate-600 pb-2">${mainCategory}</h3>${mainCategoryHtml}`;
-                        pareceresContainer.appendChild(mainCategoryElement);
+                    contentHtml += '</div>';
+                    if (hasResults) {
+                        pareceresContainer.innerHTML += mainCategoryHtml + contentHtml;
                     }
                 }
+
                 if (!hasResults) {
                     pareceresContainer.innerHTML = `
                         <div class="text-center text-lg py-8 text-subtle">
@@ -822,8 +847,9 @@
                         </div>
                     `;
                 }
+                 lucide.createIcons();
             }
-
+            
             function filterPareceres() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const selectedCategory = parecerCategoryFilter.value;
@@ -836,16 +862,22 @@
                 for (const mainCategory in sourceData) {
                     const subCategories = sourceData[mainCategory];
                     const filteredSubCategories = {};
-                    for (const subCategory in subCategories) {
-                        const pareceres = subCategories[subCategory];
-                        const filteredPareceres = pareceres.filter(parecerObj => {
-                            const key = Object.keys(parecerObj)[0];
-                            const value = parecerObj[key];
-                            return key.toLowerCase().includes(searchTerm) ||
-                                   value.toLowerCase().includes(searchTerm);
-                        });
-                        if (filteredPareceres.length > 0) {
-                            filteredSubCategories[subCategory] = filteredPareceres;
+                    for (const subCategoryTitle in subCategories) {
+                        const items = subCategories[subCategoryTitle];
+                        if (typeof items === 'object' && items !== null) {
+                            const filteredItems = {};
+                            for(const key in items) {
+                                if (key.toLowerCase().includes(searchTerm) || items[key].toLowerCase().includes(searchTerm)) {
+                                    filteredItems[key] = items[key];
+                                }
+                            }
+                            if(Object.keys(filteredItems).length > 0) {
+                                filteredSubCategories[subCategoryTitle] = filteredItems;
+                            }
+                        } else {
+                            if (subCategoryTitle.toLowerCase().includes(searchTerm) || items.toLowerCase().includes(searchTerm)) {
+                                filteredSubCategories[subCategoryTitle] = items;
+                            }
                         }
                     }
                     if (Object.keys(filteredSubCategories).length > 0) {
@@ -888,16 +920,14 @@
             function createCounterInstance(id, initialValue, isTimer) {
                 const counterElement = counterTemplate.content.cloneNode(true).firstElementChild;
                 counterElement.dataset.id = id;
-                countersGrid.appendChild(counterElement);
-                lucide.createIcons({
-                    nodes: [counterElement]
-                });
-
+                
                 const titleElement = counterElement.querySelector('.counter-title');
                 const display = counterElement.querySelector('.counter-display');
                 const plusBtn = counterElement.querySelector('.counter-plus');
                 const minusBtn = counterElement.querySelector('.counter-minus');
                 const removeBtn = counterElement.querySelector('.remove-counter-btn');
+                const playBtn = counterElement.querySelector('.timer-play');
+                const resetBtn = counterElement.querySelector('.timer-reset');
 
                 if (isTimer) {
                     titleElement.textContent = `Timer ${counters.length + 1}`;
@@ -907,89 +937,98 @@
 
                 let value = initialValue;
                 let timerInterval = null;
+                let initialTimerValue = initialValue;
 
                 const instance = {
-                    id,
-                    element: counterElement,
-                    value,
-                    isTimer,
-                    timerInterval,
+                    id, element: counterElement,
                     updateDisplay() {
-                        if (this.isTimer) {
-                            const minutes = Math.floor(this.value / 60).toString().padStart(2, '0');
-                            const seconds = (this.value % 60).toString().padStart(2, '0');
+                        if (isTimer) {
+                            const minutes = Math.floor(value / 60).toString().padStart(2, '0');
+                            const seconds = (value % 60).toString().padStart(2, '0');
                             display.textContent = `${minutes}:${seconds}`;
                         } else {
-                            display.textContent = this.value;
+                            display.textContent = value;
                         }
                     },
                     remove() {
-                        clearInterval(this.timerInterval);
-                        this.element.remove();
-                        counters = counters.filter(c => c.id !== this.id);
-                        updateCountersLayout();
+                        clearInterval(timerInterval);
+                        counterElement.classList.add('animate-fade-out');
+                        counterElement.addEventListener('animationend', () => {
+                            counterElement.remove();
+                            counters = counters.filter(c => c.id !== id);
+                            updateCountersLayout();
+                        }, { once: true });
                     }
                 };
                 
+                removeBtn.addEventListener('click', instance.remove);
+
                 if (isTimer) {
                     display.setAttribute('contenteditable', true);
-                    plusBtn.onclick = () => { instance.value += 60; instance.updateDisplay(); };
-                    minusBtn.onclick = () => { instance.value = Math.max(0, instance.value - 60); instance.updateDisplay(); };
-                    
+                    plusBtn.classList.add('hidden');
+                    minusBtn.classList.add('hidden');
+                    playBtn.classList.remove('hidden');
+                    resetBtn.classList.remove('hidden');
+
                     display.addEventListener('blur', () => {
                         const parts = display.textContent.split(':').map(part => parseInt(part) || 0);
-                        if(parts.length === 2) {
-                            instance.value = (parts[0] * 60) + parts[1];
-                        } else if (parts.length === 1) {
-                            instance.value = parts[0];
-                        }
+                        value = (parts.length === 2) ? (parts[0] * 60) + parts[1] : parts[0];
+                        initialTimerValue = value;
                         instance.updateDisplay();
                     });
 
-                    display.addEventListener('click', () => {
-                        if (instance.timerInterval) {
-                            clearInterval(instance.timerInterval);
-                            instance.timerInterval = null;
-                        } else {
-                            if (instance.value > 0) {
-                                instance.timerInterval = setInterval(() => {
-                                    instance.value--;
-                                    instance.updateDisplay();
-                                    if (instance.value <= 0) {
-                                        clearInterval(instance.timerInterval);
-                                        instance.timerInterval = null;
-                                    }
-                                }, 1000);
-                            }
+                    playBtn.addEventListener('click', () => {
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            playBtn.innerHTML = '<i data-lucide="play"></i>';
+                        } else if (value > 0) {
+                            playBtn.innerHTML = '<i data-lucide="pause"></i>';
+                            timerInterval = setInterval(() => {
+                                value--;
+                                instance.updateDisplay();
+                                if (value <= 0) {
+                                    clearInterval(timerInterval);
+                                    timerInterval = null;
+                                    playBtn.innerHTML = '<i data-lucide="play"></i>';
+                                }
+                            }, 1000);
                         }
+                        lucide.createIcons();
                     });
+
+                    resetBtn.addEventListener('click', () => {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        value = initialTimerValue;
+                        playBtn.innerHTML = '<i data-lucide="play"></i>';
+                        lucide.createIcons();
+                        instance.updateDisplay();
+                    });
+
                 } else {
                     plusBtn.addEventListener('click', () => {
-                        const incrementValue = parseInt(incrementInput.value) || 1;
-                        instance.value += incrementValue;
+                        value += parseInt(incrementInput.value) || 1;
                         instance.updateDisplay();
                     });
-
                     minusBtn.addEventListener('click', () => {
-                        const incrementValue = parseInt(incrementInput.value) || 1;
-                        instance.value -= incrementValue;
-                        if (instance.value < 0) instance.value = 0;
+                        value -= parseInt(incrementInput.value) || 1;
                         instance.updateDisplay();
                     });
                 }
                 
-                removeBtn.addEventListener('click', () => instance.remove());
-                
                 instance.updateDisplay();
-                return instance;
+                counters.push(instance);
+                countersGrid.appendChild(counterElement);
+                lucide.createIcons({nodes: [counterElement]});
+                counterElement.classList.add('animate-fade-in');
             }
 
             addCounterBtn.addEventListener('click', () => {
                 if (counters.length >= 4) return;
                 const initialValue = parseInt(startInput.value) || 0;
                 const isTimer = timerToggle.checked;
-                const newCounter = createCounterInstance(Date.now(), initialValue, isTimer);
-                counters.push(newCounter);
+                createCounterInstance(Date.now(), initialValue, isTimer);
                 updateCountersLayout();
             });
             
@@ -1006,7 +1045,6 @@
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
             function initializeApp() {
-                lucide.createIcons();
                 updateThemeIcons();
                 if (dockButtons.length > 0) {
                     requestAnimationFrame(() => {
