@@ -53,7 +53,6 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden; /* Previne a barra de rolagem principal */
         }
 
         /* Classes de utilidade para o Neumorfismo usando variáveis */
@@ -155,9 +154,9 @@
 <body>
 
     <!-- Container Principal: Centralizado e com largura máxima -->
-    <div class="h-screen w-screen flex flex-col items-center p-4">
+    <div class="min-h-screen w-screen flex flex-col items-center p-4 sm:p-8">
 
-        <main class="w-full max-w-4xl mx-auto flex flex-col gap-4 flex-1 min-h-0 pb-24">
+        <main class="w-full max-w-4xl mx-auto flex flex-col gap-4 mb-24">
             <!-- Cabeçalho da Aplicação -->
             <header class="flex justify-between items-center w-full px-2 flex-shrink-0">
                 <h1 id="module-title" class="text-2xl font-bold transition-all duration-300">
@@ -170,47 +169,56 @@
             </header>
 
             <!-- Container dos Módulos com altura flexível e sombra única -->
-            <div id="module-container" class="w-full flex-1 min-h-0 overflow-y-auto custom-scrollbar p-6 md:p-8 rounded-2xl neumorphic-outset">
+            <div id="module-container" class="w-full p-6 md:p-8 rounded-2xl neumorphic-outset">
                 <!-- Módulo 1: Renda PJ (antigo Faturamento) -->
                 <div id="faturamento-module" class="module-content hidden">
-                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        <!-- Coluna de Entradas -->
-                        <div class="flex flex-col gap-4">
-                            <h3 class="text-sm text-subtle uppercase tracking-wide mb-2">Entradas</h3>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
-                                <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full mt-1 p-2 focus:outline-none text-lg">
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
-                                <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full mt-1 p-2 focus:outline-none text-lg">
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
-                                <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full mt-1 p-2 focus:outline-none text-lg">
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
-                                <input type="number" id="num_meses" placeholder="1" class="w-full mt-1 p-2 focus:outline-none text-lg">
+                    <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <!-- Linha 1 -->
+                        <div class="flex flex-col gap-2">
+                            <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
+                            <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-medium">1º Cálculo (Somente RBT12)</label>
+                            <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                <p id="resultado1" class="text-2xl font-bold text-accent">R$ 0,00</p>
                             </div>
                         </div>
 
-                        <!-- Coluna de Resultados -->
-                        <div class="flex flex-col gap-4">
-                            <h3 class="text-sm text-subtle uppercase tracking-wide mb-2">Resultados</h3>
-                            <div class="p-4 rounded-2xl neumorphic-inset flex-grow flex flex-col justify-center">
-                                <p class="text-sm font-medium">1º Cálculo (Somente RBT12)</p>
-                                <p id="resultado1" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset flex-grow flex flex-col justify-center">
-                                <p class="text-sm font-medium">2º Cálculo (+12 Meses)</p>
-                                <p id="resultado2" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset flex-grow flex flex-col justify-center">
-                                <p class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</p>
-                                <p id="resultado3" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
+                        <!-- Linha 2 -->
+                        <div class="flex flex-col gap-2">
+                            <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
+                            <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-medium">2º Cálculo (+12 Meses)</label>
+                            <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                <p id="resultado2" class="text-2xl font-bold text-accent">R$ 0,00</p>
                             </div>
                         </div>
+
+                        <!-- Linha 3 -->
+                        <div class="flex flex-col gap-2">
+                            <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
+                            <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                        </div>
+                         <div class="flex flex-col gap-2">
+                            <label class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</label>
+                            <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                <p id="resultado3" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                            </div>
+                        </div>
+
+                        <!-- Linha 4 -->
+                        <div class="flex flex-col gap-2">
+                            <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
+                            <input type="number" id="num_meses" placeholder="1" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                        </div>
+                        
+                        <!-- Espaçador para alinhar o botão -->
+                        <div></div>
+
+                        <!-- Botões -->
                         <div class="md:col-span-2 flex gap-4 mt-4">
                             <button id="calcular-faturamento" type="button" class="flex-1 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
                                 <i data-lucide="calculator" class="w-5 h-5"></i> Calcular
@@ -398,14 +406,14 @@
 
         <!-- Dock de Navegação Fixo -->
         <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto flex-shrink-0">
-            <div id="dock-container" class="relative flex items-center justify-center p-2 rounded-full neumorphic-outset">
-                <div id="dock-slider" class="absolute top-0 h-full rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
-                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
-                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="cnpj-module" data-title="Consulta CNPJ">Consulta CNPJ</button>
-                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="contador-module" data-title="Contador">Contador</button>
-                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="regras-module" data-title="Regras IRPF">Regras</button>
-                <button class="dock-button relative z-10 px-4 py-3 rounded-full transition-colors duration-300 whitespace-nowrap text-sm" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
+            <div id="dock-container" class="relative flex items-center justify-center rounded-full neumorphic-outset">
+                <div id="dock-slider" class="absolute top-0 bottom-0 rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
+                <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
+                <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="cnpj-module" data-title="Consulta CNPJ">Consulta CNPJ</button>
+                <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="contador-module" data-title="Contador">Contador</button>
+                <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="regras-module" data-title="Regras IRPF">Regras</button>
+                <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="parecer-module" data-title="Pareceres">Pareceres</button>
             </div>
         </nav>
     </div>
@@ -487,15 +495,13 @@
 
             function updateSlider(button) {
                 if (!button) return;
-                const buttonRect = button.getBoundingClientRect();
-                const containerRect = dockContainer.getBoundingClientRect();
-                dockSlider.style.width = `${buttonRect.width}px`;
-                dockSlider.style.left = `${buttonRect.left - containerRect.left}px`;
+                dockSlider.style.width = `${button.offsetWidth}px`;
+                dockSlider.style.left = `${button.offsetLeft}px`;
                 dockButtons.forEach(btn => btn.classList.remove('text-accent', 'font-semibold'));
                 button.classList.add('text-accent', 'font-semibold');
             }
 
-            dockButtons.forEach(button => {
+            dockButtons.forEach((button, index) => {
                 button.addEventListener('click', () => {
                     const targetModuleId = button.dataset.target;
                     if (targetModuleId === currentModuleId) return;
