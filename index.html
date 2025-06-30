@@ -53,6 +53,7 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
         }
 
         /* Classes de utilidade para o Neumorfismo usando variáveis */
@@ -154,7 +155,7 @@
 <body>
 
     <!-- Container Principal: Centralizado e com largura máxima -->
-    <div class="min-h-screen w-screen flex flex-col items-center p-4 sm:p-8">
+    <div class="min-h-screen w-full flex flex-col items-center p-4 sm:p-8">
 
         <main class="w-full max-w-4xl mx-auto flex flex-col gap-4 mb-24">
             <!-- Cabeçalho da Aplicação -->
@@ -169,7 +170,7 @@
             </header>
 
             <!-- Container dos Módulos com altura flexível e sombra única -->
-            <div id="module-container" class="w-full p-6 md:p-8 rounded-2xl neumorphic-outset overflow-x-hidden">
+            <div id="module-container" class="w-full p-6 md:p-8 rounded-2xl neumorphic-outset">
                 <!-- Módulo 1: Renda PJ (antigo Faturamento) -->
                 <div id="faturamento-module" class="module-content hidden">
                     <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -319,7 +320,7 @@
                 <!-- Módulo 3: Regras IRPF -->
                 <div id="regras-module" class="module-content hidden">
                     <h2 class="text-2xl font-bold mb-6">Regras do Imposto de Renda</h2>
-                    <div class="overflow-y-auto custom-scrollbar h-full">
+                    <div class="overflow-auto custom-scrollbar">
                         <table class="w-full text-left text-sm">
                             <thead class="border-b-2 border-slate-300 dark:border-slate-600 sticky top-0 bg-[var(--color-bg)]">
                                 <tr>
@@ -405,8 +406,8 @@
         </main>
 
         <!-- Dock de Navegação Fixo -->
-        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto flex-shrink-0">
-            <div id="dock-container" class="relative flex items-center justify-center rounded-full neumorphic-outset">
+        <nav class="fixed bottom-0 left-0 right-0 p-4 w-full flex justify-center">
+            <div id="dock-container" class="relative flex items-center justify-start sm:justify-center rounded-full neumorphic-outset overflow-x-auto max-w-full p-1">
                 <div id="dock-slider" class="absolute top-0 bottom-0 rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                 <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
                 <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
