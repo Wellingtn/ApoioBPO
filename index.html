@@ -148,7 +148,17 @@
             color: var(--color-text);
         }
 
-    </style>
+    
+/* Correção para alinhar o slider com o primeiro botão */
+#dock-slider {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute;
+    left: 0;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+</style>
 </head>
 
 <!-- As classes de cor foram removidas do body, pois agora são controladas pelo CSS acima -->
@@ -366,7 +376,7 @@
                             </select>
                         </div>
                     </div>
-                    <div id="pareceresContainer" class="space-y-4 overflow-y-auto custom-scrollbar flex-grow">
+                    <div id="pareceresContainer" class="space-y-4 overflow-auto custom-scrollbar flex-grow">
                         <!-- Conteúdo dos pareceres será inserido aqui -->
                     </div>
                 </div>
@@ -407,7 +417,7 @@
 
         <!-- Dock de Navegação Fixo -->
         <nav class="fixed bottom-0 left-0 right-0 p-4 w-full flex justify-center">
-            <div id="dock-container" class="relative flex items-center justify-start sm:justify-center rounded-full neumorphic-outset overflow-x-auto max-w-full p-1">
+            <div id="dock-container" class="relative flex items-center justify-start rounded-full neumorphic-outset overflow-x-auto max-w-full py-1">
                 <div id="dock-slider" class="absolute top-0 bottom-0 rounded-full neumorphic-inset" style="transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                 <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="faturamento-module" data-title="Cálculo Renda PJ">Renda PJ</button>
                 <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="renda-pf-module" data-title="Cálculo Renda PF">Renda PF</button>
@@ -496,8 +506,10 @@
 
             function updateSlider(button) {
                 if (!button) return;
-                dockSlider.style.width = `${button.offsetWidth}px`;
-                dockSlider.style.left = `${button.offsetLeft}px`;
+                const containerRect = dockContainer.getBoundingClientRect();
+                const buttonRect = button.getBoundingClientRect();
+                dockSlider.style.width = `${buttonRect.width}px`;
+                dockSlider.style.left = `${buttonRect.left - containerRect.left}px`;
                 dockButtons.forEach(btn => btn.classList.remove('text-accent', 'font-semibold'));
                 button.classList.add('text-accent', 'font-semibold');
             }
