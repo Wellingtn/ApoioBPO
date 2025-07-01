@@ -707,7 +707,11 @@
             consultarCnpjBtn.addEventListener('click', async () => {
                 const cnpj = cnpjInput.value.replace(/\D/g, '');
                 if (cnpj.length !== 14) {
-                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">Por favor, insira um CNPJ válido.</div>`;
+                    
+                document.getElementById('nome-empresa').textContent = data.company?.name || 'Não informado';
+                document.getElementById('data-alteracao').textContent = data.company?.updated ? new Date(data.company.updated).toLocaleDateString('pt-BR') : 'Não informado';
+
+                cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">Por favor, insira um CNPJ válido.</div>`;
                     return;
                 }
 
@@ -735,6 +739,12 @@
                 const porteEmpresa = data.company?.size?.text || 'Não informado';
                 const lastUpdated = data.updated ? new Date(data.updated).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Não informado';
                 
+                // --- CORREÇÃO 1: Acessar o nome da empresa diretamente ---
+                const nomeEmpresa = data.company?.name || 'Não informado'; 
+                
+                // --- CORREÇÃO 2: Acessar a data de fundação pelo campo "founded" ---
+                const data_abertura = data.founded ? new Date(data.founded).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Não informado';
+
                 let sociosHtml = '<p class="text-subtle">Nenhum sócio encontrado.</p>';
                 if (data.company?.members && data.company.members.length > 0) {
                     sociosHtml = `<ul class="list-disc list-inside">${data.company.members.map(socio => `<li>${socio.person.name} <span class="text-subtle">(${socio.role?.text || 'Sócio'})</span></li>`).join('')}</ul>`;
@@ -749,20 +759,34 @@
 
                 cnpjResultsContainer.innerHTML = `
                     <div class="space-y-4">
+
                         <div class="p-4 rounded-2xl neumorphic-inset">
-                            <p class="text-sm text-subtle uppercase tracking-wide">Última Atualização</p>
-                            <p class="font-semibold mt-1">${lastUpdated}</p>
+                            <p class="text-sm text-subtle uppercase tracking-wide">Nome da Empresa</p>
+                            <p class="text-lg font-bold text-accent mt-1" id="nome-empresa">${nomeEmpresa || 'Não informado'}</p>
                         </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Data de Abertura</p>
+                                <p class="text-lg font-bold text-accent mt-1" id="data-alteracao">${data_abertura || 'Não informado'}</p>
+                            </div>
+                            <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Última Atualização</p>
+                                <p class="font-semibold mt-1">${lastUpdated}</p>
+                            </div>
+                        </div>
+                        
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Situação Cadastral</p>
                                 <p class="text-lg font-bold text-accent mt-1">${data.status?.text || 'Não informado'}</p>
                             </div>
-                             <div class="p-4 rounded-2xl neumorphic-inset">
+                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Porte da Empresa</p>
                                 <p class="text-lg font-bold text-accent mt-1">${porteEmpresa}</p>
                             </div>
                         </div>
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Optante Simples</p>
@@ -773,18 +797,22 @@
                                 <p class="text-lg font-bold text-accent mt-1">${isSimei}</p>
                             </div>
                         </div>
+
                         <div class="p-4 rounded-2xl neumorphic-inset">
                             <p class="text-sm text-subtle uppercase tracking-wide">Atividade Principal (CNAE)</p>
                             <p class="font-semibold mt-1">${data.mainActivity?.text || 'Não informado'}</p>
                         </div>
+
                         <div class="p-4 rounded-2xl neumorphic-inset">
                             <p class="text-sm text-subtle uppercase tracking-wide mb-2">Sócios</p>
                             <div class="font-semibold">${sociosHtml}</div>
                         </div>
+
                         ${rawJsonHtml}
+
                     </div>
                 `;
-            }
+            };
 
             limparCnpjBtn.addEventListener('click', () => {
                 cnpjInput.value = '';
