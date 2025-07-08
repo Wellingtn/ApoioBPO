@@ -739,10 +739,7 @@
                 const porteEmpresa = data.company?.size?.text || 'Não informado';
                 const lastUpdated = data.updated ? new Date(data.updated).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Não informado';
                 
-                // --- CORREÇÃO 1: Acessar o nome da empresa diretamente ---
                 const nomeEmpresa = data.company?.name || 'Não informado'; 
-                
-                // --- CORREÇÃO 2: Acessar a data de fundação pelo campo "founded" ---
                 const data_abertura = data.founded ? new Date(data.founded).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Não informado';
 
                 let sociosHtml = '<p class="text-subtle">Nenhum sócio encontrado.</p>';
@@ -896,50 +893,50 @@
                 },
                 "Fluxos de Relacionamento": {
                     "Pareceres Gerais de Relacionamento": {
-                        "TIPO DE RELACIONAMENTO": "O TIPO DE RELACIONAMENTO NÃO CONDIZ COM A DOCUMENTAÇÃO FORNECIDA.",
-                        "DATA DE INÍCIO DO MANDATO": "A DATA DE INÍCIO DO MANDATO ESTÁ INVÁLIDA OU NÃO CONDIZ COM O DOCUMENTO.",
-                        "DATA DE FIM DO MANDATO": "A DATA DE FIM DO MANDATO ESTÁ INCORRETA OU NÃO É COMPATÍVEL COM O DOCUMENTO.",
-                        "NÚMERO DO REGISTRO": "FALTA O NÚMERO DO REGISTRO.",
-                        "NÚMERO DO LIVRO": "FALTA O NÚMERO DO LIVRO.",
-                        "NÚMERO DA FOLHA": "FALTA O NÚMERO DA FOLHA.",
-                        "NOME DO CARTÓRIO": "FALTA O NOME DO CARTÓRIO."
+                        "TIPO DE RELACIONAMENTO INCORRETO": "O TIPO DE RELACIONAMENTO NÃO CONDIZ COM A DOCUMENTAÇÃO FORNECIDA. FAVOR AJUSTAR.",
+                        "DATA DE INÍCIO DO MANDATO INVÁLIDA": "A DATA DE INÍCIO DO MANDATO ESTÁ INVÁLIDA OU NÃO CONDIZ COM O DOCUMENTO. FAVOR CORRIGIR PARA {}.",
+                        "DATA DE FIM DO MANDATO INVÁLIDA": "A DATA DE FIM DO MANDATO ESTÁ INCORRETA OU NÃO É COMPATÍVEL COM O DOCUMENTO. FAVOR CORRIGIR PARA {}.",
+                        "FALTA NÚMERO DO REGISTRO": "FAVOR INFORMAR O NÚMERO DO REGISTRO.",
+                        "FALTA NÚMERO DO LIVRO": "FAVOR INFORMAR O NÚMERO DO LIVRO.",
+                        "FALTA NÚMERO DA FOLHA": "FAVOR INFORMAR O NÚMERO DA FOLHA.",
+                        "FALTA NOME DO CARTÓRIO": "FAVOR INFORMAR O NOME DO CARTÓRIO."
                     },
                     "Pareceres de Relacionamento - Pessoa Jurídica": {
-                        "PERCENTUAL NO CAPITAL SOCIAL": "O PERCENTUAL INFORMADO ESTÁ INCORRETO OU INCONSISTENTE."
+                        "PERCENTUAL NO CAPITAL SOCIAL INCORRETO": "O PERCENTUAL INFORMADO NO CAPITAL SOCIAL ESTÁ INCORRETO OU INCONSISTENTE. FAVOR CORRIGIR PARA {}%."
                     }
                 },
                 "Fluxos de Bem": {
                     "Pareceres Gerais de Bem": {
-                        "TIPO DO BEM": "O TIPO DO BEM NÃO FOI INFORMADO OU ESTÁ INCORRETO.",
-                        "VALOR DE AVALIAÇÃO": "O VALOR DE AVALIAÇÃO ESTÁ INCORRETO OU NÃO CONDIZ COM O LAUDO.",
-                        "ÁREA DIVERGENTE": "A ÁREA INFORMADA DIVERGE DA DOCUMENTAÇÃO.",
-                        "DATA DE AVALIAÇÃO": "A DATA DA AVALIAÇÃO NÃO CORRESPONDE À DATA DO LAUDO.",
-                        "VALOR DO BEM": "O VALOR INFORMADO NÃO ESTÁ CORRETO, DE ACORDO COM A DOCUMENTAÇÃO.",
-                        "DESCRIÇÃO DO BEM": "A DESCRIÇÃO DO BEM NÃO CONDIZ COM O TIPO DE BEM OU ESTÁ INCOMPLETA.",
-                        "BEM EM PROCESSO DE AQUISIÇÃO": "TENTATIVA DE CADASTRAR UM BEM EM AQUISIÇÃO COMO SE FOSSE DE POSSE PLENA.",
-                        "BEM NÃO COMPROVADO COMO PATRIMÔNIO": "O BEM INFORMADO NÃO É PATRIMÔNIO DO INDIVÍDUO OU DA EMPRESA.",
-                        "LAUDO DE AVALIAÇÃO": "O LAUDO DE AVALIAÇÃO NÃO É VÁLIDO OU NÃO CORRESPONDE AO BEM INFORMADO.",
-                        "PERCENTUAL DE PROPRIEDADE": "O PERCENTUAL DE PROPRIEDADE DO BEM NÃO FOI INFORMADO OU ESTÁ INCORRETO.",
-                        "CADASTRO DE BENS EM CONJUNTO": "OS BENS FORAM INFORMADOS EM CONJUNTO QUANDO DEVERIAM SER CADASTRADOS SEPARADAMENTE.",
-                        "EXCLUSÃO DE BEM": "POR SE TRATAR DE EXCLUSÃO, O PERCENTUAL DE PROPRIEDADE DEVE SER ZERADO.",
-                        "EMPREENDIMENTO NÃO É VÁLIDO COMO BEM": "EMPREENDIMENTOS NÃO SÃO ACEITOS COMO BENS PATRIMONIAIS."
+                        "TIPO DO BEM INCORRETO": "O TIPO DO BEM NÃO FOI INFORMADO OU ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.",
+                        "VALOR DE AVALIAÇÃO INCORRETO": "O VALOR DE AVALIAÇÃO ESTÁ INCORRETO OU NÃO CONDIZ COM O LAUDO. FAVOR CORRIGIR PARA R$ {}.",
+                        "ÁREA DIVERGENTE": "A ÁREA INFORMADA DIVERGE DA DOCUMENTAÇÃO. FAVOR CORRIGIR PARA {}.",
+                        "DATA DE AVALIAÇÃO DIVERGENTE": "A DATA DA AVALIAÇÃO NÃO CORRESPONDE À DATA DO LAUDO. FAVOR CORRIGIR PARA {}.",
+                        "VALOR DO BEM INCORRETO": "O VALOR DO BEM INFORMADO NÃO ESTÁ CORRETO. FAVOR CORRIGIR PARA R$ {}.",
+                        "DESCRIÇÃO DO BEM INCOMPLETA/INCORRETA": "A DESCRIÇÃO DO BEM NÃO CONDIZ COM O TIPO DE BEM OU ESTÁ INCOMPLETA. FAVOR AJUSTAR.",
+                        "CADASTRO INDEVIDO DE BEM EM AQUISIÇÃO": "NÃO É PERMITIDO CADASTRAR BEM EM PROCESSO DE AQUISIÇÃO COMO SE FOSSE DE POSSE PLENA.",
+                        "BEM NÃO COMPROVADO COMO PATRIMÔNIO": "O BEM INFORMADO NÃO FOI COMPROVADO COMO PATRIMÔNIO. FAVOR ANEXAR DOCUMENTAÇÃO COMPROBATÓRIA.",
+                        "LAUDO DE AVALIAÇÃO INVÁLIDO": "O LAUDO DE AVALIAÇÃO NÃO É VÁLIDO OU NÃO CORRESPONDE AO BEM INFORMADO. FAVOR ANEXAR LAUDO VÁLIDO.",
+                        "PERCENTUAL DE PROPRIEDADE INCORRETO": "O PERCENTUAL DE PROPRIEDADE DO BEM NÃO FOI INFORMADO OU ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}%.",
+                        "CADASTRO INDEVIDO DE BENS EM CONJUNTO": "OS BENS FORAM INFORMADOS EM CONJUNTO QUANDO DEVERIAM SER CADASTRADOS SEPARADAMENTE. FAVOR REALIZAR CADASTROS INDIVIDUAIS.",
+                        "PERCENTUAL INCORRETO NA EXCLUSÃO DE BEM": "POR SE TRATAR DE EXCLUSÃO, O PERCENTUAL DE PROPRIEDADE DEVE SER ZERADO. FAVOR AJUSTAR.",
+                        "TIPO DE BEM INVÁLIDO (EMPREENDIMENTO)": "EMPREENDIMENTOS NÃO SÃO ACEITOS COMO BENS PATRIMONIAIS. FAVOR REMOVER O CADASTRO."
                     },
                     "Pareceres de Bens Móveis": {
-                        "TIPO DO CHASSI": "O TIPO DE CHASSI ESTÁ INCORRETO.",
-                        "NÚMERO DO CHASSI": "O NÚMERO DO CHASSI ESTÁ INVÁLIDO OU NÃO FOI REGISTRADO CORRETAMENTE.",
-                        "RENAVAM": "O NÚMERO DO RENAVAM ESTÁ INCORRETO OU NÃO CORRESPONDE AO VEÍCULO.",
-                        "PLACA": "A PLACA DO VEÍCULO ESTÁ INVÁLIDA OU NÃO FOI REGISTRADA CORRETAMENTE.",
-                        "ANO DE FABRICAÇÃO": "O ANO DE FABRICAÇÃO INFORMADO ESTÁ INCORRETO.",
-                        "ANO MODELO": "O ANO MODELO NÃO CORRESPONDE AO VEÍCULO REGISTRADO."
+                        "TIPO DO CHASSI INCORRETO": "O TIPO DE CHASSI ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.",
+                        "NÚMERO DO CHASSI INVÁLIDO": "O NÚMERO DO CHASSI ESTÁ INVÁLIDO OU NÃO FOI REGISTRADO CORRETAMENTE. FAVOR CORRIGIR PARA {}.",
+                        "RENAVAM INCORRETO": "O NÚMERO DO RENAVAM ESTÁ INCORRETO OU NÃO CORRESPONDE AO VEÍCULO. FAVOR CORRIGIR PARA {}.",
+                        "PLACA INVÁLIDA": "A PLACA DO VEÍCULO ESTÁ INVÁLIDA OU NÃO FOI REGISTRADA CORRETAMENTE. FAVOR CORRIGIR PARA {}.",
+                        "ANO DE FABRICAÇÃO INCORRETO": "O ANO DE FABRICAÇÃO INFORMADO ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.",
+                        "ANO MODELO INCORRETO": "O ANO MODELO NÃO CORRESPONDE AO VEÍCULO REGISTRADO. FAVOR CORRIGIR PARA {}."
                     },
                     "Pareceres de Bens Imóveis": {
-                        "ÁREA DIVERGENTE": "A ÁREA INFORMADA DIVERGE DA DOCUMENTAÇÃO.",
-                        "UNIDADE DE MEDIDA": "A UNIDADE DE MEDIDA NÃO ESTÁ COERENTE COM O DOCUMENTO."
+                        "ÁREA DO IMÓVEL DIVERGENTE": "A ÁREA DO IMÓVEL INFORMADA DIVERGE DA DOCUMENTAÇÃO. FAVOR CORRIGIR PARA {}.",
+                        "UNIDADE DE MEDIDA INCOERENTE": "A UNIDADE DE MEDIDA NÃO ESTÁ COERENTE COM O DOCUMENTO. FAVOR CORRIGIR PARA {}."
                     },
                     "Pareceres de Bens Agropecuários": {
-                        "QUANTIDADE DE SEMOVENTES DIVERGENTE": "A QUANTIDADE DE SEMOVENTES INFORMADA DIVERGE DO COMPROVANTE.",
-                        "PERCENTUAL DE ARRENDAMENTO": "O PERCENTUAL DE ARRENDAMENTO NÃO FOI INFORMADO OU ESTÁ INCORRETO.",
-                        "DESCRIÇÃO DE SEMOVENTES DIFERENTE DO DOCUMENTO": "O TIPO DE SEMOVENTE DESCRITO ESTÁ DIFERENTE DO DOCUMENTO."
+                        "QUANTIDADE DE SEMOVENTES DIVERGENTE": "A QUANTIDADE DE SEMOVENTES INFORMADA DIVERGE DO COMPROVANTE. FAVOR CORRIGIR PARA {}.",
+                        "PERCENTUAL DE ARRENDAMENTO INCORRETO": "O PERCENTUAL DE ARRENDAMENTO NÃO FOI INFORMADO OU ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}%.",
+                        "DESCRIÇÃO DE SEMOVENTES DIVERGENTE": "A DESCRIÇÃO DO SEMOVENTE DIVERGE DO DOCUMENTO. FAVOR AJUSTAR."
                     }
                 }
             };
@@ -951,59 +948,64 @@
 
             function populateParecerFilter() {
                 parecerCategoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
-                for (const mainCategory in pareceresData) {
+                for (const mainCategory in pareceresDataCorrigido) {
                     parecerCategoryFilter.innerHTML += `<option value="${mainCategory}">${mainCategory}</option>`;
                 }
             }
 
             function renderPareceres(data) {
                 pareceresContainer.innerHTML = '';
-                let hasResults = false;
-
-                function createParecerHTML(key, value, mainCategory, subCategory) {
-                    hasResults = true;
-                    const uniqueId = `copiedMessage-${mainCategory.replace(/\s/g, '-')}-${subCategory.replace(/\s/g, '-')}-${key.replace(/\s/g, '-')}`;
-                    const fullParecerText = `${key}: ${value}`;
-                    return `
-                        <div class="p-4 rounded-2xl neumorphic-inset flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div class="flex-1 min-w-0">
-                                <h5 class="font-semibold mb-1">${key}</h5>
-                                <p class="text-sm whitespace-normal break-words text-subtle">${value}</p>
-                            </div>
-                            <div class="flex-shrink-0 flex items-center self-start sm:self-center">
-                                <button class="p-2 rounded-2xl neumorphic-outset-sm text-sm font-bold transition duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5"
-                                        onclick="copyParecer(decodeURIComponent('${encodeURIComponent(fullParecerText)}'), '${uniqueId}')">
-                                    Copiar
-                                </button>
-                                <span id="${uniqueId}" class="copied-message text-sm text-green-500 ml-2">Copiado!</span>
-                            </div>
-                        </div>
-                    `;
-                }
+                let mainContentRendered = false;
 
                 for (const mainCategory in data) {
                     const subCategories = data[mainCategory];
                     let mainCategoryHtml = `<h3 class="text-2xl font-bold mb-4 border-b-2 border-slate-300 dark:border-slate-600 pb-2">${mainCategory}</h3>`;
                     let contentHtml = '<div class="space-y-4">';
+                    let hasSubResults = false;
+
+                    function createParecerHTML(key, value) {
+                        hasSubResults = true;
+                        mainContentRendered = true;
+                        const uniqueId = `copiedMessage-${key.replace(/\s|\W/g, '-')}`;
+                        const fullParecerText = `${key}: ${value}`;
+                        return `
+                            <div class="p-4 rounded-2xl neumorphic-inset flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <h5 class="font-semibold mb-1">${key}</h5>
+                                    <p class="text-sm whitespace-normal break-words text-subtle">${value}</p>
+                                </div>
+                                <div class="flex-shrink-0 flex items-center self-start sm:self-center">
+                                    <button class="p-2 rounded-2xl neumorphic-outset-sm text-sm font-bold transition duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5"
+                                            onclick="copyParecer(decodeURIComponent('${encodeURIComponent(fullParecerText)}'), '${uniqueId}')">
+                                        Copiar
+                                    </button>
+                                    <span id="${uniqueId}" class="copied-message text-sm text-green-500 ml-2">Copiado!</span>
+                                </div>
+                            </div>
+                        `;
+                    }
 
                     for (const subCategoryTitle in subCategories) {
                         const items = subCategories[subCategoryTitle];
                         if (typeof items === 'object' && items !== null) {
-                            contentHtml += `<h4 class="text-xl font-semibold mb-3 mt-4">${subCategoryTitle}</h4>`;
+                            let subCategoryContent = '';
                             for (const key in items) {
-                                contentHtml += createParecerHTML(key, items[key], mainCategory, subCategoryTitle);
+                                subCategoryContent += createParecerHTML(key, items[key]);
+                            }
+                            if(subCategoryContent) {
+                                contentHtml += `<h4 class="text-xl font-semibold mb-3 mt-4">${subCategoryTitle}</h4>` + subCategoryContent;
                             }
                         } else {
-                            contentHtml += createParecerHTML(subCategoryTitle, items, mainCategory, '');
+                            contentHtml += createParecerHTML(subCategoryTitle, items);
                         }
                     }
                     contentHtml += '</div>';
-                    if (hasResults) {
+                    if (hasSubResults) {
                         pareceresContainer.innerHTML += mainCategoryHtml + contentHtml;
                     }
                 }
 
-                if (!hasResults) {
+                if (!mainContentRendered) {
                     pareceresContainer.innerHTML = `
                         <div class="text-center text-lg py-8 text-subtle">
                             Nenhum parecer encontrado para a sua pesquisa.
@@ -1017,14 +1019,16 @@
                 const searchTerm = searchInput.value.toLowerCase();
                 const selectedCategory = parecerCategoryFilter.value;
                 
+                // CORREÇÃO: Usar 'pareceresDataCorrigido' em vez de 'pareceresData'
                 const sourceData = selectedCategory === 'all' 
-                    ? pareceresData 
-                    : { [selectedCategory]: pareceresData[selectedCategory] };
+                    ? pareceresDataCorrigido 
+                    : { [selectedCategory]: pareceresDataCorrigido[selectedCategory] };
 
                 const filteredData = {};
                 for (const mainCategory in sourceData) {
                     const subCategories = sourceData[mainCategory];
                     const filteredSubCategories = {};
+                    let hasMatch = false;
                     for (const subCategoryTitle in subCategories) {
                         const items = subCategories[subCategoryTitle];
                         if (typeof items === 'object' && items !== null) {
@@ -1032,6 +1036,7 @@
                             for(const key in items) {
                                 if (key.toLowerCase().includes(searchTerm) || items[key].toLowerCase().includes(searchTerm)) {
                                     filteredItems[key] = items[key];
+                                    hasMatch = true;
                                 }
                             }
                             if(Object.keys(filteredItems).length > 0) {
@@ -1040,10 +1045,11 @@
                         } else {
                             if (subCategoryTitle.toLowerCase().includes(searchTerm) || items.toLowerCase().includes(searchTerm)) {
                                 filteredSubCategories[subCategoryTitle] = items;
+                                hasMatch = true;
                             }
                         }
                     }
-                    if (Object.keys(filteredSubCategories).length > 0) {
+                    if (hasMatch) {
                         filteredData[mainCategory] = filteredSubCategories;
                     }
                 }
