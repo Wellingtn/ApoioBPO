@@ -83,6 +83,3 @@ Banco de dados com **textos padronizados** utilizados em pareceres.
 - Markdown (documentação)
 
 ---
-
-## 🧭 Organização recomendada
-
