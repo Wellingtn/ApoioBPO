@@ -148,17 +148,49 @@
             color: var(--color-text);
         }
 
-    
-/* Correção para alinhar o slider com o primeiro botão */
-#dock-slider {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    position: absolute;
-    left: 0;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
+        /* Correção para alinhar o slider com o primeiro botão */
+        #dock-slider {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            left: 0;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
 
-</style>
+        /* --- NOVOS ESTILOS PARA O CHECKLIST --- */
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .custom-checkbox .check-icon {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease-in-out;
+            color: var(--color-accent);
+        }
+        .checklist-item-checkbox:checked + .custom-checkbox {
+            box-shadow: inset 3px 3px 6px var(--color-shadow-2), inset -3px -3px 6px var(--color-shadow-1);
+        }
+        .checklist-item-checkbox:checked + .custom-checkbox .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .checklist-list-item:has(.checklist-item-checkbox:checked) {
+            background-color: rgba(0,0,0,0.02);
+        }
+        html.dark .checklist-list-item:has(.checklist-item-checkbox:checked) {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+    </style>
 </head>
 
 <!-- As classes de cor foram removidas do body, pois agora são controladas pelo CSS acima -->
@@ -173,14 +205,19 @@
                 <h1 id="module-title" class="text-2xl font-bold transition-all duration-300">
                     <!-- O título será preenchido via JavaScript -->
                 </h1>
-                <button id="theme-toggle" class="p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">
-                    <i data-lucide="sun" id="sun-icon"></i>
-                    <i data-lucide="moon" id="moon-icon" class="hidden"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button id="info-button" class="p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">
+                        <i data-lucide="info" class="w-5 h-5"></i>
+                    </button>
+                    <button id="theme-toggle" class="p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">
+                        <i data-lucide="sun" id="sun-icon" class="w-5 h-5"></i>
+                        <i data-lucide="moon" id="moon-icon" class="hidden w-5 h-5"></i>
+                    </button>
+                </div>
             </header>
 
             <!-- Container dos Módulos com altura flexível e sombra única -->
-            <div id="module-container" class="w-full p-6 md:p-8 rounded-2xl neumorphic-outset">
+            <div id="module-container" class="w-full p-6 md:p-8 rounded-2xl neumorphic-outset min-h-[60vh]">
                 <!-- Módulo 1: Renda PJ (antigo Faturamento) -->
                 <div id="faturamento-module" class="module-content hidden">
                     <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -413,10 +450,9 @@
                      </div>
                 </div>
 
-                <!-- NOVO Módulo 7: Checklist -->
-                <div id="checklist-module" class="module-content hidden flex flex-col items-center justify-center h-full min-h-[400px] gap-4">
-                    <i data-lucide="hammer" class="w-16 h-16 text-subtle"></i>
-                    <h2 class="text-2xl font-bold text-center text-subtle">Módulo em construção</h2>
+                <!-- MÓDULO 7: CHECKLIST (CONTEÚDO ATUALIZADO) -->
+                <div id="checklist-module" class="module-content hidden flex flex-col gap-4 h-full">
+                    <!-- O conteúdo do checklist será inserido aqui pelo JavaScript -->
                 </div>
             </div>
         </main>
@@ -435,6 +471,30 @@
                 <button class="dock-button relative z-10 px-4 py-3 whitespace-nowrap text-sm" data-target="checklist-module" data-title="Checklist">Checklist</button>
             </div>
         </nav>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="modal-overlay absolute inset-0 bg-[var(--color-bg)]"></div>
+        <div class="modal-content relative w-full max-w-lg p-6 rounded-2xl neumorphic-outset animate-fade-in">
+            <button class="modal-close-btn absolute top-4 right-4 p-2 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/10 dark:hover:bg-white/10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-4 text-accent">Licença de Uso Interno — ApoioBPO</h2>
+            <div class="text-sm space-y-3">
+                <p><strong>Desenvolvido por:</strong></p>
+                <ul class="list-disc list-inside pl-4 text-subtle">
+                    <li>Wellington Juan Dutra Oliveira</li>
+                    <li>Gabriel Artur Lopes Feltes (Coordenador de BPO)</li>
+                    <li>Mauricio Gabriel Freiberger Konig (Colaborador)</li>
+                </ul>
+                <p><strong>Uso permitido:</strong></p>
+                <p class="text-subtle">Somente por colaboradores autorizados da Meta Serviços em Informática S.A., prestando serviço de BPO para o Sicoob, durante o horário de trabalho e exclusivamente para fins profissionais internos.</p>
+                <p><strong>Proibido:</strong></p>
+                <p class="text-subtle">Copiar, modificar, distribuir ou utilizar este software para qualquer outra finalidade sem autorização expressa dos autores.</p>
+                <p class="text-xs text-center text-subtle pt-4 mt-4 border-t border-[var(--color-shadow-2)]">© 2025 Wellington Juan Dutra Oliveira e colaboradores. Todos os direitos reservados.</p>
+            </div>
+        </div>
     </div>
 
     <template id="counter-template">
@@ -466,10 +526,12 @@
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            messageElement.classList.add('show');
-            setTimeout(() => {
-                messageElement.classList.remove('show');
-            }, 1500);
+            if (messageElement) {
+                messageElement.classList.add('show');
+                setTimeout(() => {
+                    messageElement.classList.remove('show');
+                }, 1500);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -483,6 +545,11 @@
             const moduleTitle = document.getElementById('module-title');
             const modules = document.querySelectorAll('.module-content');
             const moduleContainer = document.getElementById('module-container');
+            const infoButton = document.getElementById('info-button');
+            const infoModal = document.getElementById('info-modal');
+            const modalOverlay = infoModal.querySelector('.modal-overlay');
+            const modalCloseBtn = infoModal.querySelector('.modal-close-btn');
+
 
             // --- FUNÇÕES AUXILIARES ---
             function formatCurrency(value) {
@@ -508,6 +575,19 @@
                 moonIcon.classList.toggle('hidden', !isDarkMode);
                 lucide.createIcons();
             }
+
+            // --- LÓGICA DO MODAL DE INFORMAÇÕES ---
+            infoButton.addEventListener('click', () => {
+                infoModal.classList.remove('hidden');
+                lucide.createIcons(); 
+            });
+
+            function closeModal() {
+                infoModal.classList.add('hidden');
+            }
+
+            modalOverlay.addEventListener('click', closeModal);
+            modalCloseBtn.addEventListener('click', closeModal);
 
             // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
             let currentModuleId = null;
@@ -543,6 +623,10 @@
                        }
                        if (targetModuleId === 'contador-module' && counters.length === 0) {
                            addCounterBtn.click();
+                       }
+                       // Adicionado para renderizar o checklist quando o módulo for ativado
+                       if (targetModuleId === 'checklist-module') {
+                           renderChecklist();
                        }
                     }
                 });
@@ -1218,6 +1302,280 @@
                     counter.updateDisplay();
                 });
             });
+
+            // --- LÓGICA DO MÓDULO CHECKLIST ---
+            const checklistData = {
+                "flows": {
+                    "bem_novo": { "icon": "🏠", "name": "Bem Novo", "documents": {} },
+                    "certidao": { "icon": "📜", "name": "Certidão", "documents": {} },
+                    "endereco": { "icon": "📍", "name": "Endereço", "documents": {} },
+                    "fonte_de_renda": { "icon": "💰", "name": "Fonte de Renda", "documents": {} },
+                    "tributacao": { "icon": "🧾", "name": "Tributação", "documents": {} },
+                    "pessoa": { "icon": "👤", "name": "Pessoa", "documents": {} },
+                    "produtividade": { "icon": "📊", "name": "Produtividade", "documents": {} },
+                    "produtor": { "icon": "🌾", "name": "Produtor", "documents": {} },
+                    "relacionamento": { "icon": "🤝", "name": "Relacionamento", "documents": {} },
+                    "responsavel": { "icon": "👨‍💼", "name": "Responsável", "documents": {} }
+                }
+            };
+
+            function renderChecklist() {
+                const container = document.getElementById('checklist-module');
+                if (!container) return;
+                
+                container.innerHTML = `
+                    <div id="checklist-flows-view"></div>
+                    <div id="checklist-documents-view" class="hidden"></div>
+                    <div id="checklist-items-view" class="hidden"></div>
+                `;
+                
+                showFlowsView();
+                
+                container.addEventListener('click', handleChecklistNavigation);
+            }
+
+            function handleChecklistNavigation(e) {
+                const flowBtn = e.target.closest('.checklist-flow-btn');
+                const docBtn = e.target.closest('.checklist-doc-btn');
+                const backBtn = e.target.closest('.checklist-back-btn');
+                const copyBtn = e.target.closest('.copy-parecer-btn');
+                const finishBtn = e.target.closest('.checklist-finish-btn');
+                const copyResultBtn = e.target.closest('.checklist-copy-result-btn');
+
+                if (flowBtn) {
+                    showDocumentsView(flowBtn.dataset.flow);
+                } else if (docBtn) {
+                    showChecklistItemsView(docBtn.dataset.flow, docBtn.dataset.doc);
+                } else if (backBtn) {
+                    const targetView = backBtn.dataset.target;
+                    const flowKey = backBtn.dataset.flow;
+                    if (targetView === 'flows') {
+                        showFlowsView();
+                    } else if (targetView === 'documents') {
+                        showDocumentsView(flowKey);
+                    }
+                } else if (copyBtn) {
+                    const parecerText = copyBtn.dataset.parecer;
+                    const messageId = copyBtn.dataset.messageId;
+                    
+                    const textarea = document.createElement('textarea');
+                    textarea.value = parecerText;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = 0;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+
+                    const messageElement = document.getElementById(messageId);
+                    if (messageElement) {
+                        messageElement.classList.add('show');
+                        setTimeout(() => {
+                            messageElement.classList.remove('show');
+                        }, 1500);
+                    }
+                } else if (finishBtn) {
+                    const itemsView = finishBtn.closest('#checklist-items-view');
+                    const checkboxes = itemsView.querySelectorAll('.checklist-item-checkbox');
+                    const resultContainer = itemsView.querySelector('.checklist-result-container');
+                    const resultText = resultContainer.querySelector('.result-text');
+                    
+                    const devolucoes = [];
+                    checkboxes.forEach(cb => {
+                        if (!cb.checked) {
+                            devolucoes.push(cb.dataset.parecer);
+                        }
+                    });
+
+                    if (devolucoes.length === 0) {
+                        resultText.innerHTML = `<p class="text-green-500 font-bold">APROVAR</p>`;
+                    } else {
+                        resultText.innerHTML = `<p class="text-red-500 font-medium">${devolucoes.join('; ')}</p>`;
+                    }
+                    resultContainer.classList.remove('hidden');
+                    lucide.createIcons(); // Re-render icons to show the copy button
+                } else if (copyResultBtn) {
+                    const resultText = copyResultBtn.previousElementSibling.innerText;
+                    const textarea = document.createElement('textarea');
+                    textarea.value = resultText;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = 0;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        const icon = copyResultBtn.querySelector('i');
+                        if (icon) {
+                           icon.dataset.lucide = 'check';
+                           lucide.createIcons();
+                           setTimeout(() => {
+                               icon.dataset.lucide = 'copy';
+                               lucide.createIcons();
+                           }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                    }
+                    document.body.removeChild(textarea);
+                }
+            }
+            
+            function showFlowsView() {
+                const container = document.getElementById('checklist-module');
+                container.querySelector('#checklist-flows-view').classList.remove('hidden');
+                container.querySelector('#checklist-documents-view').classList.add('hidden');
+                container.querySelector('#checklist-items-view').classList.add('hidden');
+
+                const flowsView = container.querySelector('#checklist-flows-view');
+                let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">';
+                for (const flowKey in checklistData.flows) {
+                    const flow = checklistData.flows[flowKey];
+                    html += `
+                        <button class="checklist-flow-btn flex flex-col items-center justify-center text-center gap-2 p-3 rounded-2xl neumorphic-outset-sm aspect-square transition-all duration-200 active:scale-95 hover:neumorphic-inset" data-flow="${flowKey}">
+                            <span class="text-4xl">${flow.icon}</span>
+                            <span class="font-semibold">${flow.name}</span>
+                        </button>
+                    `;
+                }
+                html += '</div>';
+                flowsView.innerHTML = html;
+                lucide.createIcons();
+            }
+
+            function showDocumentsView(flowKey) {
+                const container = document.getElementById('checklist-module');
+                container.querySelector('#checklist-flows-view').classList.add('hidden');
+                container.querySelector('#checklist-documents-view').classList.remove('hidden');
+                container.querySelector('#checklist-items-view').classList.add('hidden');
+                
+                const documentsView = container.querySelector('#checklist-documents-view');
+                const flow = checklistData.flows[flowKey];
+                
+                let html = `
+                    <div class="flex items-center mb-6">
+                        <button class="checklist-back-btn p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5" data-target="flows">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+                        <h3 class="text-xl font-bold ml-4">${flow.name}</h3>
+                    </div>
+                `;
+
+                if (Object.keys(flow.documents).length > 0) {
+                    html += `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">`;
+                    for (const docKey in flow.documents) {
+                        const doc = flow.documents[docKey];
+                        html += `
+                            <button class="checklist-doc-btn flex flex-col items-center justify-center text-center gap-2 p-3 rounded-2xl neumorphic-outset-sm aspect-square transition-all duration-200 active:scale-95 hover:neumorphic-inset" data-flow="${flowKey}" data-doc="${docKey}">
+                                <span class="text-3xl">${doc.icon}</span>
+                                <span class="text-xs font-medium">${doc.name}</span>
+                            </button>
+                        `;
+                    }
+                    html += '</div>';
+                } else {
+                     html += `
+                        <div class="flex flex-col items-center justify-center h-full min-h-[300px] gap-4 text-center p-4 rounded-2xl neumorphic-inset">
+                            <i data-lucide="wrench" class="w-12 h-12 text-subtle"></i>
+                            <p class="text-lg font-medium text-subtle">Os checklists para ${flow.name} estão sendo construídos.</p>
+                        </div>
+                    `;
+                }
+
+                documentsView.innerHTML = html;
+                lucide.createIcons();
+            }
+
+            function showChecklistItemsView(flowKey, docKey) {
+                const container = document.getElementById('checklist-module');
+                container.querySelector('#checklist-flows-view').classList.add('hidden');
+                container.querySelector('#checklist-documents-view').classList.add('hidden');
+                container.querySelector('#checklist-items-view').classList.remove('hidden');
+
+                const itemsView = container.querySelector('#checklist-items-view');
+                const doc = checklistData.flows[flowKey].documents[docKey];
+
+                let html = `
+                    <div class="flex items-center mb-6">
+                        <button class="checklist-back-btn p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5" data-target="documents" data-flow="${flowKey}">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+                        <h3 class="text-xl font-bold ml-4 flex items-center gap-2"><span class="text-2xl">${doc.icon}</span> ${doc.name}</h3>
+                    </div>
+                    <div class="p-4 rounded-2xl neumorphic-inset animate-fade-in">
+                `;
+
+                if (doc.checklist && Object.keys(doc.checklist).length > 0) {
+                    html += '<ul class="space-y-4">';
+                    for (const itemKey in doc.checklist) {
+                        const parecerKey = doc.checklist[itemKey];
+                        const parecerText = findParecerText(parecerKey) || "Parecer não encontrado.";
+                        
+                        const uniqueId = `copy-msg-${flowKey}-${docKey}-${itemKey.replace(/\s|\W/g, '')}`;
+                        html += `
+                            <li class="checklist-list-item p-3 rounded-lg transition-colors duration-200">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="flex-grow">
+                                        <label class="flex items-start gap-4 cursor-pointer">
+                                            <input type="checkbox" class="checklist-item-checkbox hidden" data-parecer="${parecerText}">
+                                            <span class="custom-checkbox neumorphic-outset-sm">
+                                                <i data-lucide="check" class="check-icon w-4 h-4"></i>
+                                            </span>
+                                            <span class="font-medium flex-1">${itemKey}</span>
+                                        </label>
+                                        <div class="mt-2 pl-10 text-sm text-subtle">
+                                            <p><strong class="text-text/80">Parecer:</strong> ${parecerText}</p>
+                                        </div>
+                                    </div>
+                                    <button class="copy-parecer-btn p-2 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex-shrink-0" data-parecer="${parecerText}" data-message-id="${uniqueId}">
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <span id="${uniqueId}" class="copied-message text-sm text-green-500 ml-10 mt-1">Copiado!</span>
+                            </li>`;
+                    }
+                    html += `
+                        </ul>
+                        <div class="mt-6 flex flex-col gap-4">
+                            <button class="checklist-finish-btn w-full p-3 rounded-2xl neumorphic-outset font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2 text-accent">
+                                <i data-lucide="check-circle-2" class="w-5 h-5"></i> Finalizar
+                            </button>
+                            <div class="checklist-result-container hidden p-4 rounded-2xl neumorphic-inset text-sm flex items-center justify-between gap-4">
+                                <div class="result-text flex-grow"></div>
+                                <button class="checklist-copy-result-btn p-2 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex-shrink-0">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="flex flex-col items-center justify-center h-full min-h-[200px] gap-4 text-center">
+                            <i data-lucide="wrench" class="w-12 h-12 text-subtle"></i>
+                            <p class="text-lg font-medium text-subtle">Checklist para este documento ainda em construção.</p>
+                        </div>
+                    `;
+                }
+
+                html += '</div>';
+                itemsView.innerHTML = html;
+                lucide.createIcons();
+            }
+            
+            function findParecerText(parecerKey) {
+                for (const mainCategory in pareceresDataCorrigido) {
+                    for (const subCategory in pareceresDataCorrigido[mainCategory]) {
+                        if (typeof pareceresDataCorrigido[mainCategory][subCategory] === 'string' && subCategory === parecerKey) {
+                             return pareceresDataCorrigido[mainCategory][subCategory];
+                        }
+                        if (typeof pareceresDataCorrigido[mainCategory][subCategory] === 'object') {
+                            if (pareceresDataCorrigido[mainCategory][subCategory][parecerKey]) {
+                                return pareceresDataCorrigido[mainCategory][subCategory][parecerKey];
+                            }
+                        }
+                    }
+                }
+                return null; // Retorna nulo se não encontrar
+            }
 
 
             // --- ESTADO INICIAL DA APLICAÇÃO ---
