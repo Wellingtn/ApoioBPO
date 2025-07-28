@@ -871,7 +871,7 @@
                 },
                 "Fluxos de Fontes de Renda": {
                     "Pareceres Gerais de Renda": {
-                        "RENDA MENSAL INVÁLIDA": "A RENDA CADASTRADA NÃO É VÁLIDA PARA COMPROVAÇÃO. FAVOR UTILIZAR UMA FONTE DE RENDA VÁLIDA PARA A INCLUSÃO/ALTERAÇÃO.",
+                        "RENDA MENSAL INVÁLIDA": "A RENDA CADASTRADA NÃO É VÁLIDA PARA COMPROVAÇÃO. FAVOR UTILIZAR UMA FONTE DE RENDA VÁLida PARA A INCLUSÃO/ALTERAÇÃO.",
                         "TIPO DE RENDA INCORRETO": "CORRIGIR O TIPO DE RENDA PARA {}.",
                         "DIVISÃO DE RENDA MENSAL INCORRETA": "A DIVISÃO DA RENDA MENSAL ESTÁ INCORRETA. FAVOR CORRIGIR PARA {}.",
                         "RENDA PROVENIENTE DE FONTES PAGADORAS DIVERGENTES": "A RENDA UTILIZADA É UMA SOMA DE FONTES DISTINTAS. FAVOR CADASTRÁ-LAS SEPARADAMENTE."
@@ -912,7 +912,7 @@
                         "DATA DE CONSTITUIÇÃO": "CORRIGIR A DATA DE CONSTITUIÇÃO PARA {}.",
                         "NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE": "CORRIGIR O NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE PARA {}.",
                         "NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "CORRIGIR O NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL PARA {}.",
-                        "DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "CORRIGIR A DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL PARA {}.",
+                        "DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "CORRIGIR A DATA DA ÚLTIMA ALTERAÇÃO DO CONTRato SOCIAL PARA {}.",
                         "NÚMERO DE REGISTRO DE REPRESENTAÇÃO": "CORRIGIR O NÚMERO DE REGISTRO DE REPRESENTAÇÃO PARA {}.",
                         "DATA DE REGISTRO DE REPRESENTAÇÃO": "CORRIGIR A DATA DE REGISTRO DE REPRESENTAÇÃO PARA {}.",
                         "OPÇÃO MEI": "AJUSTAR A OPÇÃO 'MEI' PARA {}.",
@@ -1257,7 +1257,7 @@
                             "declaracao_de_renda": { 
                                 "name": "Declaração de Renda", 
                                 "icon": "📄", 
-                                "imageUrl": "./documents/renda/declaracao-renda.png",
+                                "imageUrl": "https://placehold.co/800x1100/e0e5ec/5a6474?text=Exemplo+de+Documento",
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
@@ -1330,18 +1330,20 @@
                     });
 
                     let resultHTML = '<div class="flex flex-col h-full">';
+                    let parecerTextForCopy = "APROVAR";
                     if (devolucoes.length === 0) {
                         resultHTML += `<div class="flex-grow flex flex-col items-center justify-center text-center gap-4"><i data-lucide="party-popper" class="w-16 h-16 text-green-500"></i><p class="text-2xl text-green-500 font-bold">APROVAR</p></div>`;
                     } else {
-                        resultHTML += `<div class="flex-grow"><p class="text-red-500 font-medium">${devolucoes.join('; ')}</p></div>`;
+                        parecerTextForCopy = devolucoes.join('; ');
+                        resultHTML += `<div class="flex-grow"><p class="text-red-500 font-medium">${parecerTextForCopy}</p></div>`;
                     }
 
                     resultHTML += `
                         <div class="mt-auto pt-6 flex flex-col gap-4">
-                             <button class="checklist-copy-result-btn w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                             <button class="checklist-copy-result-btn w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2" data-text-to-copy="${encodeURIComponent(parecerTextForCopy)}">
                                 <i data-lucide="copy" class="w-5 h-5"></i> Copiar Parecer
                             </button>
-                            <button class="checklist-back-to-items w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2 text-accent">
+                            <button class="checklist-back-to-items w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2 text-accent" data-flow="${flow}" data-doc="${doc}" data-page="${page}">
                                 <i data-lucide="arrow-left-circle" class="w-5 h-5"></i> Voltar
                             </button>
                         </div>
@@ -1349,14 +1351,11 @@
                     `;
                     
                     itemsContainer.innerHTML = resultHTML;
-                    itemsContainer.querySelector('.checklist-back-to-items').dataset.flow = flow;
-                    itemsContainer.querySelector('.checklist-back-to-items').dataset.doc = doc;
-                    itemsContainer.querySelector('.checklist-back-to-items').dataset.page = page;
-
                     safeCreateIcons();
+
                 } else if (copyResultBtn) {
-                    const resultText = copyResultBtn.closest('.flex-col').querySelector('p').innerText;
-                    copyParecer(resultText, copyResultBtn);
+                    const textToCopy = decodeURIComponent(copyResultBtn.dataset.textToCopy);
+                    copyParecer(textToCopy, copyResultBtn);
                 } else if (pageNextBtn) {
                     const { flow, doc, page } = pageNextBtn.dataset;
                     renderChecklistPage(flow, doc, parseInt(page) + 1);
@@ -1588,10 +1587,11 @@
                 let checklistHtml = '<ul class="space-y-4 flex-grow">';
                 pageItems.forEach(([itemKey, parecerKey]) => {
                     const parecerText = findParecerText(parecerKey) || "Parecer não encontrado.";
+                    const fullParecer = `${parecerKey}: ${parecerText}`;
                     checklistHtml += `
                         <li class="checklist-list-item p-3 rounded-lg transition-colors duration-200">
                             <label class="flex items-start gap-4 cursor-pointer">
-                                <input type="checkbox" class="checklist-item-checkbox hidden" data-parecer="${parecerText}">
+                                <input type="checkbox" class="checklist-item-checkbox hidden" data-parecer="${fullParecer}">
                                 <span class="custom-checkbox neumorphic-outset-sm">
                                     <i data-lucide="check" class="check-icon w-4 h-4"></i>
                                 </span>
