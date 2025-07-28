@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP de Cálculos - UI/UX Aprimorado</title>
+    <title>ApoioBPO - Sistema de Apoio BPO</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -59,10 +59,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 20px; border: 2px solid var(--color-bg); }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
 
-        /* Estilos do Toggle Switch Neumórfico */
         .toggle-container {
             position: relative;
-            width: 3.5rem; /* Aumentado para melhor visual */
+            width: 3.5rem;
             height: 1.75rem;
         }
         .toggle-label {
@@ -121,18 +120,17 @@
         
         #accept-terms-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
-/* Efeito neon azul ao ativar o Timer Mode */
-#timer-toggle:checked + .toggle-label {
-    background-color: rgba(56, 189, 248, 0.1);
-    box-shadow:
-        0 0 5px var(--color-accent),
-        0 0 10px var(--color-accent),
-        0 0 20px var(--color-accent),
-        inset 2px 2px 5px var(--color-shadow-2),
-        inset -2px -2px 5px var(--color-shadow-1);
-}
+        #timer-toggle:checked + .toggle-label {
+            background-color: rgba(56, 189, 248, 0.1);
+            box-shadow:
+                0 0 5px var(--color-accent),
+                0 0 10px var(--color-accent),
+                0 0 20px var(--color-accent),
+                inset 2px 2px 5px var(--color-shadow-2),
+                inset -2px -2px 5px var(--color-shadow-1);
+        }
 
-</style>
+    </style>
 </head>
 
 <body>
@@ -140,33 +138,71 @@
     <div id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-[var(--color-bg)] opacity-90"></div>
         <div class="relative w-full max-w-2xl p-6 sm:p-8 rounded-2xl neumorphic-outset animate-fade-in">
-            <h2 class="text-2xl font-bold mb-4 text-accent">Termos e Condições de Uso</h2>
-            <div class="max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 text-sm space-y-3">
-                <p>Bem-vindo à ferramenta de ERP de Cálculos. Antes de continuar, por favor, leia e aceite os seguintes termos:</p>
-                <p><strong>1. Propriedade e Autoria:</strong></p>
-                <ul class="list-disc list-inside pl-4 text-subtle">
-                    <li>Esta ferramenta foi desenvolvida por Wellington Juan Dutra Oliveira, com a colaboração de Gabriel Artur Lopes Feltes (Coordenador de BPO) e Mauricio Gabriel Freiberger Konig (Colaborador).</li>
-                    <li>Todos os direitos sobre o software, incluindo seu design, código e funcionalidades, são reservados aos autores.</li>
-                </ul>
-                <p><strong>2. Licença de Uso:</strong></p>
-                <p class="text-subtle">Este software é licenciado exclusivamente para uso interno e profissional. A sua utilização está restrita aos colaboradores da Meta Serviços em Informática S.A. que estão prestando serviço de BPO (Business Process Outsourcing) para o Sicoob.</p>
-                <p><strong>3. Restrições de Uso:</strong></p>
-                <p class="text-subtle">É estritamente <strong>proibido</strong>:</p>
-                <ul class="list-disc list-inside pl-4 text-subtle">
-                    <li>Copiar, modificar, distribuir, vender ou alugar qualquer parte deste software.</li>
-                    <li>Utilizar esta ferramenta para qualquer finalidade que não seja a de apoio às atividades profissionais designadas no âmbito do serviço prestado ao Sicoob.</li>
-                    <li>Compartilhar o acesso ou o próprio software com pessoas não autorizadas.</li>
-                </ul>
-                <p><strong>4. Confidencialidade:</strong></p>
-                <p class="text-subtle">Ao utilizar esta ferramenta, você concorda em manter a confidencialidade de todas as informações relacionadas ao seu funcionamento e propósito, não divulgando detalhes técnicos ou operacionais a terceiros.</p>
-                <p><strong>5. Isenção de Responsabilidade:</strong></p>
-                <p class="text-subtle">A ferramenta é fornecida "como está". Embora todos os esforços tenham sido feitos para garantir sua precisão e funcionalidade, os autores não se responsabilizam por quaisquer erros, imprecisões nos cálculos ou decisões tomadas com base nos resultados fornecidos.</p>
-                 <p class="pt-4 mt-4 border-t border-[var(--color-shadow-2)]">Ao clicar em "Aceitar e Continuar", você confirma que leu, compreendeu e concorda em cumprir todos os termos e condições aqui estabelecidos.</p>
+            <h2 class="text-2xl font-bold mb-2 text-accent">Termos e Condições de Uso — ApoioBPO</h2>
+            <p class="text-xs text-subtle mb-4">Versão 1.1 — 28/07/2025</p>
+
+            <div class="max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 text-sm space-y-4">
+                <p>Bem-vindo ao ApoioBPO. Antes de utilizar o sistema, leia atentamente os termos abaixo. Ao clicar em “Aceitar e Continuar”, você declara estar de acordo com as condições estabelecidas.</p>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">1. Propriedade Intelectual</h3>
+                    <p class="text-subtle">Este sistema foi desenvolvido por Wellington Juan Dutra Oliveira (Assistente de BPO), com colaboração de:</p>
+                    <ul class="list-disc list-inside pl-4 text-subtle">
+                        <li>Gabriel Artur Lopes Feltes (Coordenador de BPO)</li>
+                        <li>Mauricio Gabriel Freiberger Konig (Líder de BPO)</li>
+                        <li>Erika Mendonça Figueira (Assistente de BPO)</li>
+                    </ul>
+                    <p class="text-subtle mt-2">Todos os direitos sobre o sistema, incluindo design, código-fonte, funcionalidades e estrutura lógica, são reservados ao autor.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">2. Finalidade de Uso</h3>
+                    <p class="text-subtle">O ApoioBPO é destinado exclusivamente para uso interno e profissional pelos colaboradores da Meta Serviços em Informática S.A., no contexto de serviços de BPO (Business Process Outsourcing) prestados ao Banco Cooperativo Sicoob S.A.</p>
+                    <p class="text-subtle mt-2">Funcionalidades abrangidas:</p>
+                    <ul class="list-disc list-inside pl-4 text-subtle">
+                        <li>Consulta e verificação de CNPJ;</li>
+                        <li>Cálculo de renda para pessoas físicas (PF) e jurídicas (PJ);</li>
+                        <li>Módulo de contador, regras automatizadas e pareceres técnicos;</li>
+                        <li>Checklist de documentos.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">3. Restrições de Uso</h3>
+                    <p class="text-subtle">É terminantemente proibido:</p>
+                    <ul class="list-disc list-inside pl-4 text-subtle">
+                        <li>Copiar, modificar, vender, alugar ou distribuir o sistema sem autorização expressa dos autores;</li>
+                        <li>Utilizar o sistema fora do escopo profissional definido neste Termo;</li>
+                        <li>Compartilhar o acesso com pessoas não autorizadas.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">4. Confidencialidade</h3>
+                    <p class="text-subtle">Todas as informações processadas, visualizadas ou geradas pelo sistema, incluindo dados de clientes, cálculos, pareceres, regras de negócio e checklists, são estritamente confidenciais. O usuário se compromete a protegê-las contra acesso, uso ou divulgação não autorizados, mesmo após o término do vínculo com a organização. É vedado copiar, armazenar externamente ou transmitir qualquer dado sem permissão expressa e documentada.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">5. Responsabilidade Limitada</h3>
+                    <p class="text-subtle">O sistema é fornecido com o compromisso de entrega técnica adequada às funcionalidades descritas neste termo. Ainda assim, podem existir limitações técnicas ou operacionais decorrentes de atualizações, integrações externas, indisponibilidades de terceiros ou uso indevido. Os desenvolvedores e colaboradores assumem responsabilidade limitada, restrita ao correto funcionamento das funcionalidades tal como especificadas.</p>
+                    <p class="text-subtle mt-2">Decisões operacionais, financeiras ou jurídicas tomadas com base em informações do sistema devem ser validadas pelo usuário. Eventuais falhas devem ser comunicadas imediatamente pelos canais oficiais de suporte descritos na Cláusula 6, para avaliação e correção.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">6. Suporte e Comunicação de Incidentes</h3>
+                    <p class="text-subtle">Em caso de falhas, inconsistências, dúvidas ou incidentes de segurança, o usuário deve reportar imediatamente por meio do canal oficial interno de suporte da Meta Serviços em Informática S.A. (ex.: Microsoft Teams, E-mail corporativo ou ferramenta designada pela empresa). O não reporte tempestivo pode limitar a responsabilidade dos autores quanto aos efeitos decorrentes.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">7. Vigência e Atualizações</h3>
+                    <p class="text-subtle">Estes Termos de Uso entram em vigor na data indicada na versão e poderão ser atualizados a qualquer tempo, por necessidade técnica, jurídica ou operacional. É responsabilidade do usuário manter-se informado sobre a versão vigente, exibida no topo deste documento.</p>
+                </div>
+
             </div>
             <div class="mt-6 space-y-4">
                 <label for="terms-checkbox" class="flex items-center justify-center gap-2 text-sm cursor-pointer">
                     <input type="checkbox" id="terms-checkbox" class="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent">
-                    <span>Eu li e concordo com os termos de uso.</span>
+                    <span>Declaro que li, compreendi e aceito todos os termos e condições de uso descritos acima</span>
                 </label>
                 <button id="accept-terms-btn" class="w-full px-8 py-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 text-accent" disabled>
                     Aceitar e Continuar
@@ -436,11 +472,12 @@
             </button>
             <h2 class="text-2xl font-bold mb-4 text-accent">Créditos e Uso</h2>
             <div class="text-sm space-y-3">
-                <p><strong>Desenvolvido por:</strong></p>
+                <p><strong>Desenvolvido por:</strong> Wellington Juan Dutra Oliveira</p>
+                <p><strong>Com colaboração de:</strong></p>
                 <ul class="list-disc list-inside pl-4 text-subtle">
-                    <li>Wellington Juan Dutra Oliveira</li>
                     <li>Gabriel Artur Lopes Feltes (Coordenador de BPO)</li>
-                    <li>Mauricio Gabriel Freiberger Konig (Colaborador)</li>
+                    <li>Mauricio Gabriel Freiberger Konig (Líder de BPO)</li>
+                    <li>Erika Mendonça Figueira (Assistente de BPO)</li>
                 </ul>
                 <p><strong>Lembrete de Uso:</strong></p>
                 <p class="text-subtle">Esta ferramenta é de uso exclusivo para colaboradores da Meta Serviços em Informática S.A. a serviço do Sicoob. É proibida a cópia, distribuição ou uso fora do âmbito profissional designado.</p>
@@ -1248,7 +1285,7 @@
             const checklistData = {
                 "flows": {
                     "bem_novo": { "icon": "🏠", "name": "Bem Novo", "documents": {} },
-                    "certidao": { "icon": "📜", "name": "Certidão", "documents": {} },
+                    "certidao": { "icon": "�", "name": "Certidão", "documents": {} },
                     "endereco": { "icon": "📍", "name": "Endereço", "documents": {} },
                     "fonte_de_renda": { 
                         "icon": "💰", 
@@ -1668,7 +1705,7 @@
             }
 
             // --- LÓGICA DO MODAL DE TERMOS ---
-            const TERMS_KEY = 'erpCalculosTermsAccepted_v1';
+            const TERMS_KEY = 'apoioBpoTermsAccepted_v1.1';
             
             termsCheckbox.addEventListener('change', () => {
                 acceptTermsBtn.disabled = !termsCheckbox.checked;
@@ -1698,3 +1735,4 @@
     </script>
 </body>
 </html>
+�
