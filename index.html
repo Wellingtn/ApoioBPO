@@ -1361,7 +1361,26 @@
                         }
                     },
                     "tributacao": { "icon": "🧾", "name": "Tributação", "documents": {} },
-                    "pessoa": { "icon": "👤", "name": "Pessoa", "documents": {} },
+                    "pessoa": { 
+                        "icon": "🧑",
+                        "name": "Pessoa",
+                        "documents": {
+                            "cnh_digital":{
+                                "name": "CNH Digital",
+                                "icon": "🚗",
+                                "imageUrl": "./documents/pessoa/cnh_digital.jpg",
+                                "checklist": {
+                                    "O documento é válido?": "DOCUMENTO INVÁLIDO",
+                                    "O tipo de documento é correto?": "TIPO DE DOCUMENTO",
+                                    "O número do documento é correto?": "NÚMERO DO DOCUMENTO",
+                                    "A data de emissão é correta?": "DATA DE EMISSÃO",
+                                    "O orgão expedidor é correto?": "ÓRGÃO EXPEDIDOR",
+                                    "A uf de emissão é correta?": "UF DO ÓRGÃO EXPEDIDOR",
+                                    "O estado civil é correto?": "ESTADO CIVIL",
+                                    "A naturalidade é correta?": "NATURALIDADE",
+                                }
+                            }
+                        } },
                     "produtividade": { "icon": "📊", "name": "Produtividade", "documents": {} },
                     "produtor": { "icon": "🌾", "name": "Produtor", "documents": {} },
                     "relacionamento": { "icon": "🤝", "name": "Relacionamento", "documents": {} },
@@ -1669,7 +1688,7 @@
 
                 const doc = checklistData.flows[flowKey].documents[docKey];
                 const checklistItems = Object.entries(doc.checklist || {});
-                const itemsPerPage = 6;
+                const itemsPerPage = 8;
                 const totalPages = Math.ceil(checklistItems.length / itemsPerPage);
 
                 const start = pageIndex * itemsPerPage;
