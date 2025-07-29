@@ -1286,8 +1286,24 @@
             const checklistData = {
                 "flows": {
                     "bem_novo": { "icon": "🏠", "name": "Bem Novo", "documents": {} },
-                    "certidao": { "icon": "�", "name": "Certidão", "documents": {} },
-                    "endereco": { "icon": "📍", "name": "Endereço", "documents": {} },
+                    "certidao": { "icon": "📄", "name": "Certidão", "documents": {} },
+                    "endereco": { 
+                        "icon": "📍",
+                        "name": "Endereço",
+                        "documents": {
+                            "conta_energia": { 
+                                "name": "Conta de Energia", 
+                                "icon": "⚡",
+                                "imageUrls": ["./documents/endereco/conta_energia_1.jpg", "./documents/endereco/conta_energia_2.jpg"],
+                                "checklist": {
+                                    "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                                    "O logradouro está correto?": "LOGRADOURO",
+                                    "O número do endereço é valido?": "NUMERO",
+                                    "A data de validade é valida?": "PRAZO DE VALIDADE",
+                                    "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
+                                }
+                            }
+                        } },
                     "fonte_de_renda": { 
                         "icon": "💰", 
                         "name": "Fonte de Renda", 
