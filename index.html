@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ApoioBPO - Sistema de Apoio BPO</title>
+    <link rel="icon" type="image/png" href="./images/icone_meta.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -956,7 +957,7 @@
                         "OPÇÃO MEI": "AJUSTAR A OPÇÃO 'MEI' PARA {}.",
                         "NÚMERO DO CONTRATO SOCIAL": "CORRIGIR O NÚMERO DO CONTRATO SOCIAL PARA {}.",
                         "CAPITAL SOCIAL": "CORRIGIR O CAPITAL SOCIAL PARA R$ {}.",
-                        "INSCRIÇÃO ESTADUAL": "CORRIGIR A INSCRIÇÃO ESTADUAL PARA {}.",
+                        "INSCRIção ESTADUAL": "CORRIGIR A INSCRIÇÃO ESTADUAL PARA {}.",
                         "DATA DE REGISTRO NO ÓRGÃO COMPETENTE": "CORRIGIR A DATA DE REGISTRO NO ÓRGÃO COMPETENTE PARA {}."
                     }
                 },
@@ -1299,7 +1300,7 @@
                                     "O documento é valido?": "DOCUMENTO INVÁLIDO",
                                     "O logradouro está correto?": "LOGRADOURO",
                                     "O número do endereço é valido?": "NUMERO",
-                                    "A data de validade é valida?": "PRAZO DE VALIDADE",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                                     "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                                 }
                             }
@@ -1311,23 +1312,23 @@
                             "declaracao_de_renda": { 
                                 "name": "Declaração de Renda", 
                                 "icon": "📝", 
-                                "imageUrl": "./documents/renda/declaracao-renda.png",
+                                "imageUrl": "./documents/renda/declaracao-renda.jpg",
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
                                     "O documento é válido?": "DOCUMENTO INVÁLIDO",
-                                    "A data de validade está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                                     "As assinaturas estão corretas?": "ASSINATURAS INVÁLIDAS"
                                 }
                             },
                             "pgdas_d" : {
                                 "name": "PGDAS-D",
                                 "icon": "📄",
-                                "imageUrls": ["./documents/renda/pgdas_d.jpg", "./documents/renda/recibo_pgdas_d.jpg", "./documents/renda/comprovante_opcao_simples.png"],
+                                "imageUrls": ["./documents/renda/pgdas_d.jpg", "./documents/renda/recibo_pgdas_d.jpg", "./documents/renda/comprovante_opcao_simples.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O documento esta correto?": "DOCUMENTO INVÁLIDO",
-                                    "A data de validade está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                                     "O calculo está correto no sisbr?":"CÁLCULO DO SIMPLES",
                                     "Foi anexado o comprovante do simples":"CONSULTA DE OPÇÃO DO SIMPLES",
                                     "A opção do simples está correta?":"CAMPO 'OPTANTE DO SIMPLES'"
@@ -1336,11 +1337,11 @@
                             "extrato_simples": {
                                 "name": "Extrato do simples",
                                 "icon": "📄",
-                                "imageUrls": ["./documents/renda/extrato_simples_1.jpg", "./documents/renda/extrato_simples_2.jpg", "./documents/renda/extrato_simples_3.jpg", "./documents/renda/comprovante_opcao_simples.png"],
+                                "imageUrls": ["./documents/renda/extrato_simples_1.jpg", "./documents/renda/extrato_simples_2.jpg", "./documents/renda/extrato_simples_3.jpg", "./documents/renda/comprovante_opcao_simples.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O documento esta correto?": "DOCUMENTO INVÁLIDO",
-                                    "A data de validade está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                                     "O calculo está correto no sisbr?":"CÁLCULO DO SIMPLES",
                                     "Foi anexado o comprovante do simples":"CONSULTA DE OPÇÃO DO SIMPLES",
                                     "A opção do simples está correta?":"CAMPO 'OPTANTE DO SIMPLES'"
@@ -1354,10 +1355,21 @@
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
                                     "O documento esta correto?": "DOCUMENTO INVÁLIDO",
-                                    "A data de validade está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                }
+                            }, 
+                            "holerite":{
+                                "name": "Holerite",
+                                "icon": "📃",
+                                "imageUrls": ["./documents/renda/holerite_1.jpg", "./documents/renda/holerite_2.jpg"],
+                                "checklist": {
+                                    "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
+                                    "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
+                                    "O documento esta correto?": "DOCUMENTO INVÁLIDO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                                 }
                             }
-                            <!-- Adicione mais documentos conforme necessário -->
+                            //Adicione mais documentos conforme necessário 
                         }
                     },
                     "tributacao": { "icon": "🧾", "name": "Tributação", "documents": {} },
@@ -1380,7 +1392,8 @@
                                     "A naturalidade é correta?": "NATURALIDADE",
                                 }
                             }
-                        } },
+                        } 
+                    },
                     "produtividade": { "icon": "📊", "name": "Produtividade", "documents": {} },
                     "produtor": { "icon": "🌾", "name": "Produtor", "documents": {} },
                     "relacionamento": { "icon": "🤝", "name": "Relacionamento", "documents": {} },
@@ -1412,11 +1425,9 @@
                 const pageNextBtn = e.target.closest('.checklist-page-next');
                 const pagePrevBtn = e.target.closest('.checklist-page-prev');
                 const backToItemsBtn = e.target.closest('.checklist-back-to-items');
-                const docPageNextBtn = e.target.closest('.checklist-doc-page-next');
-                const docPagePrevBtn = e.target.closest('.checklist-doc-page-prev');
 
                 if (flowBtn) {
-                    showDocumentsView(flowBtn.dataset.flow, 0);
+                    showDocumentsView(flowBtn.dataset.flow);
                 } else if (docBtn) {
                     showChecklistItemsView(docBtn.dataset.flow, docBtn.dataset.doc);
                 } else if (backBtn) {
@@ -1425,7 +1436,7 @@
                     if (targetView === 'flows') {
                         showFlowsView();
                     } else if (targetView === 'documents') {
-                        showDocumentsView(flowKey, 0);
+                        showDocumentsView(flowKey);
                     }
                 } else if (finishBtn) {
                     const { flow, doc, page } = finishBtn.dataset;
@@ -1476,12 +1487,6 @@
                 } else if (backToItemsBtn) {
                     const { flow, doc, page } = backToItemsBtn.dataset;
                     renderChecklistPage(flow, doc, parseInt(page));
-                } else if (docPageNextBtn) {
-                    const { flow, page } = docPageNextBtn.dataset;
-                    showDocumentsView(flow, parseInt(page) + 1);
-                } else if (docPagePrevBtn) {
-                    const { flow, page } = docPagePrevBtn.dataset;
-                    showDocumentsView(flow, parseInt(page) - 1);
                 }
             }
             
@@ -1507,7 +1512,7 @@
                 safeCreateIcons();
             }
 
-            function showDocumentsView(flowKey, pageIndex) {
+            function showDocumentsView(flowKey) {
                 const container = document.getElementById('checklist-module');
                 container.querySelector('#checklist-flows-view').classList.add('hidden');
                 container.querySelector('#checklist-documents-view').classList.remove('hidden');
@@ -1517,63 +1522,33 @@
                 documentsView.className = 'flex flex-col h-full'; 
                 
                 const flow = checklistData.flows[flowKey];
-                const docKeys = Object.keys(flow.documents);
                 
                 let headerHtml = `
                     <div class="flex-shrink-0">
-                        <div class="flex items-center mb-6">
-                            <button class="checklist-back-btn p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5" data-target="flows">
-                                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                            </button>
-                            <h3 class="text-xl font-bold ml-4">${flow.name}</h3>
+                        <div class="flex items-center justify-between gap-4 mb-4">
+                            <div class="flex items-center gap-2">
+                                <button class="checklist-back-btn p-3 rounded-full neumorphic-outset-sm transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5" data-target="flows">
+                                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                                </button>
+                                <h3 class="text-xl font-bold truncate">${flow.name}</h3>
+                            </div>
+                            <div class="relative flex-grow min-w-0">
+                                 <input type="text" id="checklist-doc-search" placeholder="Buscar..." class="w-full p-3 pr-10 rounded-2xl neumorphic-inset focus:outline-none text-sm" data-flow="${flowKey}">
+                                 <i data-lucide="search" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-subtle"></i>
+                            </div>
                         </div>
                     </div>
                 `;
 
                 let contentHtml = '';
-                let footerHtml = '';
+                const docKeys = Object.keys(flow.documents);
 
                 if (docKeys.length > 0) {
-                    const docsPerPage = 4;
-                    const totalPages = Math.ceil(docKeys.length / docsPerPage);
-                    const start = pageIndex * docsPerPage;
-                    const end = start + docsPerPage;
-                    const pageDocKeys = docKeys.slice(start, end);
-
-                    contentHtml = `<div class="flex-grow"><div class="grid grid-cols-2 sm:grid-cols-4 gap-4">`;
-                    pageDocKeys.forEach(docKey => {
-                        const doc = flow.documents[docKey];
-                        contentHtml += `
-                            <button class="checklist-doc-btn flex flex-col items-center justify-center text-center gap-2 p-3 rounded-2xl neumorphic-outset-sm aspect-square transition-all duration-200 active:scale-95 hover:neumorphic-inset" data-flow="${flowKey}" data-doc="${docKey}">
-                                <span class="text-3xl">${doc.icon}</span>
-                                <span class="text-xs font-medium">${doc.name}</span>
-                            </button>
-                        `;
-                    });
-                    contentHtml += '</div></div>';
-
-                    if (totalPages > 1) {
-                        footerHtml = `
-                        <div class="mt-auto pt-6 flex items-center justify-center">
-                            <div class="flex items-center justify-center gap-4 p-2 rounded-full neumorphic-inset">
-                                <button ${pageIndex === 0 ? 'disabled' : ''} class="checklist-doc-page-prev p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-90 hover:bg-black/5 dark:hover:bg-white/5" data-flow="${flowKey}" data-page="${pageIndex}">
-                                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                                </button>
-                                <div class="flex gap-2 items-center">
-                        `;
-                        for(let i = 0; i < totalPages; i++) {
-                            footerHtml += `<div class="pagination-dot ${i === pageIndex ? 'active' : ''}"></div>`;
-                        }
-                        footerHtml += `
-                                </div>
-                                <button ${pageIndex >= totalPages - 1 ? 'disabled' : ''} class="checklist-doc-page-next p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-90 hover:bg-black/5 dark:hover:bg-white/5" data-flow="${flowKey}" data-page="${pageIndex}">
-                                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                                </button>
-                            </div>
+                    contentHtml = `
+                        <div id="checklist-doc-list-container" class="flex-grow overflow-y-auto custom-scrollbar max-h-[50vh] p-3">
+                            <!-- A lista de documentos será renderizada aqui -->
                         </div>
-                        `;
-                    }
-
+                    `;
                 } else {
                      contentHtml = `
                         <div class="flex-grow flex flex-col items-center justify-center h-full min-h-[300px] gap-4 text-center p-4 rounded-2xl neumorphic-inset">
@@ -1583,8 +1558,51 @@
                     `;
                 }
 
-                documentsView.innerHTML = headerHtml + contentHtml + footerHtml;
+                documentsView.innerHTML = headerHtml + contentHtml;
+
+                if (docKeys.length > 0) {
+                    renderDocumentList(flowKey, '');
+                }
+
+                const searchInput = document.getElementById('checklist-doc-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        renderDocumentList(flowKey, e.target.value);
+                    });
+                }
+
                 safeCreateIcons();
+            }
+
+            function renderDocumentList(flowKey, searchTerm) {
+                const listContainer = document.getElementById('checklist-doc-list-container');
+                if (!listContainer) return;
+
+                const flow = checklistData.flows[flowKey];
+                const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
+
+                const filteredDocKeys = Object.keys(flow.documents).filter(docKey => {
+                    const doc = flow.documents[docKey];
+                    return doc.name.toLowerCase().includes(lowerCaseSearchTerm);
+                });
+
+                let listHtml = '<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">';
+                if (filteredDocKeys.length > 0) {
+                    filteredDocKeys.forEach(docKey => {
+                        const doc = flow.documents[docKey];
+                        listHtml += `
+                            <button class="checklist-doc-btn flex flex-col items-center justify-center text-center gap-2 p-3 rounded-2xl neumorphic-outset-sm aspect-square transition-all duration-200 active:scale-95 hover:neumorphic-inset" data-flow="${flowKey}" data-doc="${docKey}">
+                                <span class="text-3xl">${doc.icon}</span>
+                                <span class="text-xs font-medium">${doc.name}</span>
+                            </button>
+                        `;
+                    });
+                } else {
+                    listHtml += `<div class="col-span-full text-center py-8 text-subtle">Nenhum documento encontrado.</div>`;
+                }
+                listHtml += '</div>';
+
+                listContainer.innerHTML = listHtml;
             }
 
             function showChecklistItemsView(flowKey, docKey) {

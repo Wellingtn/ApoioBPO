@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="imagens/sicoob-seeklogo.png" alt="Sicoob Logo" width="300"/>
+  <img src="images/sicoob-seeklogo.png" alt="Sicoob Logo" width="300"/>
 </p>
 
 # Ferramenta de Apoio – Sicoob
