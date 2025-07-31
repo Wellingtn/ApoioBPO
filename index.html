@@ -13,6 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Adicionada a biblioteca de gráficos Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style type="text/tailwindcss">
         :root {
@@ -55,7 +58,7 @@
         ::placeholder { color: #9ca3af; }
         .dark ::placeholder { color: #6b7280; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px;}
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 20px; border: 2px solid var(--color-bg); }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
@@ -370,7 +373,7 @@
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <div class="lg:col-span-2">
                                     <h3 class="text-lg font-semibold mb-4">Notas Fiscais</h3>
-                                    <div id="nfs-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-2 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
+                                    <div id="nfs-grid" class="grid grid-flow-col grid-rows-10 gap-x-8 gap-y-2 overflow-x-auto custom-scrollbar pb-2">
                                         <!-- Inputs gerados por JS -->
                                     </div>
                                 </div>
@@ -611,35 +614,47 @@
                     <div id="pareceresContainer" class="space-y-4 overflow-auto custom-scrollbar flex-grow">
                         </div>
                 </div>
-                <div id="contador-module" class="module-content hidden h-full">
-                     <div class="grid md:grid-cols-2 gap-8 items-center h-full">
-                        <div id="counters-grid" class="grid grid-cols-1 sm:grid-cols-2 grid-rows-2 gap-6 h-full min-h-[300px]">
-                           </div>
-                        <div class="flex flex-col gap-6 p-6 rounded-2xl neumorphic-inset">
-                            <h3 class="text-sm text-subtle uppercase tracking-wide">Settings</h3>
-                            <div class="flex items-center justify-between">
-                                <label for="timer-toggle" class="font-medium">Timer Mode</label>
-                                <div class="toggle-container">
-                                    <input type="checkbox" name="toggle" id="timer-toggle" class="toggle-checkbox"/>
-                                    <label for="timer-toggle" class="toggle-label"></label>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <label for="increment-by-input" class="text-sm font-medium">Increment By</label>
-                                <input type="number" id="increment-by-input" value="1" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <label for="counter-start-input" class="text-sm font-medium">Start Value</label>
-                                <input type="number" id="counter-start-input" value="0" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                            </div>
-                             <button id="add-counter-btn" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
-                                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add Counter
-                            </button>
-                             <button id="contador-reset" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
-                                <i data-lucide="rotate-cw" class="w-5 h-5"></i> Reset All
-                            </button>
+                
+                <div id="contador-module" class="module-content hidden h-full flex flex-col gap-8">
+                    <!-- Seção Superior: Contadores e Configurações -->
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div id="counters-grid" class="grid grid-cols-1 sm:grid-cols-2 grid-rows-2 gap-4 min-h-[320px]">
+                           <!-- Contadores são inseridos aqui via JS -->
                         </div>
-                     </div>
+                        <div class="flex flex-col gap-4 p-4 md:p-6 rounded-2xl neumorphic-inset h-full justify-center">
+                             <h3 class="text-sm text-subtle uppercase tracking-wide">Configurações</h3>
+                             <div class="flex items-center justify-between">
+                                 <label for="timer-toggle" class="font-medium text-sm">Modo Timer</label>
+                                 <div class="toggle-container">
+                                     <input type="checkbox" name="toggle" id="timer-toggle" class="toggle-checkbox"/>
+                                     <label for="timer-toggle" class="toggle-label"></label>
+                                 </div>
+                             </div>
+                             <div class="flex flex-col gap-2">
+                                 <label for="increment-by-input" class="text-sm font-medium">Incrementar por</label>
+                                 <input type="number" id="increment-by-input" value="1" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                             </div>
+                             <div class="flex flex-col gap-2">
+                                 <label for="counter-start-input" class="text-sm font-medium">Valor Inicial</label>
+                                 <input type="number" id="counter-start-input" value="0" class="w-full bg-transparent p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                             </div>
+                              <div class="grid grid-cols-2 gap-4 mt-2">
+                                 <button id="add-counter-btn" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase text-xs transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                     <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar
+                                 </button>
+                                  <button id="contador-reset" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase text-xs transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                     <i data-lucide="rotate-cw" class="w-4 h-4"></i> Resetar
+                                 </button>
+                              </div>
+                        </div>
+                    </div>
+                    <!-- Seção Inferior: Gráfico -->
+                    <div class="p-4 rounded-2xl neumorphic-inset flex-1 flex flex-col min-h-[200px]">
+                        <h3 class="text-sm text-subtle uppercase tracking-wide mb-4 flex-shrink-0">Atividade por Hora</h3>
+                        <div class="relative flex-grow">
+                            <canvas id="counter-chart"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="checklist-module" class="module-content hidden flex flex-col gap-4 h-full">
@@ -686,18 +701,18 @@
     </div>
 
     <template id="counter-template">
-        <div class="counter-card p-4 rounded-2xl neumorphic-inset flex flex-col items-center justify-center gap-4 relative h-full">
+        <div class="counter-card p-3 rounded-2xl neumorphic-inset flex flex-col items-center justify-center gap-2 relative h-full">
             <button class="remove-counter-btn absolute top-2 right-2 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
             <h4 class="counter-title font-semibold text-center w-full px-4 truncate" contenteditable="true">Contador</h4>
-            <span class="counter-display font-bold text-7xl text-accent cursor-pointer" contenteditable="false">0</span>
-            <div class="flex items-center gap-4">
-                <button class="counter-minus w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
-                <button class="counter-plus w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
+            <span class="counter-display font-bold text-6xl text-accent cursor-pointer" contenteditable="false">0</span>
+            <div class="flex items-center gap-3">
+                <button class="counter-minus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
+                <button class="counter-plus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
                 
-                <button class="timer-play w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play"></i></button>
-                <button class="timer-reset w-16 h-16 rounded-2xl neumorphic-outset-sm text-3xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw"></i></button>
+                <button class="timer-play w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play"></i></button>
+                <button class="timer-reset w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw"></i></button>
             </div>
         </div>
     </template>
@@ -771,6 +786,10 @@
             themeToggleButton.addEventListener('click', () => {
                 document.documentElement.classList.toggle('dark');
                 updateThemeIcons();
+                // Atualiza o gráfico se ele estiver visível
+                if (currentModuleId === 'contador-module' && counterChart) {
+                    updateCounterChart();
+                }
             });
             
             function updateThemeIcons() {
@@ -825,8 +844,14 @@
                             populateParecerFilter();
                             filterPareceres();
                        }
-                       if (targetModuleId === 'contador-module' && counters.length === 0) {
-                           addCounterBtn.click();
+                       if (targetModuleId === 'contador-module') {
+                           if (counters.length === 0) {
+                               addCounterBtn.click();
+                           }
+                           // Garante que o gráfico seja renderizado quando o módulo se tornar visível
+                           setTimeout(() => {
+                               updateCounterChart();
+                           }, 50);
                        }
                        if (targetModuleId === 'checklist-module') {
                            renderChecklist();
@@ -935,7 +960,7 @@
 
             // Aba 4: NF's
             const nfsGrid = document.getElementById('nfs-grid');
-            for (let i = 1; i <= 152; i++) {
+            for (let i = 1; i <= 50; i++) {
                 nfsGrid.innerHTML += `
                     <div class="flex items-center gap-2">
                         <label for="nf-${i}" class="text-sm font-medium w-12"> ${i}</label>
@@ -1506,6 +1531,8 @@
             const resetAllBtn = document.getElementById('contador-reset');
 
             let counters = [];
+            let counterChart = null;
+            let incrementHistory = [];
 
             function updateCountersLayout() {
                 const count = counters.length;
@@ -1520,6 +1547,109 @@
                     cards.forEach(card => card.classList.add('sm:row-span-2'));
                 } else if (count === 3) {
                     cards[2].classList.add('sm:col-span-2');
+                }
+            }
+
+            function updateCounterChart() {
+                const chartCanvas = document.getElementById('counter-chart');
+                if (!chartCanvas) return;
+                const ctx = chartCanvas.getContext('2d');
+
+                // Horas fixas das 6h às 19h
+                const fixedLabels = [];
+                for (let i = 6; i <= 19; i++) {
+                    fixedLabels.push(`${i.toString().padStart(2, '0')}:00`);
+                }
+                
+                let data = Array(fixedLabels.length).fill(0);
+
+                incrementHistory.forEach(date => {
+                    const hour = date.getHours();
+                    // O índice é a hora atual menos a hora inicial (6)
+                    const index = hour - 6;
+                    if (index >= 0 && index < data.length) {
+                         data[index]++;
+                    }
+                });
+
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                const textColor = isDarkMode ? '#d1d9e6' : '#5a6474';
+                
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
+
+                if (counterChart) {
+                    // Atualiza o gráfico existente
+                    counterChart.data.labels = fixedLabels;
+                    counterChart.data.datasets[0].data = data;
+                    counterChart.options.scales.x.ticks.color = textColor;
+                    counterChart.options.scales.y.ticks.color = textColor;
+                    counterChart.options.scales.x.grid.color = gridColor;
+                    counterChart.options.scales.y.grid.color = gridColor;
+                    counterChart.options.plugins.tooltip.backgroundColor = isDarkMode ? 'rgba(31, 41, 55, 0.8)' : 'rgba(224, 229, 236, 0.8)';
+                    counterChart.options.plugins.tooltip.titleColor = textColor;
+                    counterChart.options.plugins.tooltip.bodyColor = textColor;
+                    counterChart.options.plugins.tooltip.borderColor = gridColor;
+                    counterChart.update();
+                } else {
+                    // Cria um novo gráfico
+                    counterChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: fixedLabels,
+                            datasets: [{
+                                label: 'Adições',
+                                data: data,
+                                backgroundColor: accentColor,
+                                borderColor: accentColor,
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: isDarkMode ? 'rgba(31, 41, 55, 0.8)' : 'rgba(224, 229, 236, 0.8)',
+                                    titleColor: textColor,
+                                    bodyColor: textColor,
+                                    borderColor: gridColor,
+                                    borderWidth: 1,
+                                    padding: 10,
+                                    caretPadding: 10,
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return ` ${context.parsed.y} adições`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { 
+                                        color: textColor, 
+                                        stepSize: 1,
+                                        callback: function(value) {
+                                            if (Math.floor(value) === value) {
+                                                return value;
+                                            }
+                                        }
+                                    },
+                                    grid: { color: gridColor }
+                                },
+                                x: {
+                                    ticks: { color: textColor },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
                 }
             }
 
@@ -1616,6 +1746,9 @@
                     plusBtn.addEventListener('click', () => {
                         value += parseInt(incrementInput.value) || 1;
                         instance.updateDisplay();
+                        // Adiciona o registro de tempo e atualiza o gráfico
+                        incrementHistory.push(new Date());
+                        updateCounterChart();
                     });
                     minusBtn.addEventListener('click', () => {
                         value -= parseInt(incrementInput.value) || 1;
@@ -1641,11 +1774,26 @@
             resetAllBtn.addEventListener('click', () => {
                 const startValue = parseInt(startInput.value) || 0;
                 counters.forEach(counter => {
-                    clearInterval(counter.timerInterval);
-                    counter.timerInterval = null;
-                    counter.value = startValue;
-                    counter.updateDisplay();
+                    // Esta parte precisa ser ajustada para resetar o valor interno
+                    // Por simplicidade, vamos remover e recriar os contadores
                 });
+
+                // Limpa todos os contadores da tela
+                while (countersGrid.firstChild) {
+                    countersGrid.removeChild(countersGrid.firstChild);
+                }
+                counters = [];
+                
+                // Limpa o histórico e o gráfico
+                incrementHistory = [];
+                if (counterChart) {
+                    counterChart.destroy();
+                    counterChart = null;
+                }
+                updateCounterChart();
+
+                // Adiciona um contador inicial
+                addCounterBtn.click();
             });
 
             // --- LÓGICA DO MÓDULO CHECKLIST ---
@@ -1873,7 +2021,7 @@
                 container.querySelector('#checklist-items-view').classList.add('hidden');
 
                 const flowsView = container.querySelector('#checklist-flows-view');
-                let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">';
+                let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">';
                 for (const flowKey in checklistData.flows) {
                     const flow = checklistData.flows[flowKey];
                     html += `
