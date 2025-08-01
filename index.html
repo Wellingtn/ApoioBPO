@@ -1408,6 +1408,7 @@
                     "PRAZO DE VALIDADE": "O DOCUMENTO ANEXADO ESTÁ FORA DO PRAZO DE VALIDADE (90 DIAS). FAVOR ANEXAR UM DOCUMENTO ATUALIZADO QUE COMPROVE A INCLUSÃO/ALTERAÇÃO.",
                     "CHAVES INCORRETAS": "O DOCUMENTO FOI ANEXADO NA CHAVE INCORRETA. FAVOR CORRIGIR.",
                     "ASSINATURAS INVÁLIDAS": "O DOCUMENTO ANEXADO CONTÉM ASSINATURAS INVÁLIDAS OU HÍBRIDAS. FAVOR ANEXAR DOCUMENTO COM ASSINATURAS VÁLIDAS.",
+                    "ASSINATURAS FALTANTES": "O DOCUMENTO ANEXADO NÃO CONTÉM AS ASSINATURAS OBRIGATÓRIAS. FAVOR ANEXAR DOCUMENTO COM ASSINATURAS VÁLIDAS.",
                     "VÍNCULO NÃO ENCONTRADO": "NÃO FOI POSSÍVEL LOCALIZAR O VÍNCULO DO ASSOCIADO COM O TERCEIRO MENCIONADO NO DOCUMENTO. FAVOR ANEXAR DOCUMENTO QUE COMPROVE O VÍNCULO.",
                     "FALTA DE DOCUMENTO COMPROBATÓRIO": "FAVOR ANEXAR A DOCUMENTAÇÃO QUE COMPROVE A INCLUSÃO/ALTERAÇÃO.",
                     "DESCRIÇÃO DIVERGENTE": "A DESCRIÇÃO INFORMADA NO FLUXO NÃO CONDIZ COM OS COMPROVANTES ANEXADOS.",
@@ -1916,7 +1917,23 @@
             const checklistData = {
                 "flows": {
                     "bem_novo": { "icon": "🏠", "name": "Bem Novo", "documents": {} },
-                    "certidao": { "icon": "📄", "name": "Certidão", "documents": {} },
+                    "certidao": {
+                        "icon": "📄",
+                        "name": "Certidão",
+                        "documents": {
+                            "caf_pronaf": {
+                                "name": "CAF Pronaf",
+                                "icon": "📄",
+                                "imageUrl": "./documents/certidao/caf_pronaf/caf_pronaf.jpg",
+                                "checklist": {
+                                    "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                                    "O número do documento está correto?": "NUMERO DO DOCUMENTO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
+                                }
+                            }
+                        } 
+                    },
                     "endereco": { 
                         "icon": "📍",
                         "name": "Endereço",
@@ -1937,6 +1954,18 @@
                                 "name": "Conta de Internet",
                                 "icon": "🌐",
                                 "imageUrl": "./documents/endereco/conta_internet/conta_internet.jpg",
+                                "checklist": {
+                                    "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                                    "O logradouro está correto?": "LOGRADOURO",
+                                    "O número do endereço é valido?": "NUMERO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
+                                }
+                            },
+                            "recibo_do_pagador": {
+                                "name": "Recibo do Pagador",
+                                "icon": "📄",
+                                "imageUrl": "./documents/endereco/recibo_do_pagador/recibo_do_pagador.jpg",
                                 "checklist": {
                                     "O documento é valido?": "DOCUMENTO INVÁLIDO",
                                     "O logradouro está correto?": "LOGRADOURO",
@@ -2048,6 +2077,30 @@
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
                                     "O documento esta correto?": "DOCUMENTO INVÁLIDO",
                                     "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                }
+                            },
+                            "fcpr": {
+                                "name": "FCPR",
+                                "icon": "📄",
+                                "imageUrls": ["./documents/renda/fcpr/fcpr_1.jpg", "./documents/renda/fcpr/fcpr_2.jpg","./documents/renda/fcpr/caf_pronaf.jpg", "./documents/renda/planilha_rebanho/comprovante_assinatura.jpg"],
+                                "checklist": {
+                                    "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
+                                    "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
+                                    "O documento esta correto?": "DOCUMENTO INVÁLIDO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "O documento está assinado?": "ASSINATURAS FALTANTES"
+                                }
+                            },
+                            "planilha_rebanho": {
+                                "name": "Planilha de Rebanho",
+                                "icon": "📄",
+                                "imageUrls": ["./documents/renda/planilha_rebanho/planilha_rebanho.jpg", "./documents/renda/planilha_rebanho/comprovante_assinatura.jpg"],
+                                "checklist": {
+                                    "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
+                                    "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
+                                    "O documento esta correto?": "DOCUMENTO INVÁLIDO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "O documento está assinado?": "ASSINATURAS FALTANTES"
                                 }
                             }
                             //Adicione mais documentos conforme necessário 
