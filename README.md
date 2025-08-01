@@ -14,6 +14,20 @@
 
 O ApoioBPO é uma aplicação web front-end projetada para ser uma ferramenta de apoio completa para os analistas de BPO (Business Process Outsourcing) da Meta para suporte às atividades de BPO relacionadas ao Banco Cooperativo Sicoob S.A. O sistema centraliza uma série de calculadoras, consultores e utilitários que visam otimizar, padronizar e agilizar as tarefas diárias de análise e atualização de cadastro, avaliação de renda e gestão de produtividade.
 
+## ⚖️ Regras de Uso e Licença
+
+Este software é de uso interno e restrito, destinado exclusivamente à equipe autorizada da **Meta Serviços em Informática S.A.** no âmbito das atividades prestadas ao Sicoob.
+
+**Ao utilizar esta aplicação, o usuário concorda em:**
+- Utilizar o sistema de forma responsável e exclusivamente para fins profissionais.
+- Manter a confidencialidade absoluta sobre todos os dados acessados ou gerados.
+- Não compartilhar credenciais de acesso.
+- Reportar imediatamente qualquer falha ou problema de segurança.
+
+Este é um software proprietário com todos os direitos reservados. A cópia, modificação, distribuição ou engenharia reversa são estritamente proibidas.
+
+Para detalhes completos sobre os termos, direitos e restrições, **[consulte a LICENÇA completa aqui](LICENSE)**.
+
 ## ✨ Funcionalidades Principais
 
 - Interface Intuitiva: Design moderno com estilo Neumórfico, focado na usabilidade.
