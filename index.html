@@ -117,9 +117,9 @@
         .pagination-dot.active { opacity: 1; transform: scale(1.2); background-color: var(--color-accent); }
         
         @keyframes image-fade-in { from { opacity: 0.4; } to { opacity: 1; } }
-        .image-viewer-content { animation: image-fade-in 0.5s ease-in-out; }
+        .image-viewer-content-wrapper { animation: image-fade-in 0.5s ease-in-out; }
         
-        #terms-modal.hidden, #info-modal.hidden { display: none; }
+        #terms-modal.hidden, #info-modal.hidden, #image-viewer-modal.hidden { display: none; }
         #main-content.blurred { filter: blur(5px) saturate(0.9); transform: scale(0.98); pointer-events: none; user-select: none; transition: all 0.3s ease-out; }
         
         #accept-terms-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -132,6 +132,14 @@
                 0 0 20px var(--color-accent),
                 inset 2px 2px 5px var(--color-shadow-2),
                 inset -2px -2px 5px var(--color-shadow-1);
+        }
+        
+        #image-viewer-content {
+            transition: transform 0.2s ease-out;
+            cursor: grab;
+        }
+        #image-viewer-content.dragging {
+            cursor: grabbing;
         }
 
     </style>
@@ -676,6 +684,24 @@
         </nav>
     </div>
 
+    <!-- MODAL DE VISUALIZAÇÃO DE IMAGEM -->
+    <div id="image-viewer-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden bg-black/80 backdrop-blur-sm overflow-hidden">
+        <button id="image-viewer-close" class="absolute top-4 right-4 text-white p-2 rounded-full transition-colors z-20 hover:bg-white/20">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+            <button id="zoom-out-btn" class="text-white p-2 rounded-full transition-colors hover:bg-white/20">
+                <i data-lucide="zoom-out" class="w-6 h-6"></i>
+            </button>
+            <button id="zoom-in-btn" class="text-white p-2 rounded-full transition-colors hover:bg-white/20">
+                <i data-lucide="zoom-in" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div id="image-viewer-wrapper" class="relative w-full h-full flex items-center justify-center image-viewer-content-wrapper">
+            <img id="image-viewer-content" src="" alt="Imagem Ampliada" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+        </div>
+    </div>
+
     <!-- MODAL DE INFORMAÇÕES (CRÉDITOS) -->
     <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
         <div class="modal-overlay absolute inset-0 bg-[var(--color-bg)] opacity-80"></div>
@@ -756,12 +782,19 @@
             const infoModal = document.getElementById('info-modal');
             const modalOverlay = infoModal.querySelector('.modal-overlay');
             const modalCloseBtn = infoModal.querySelector('.modal-close-btn');
+            const mainContent = document.getElementById('main-content');
 
             // --- Elementos do Modal de Termos ---
             const termsModal = document.getElementById('terms-modal');
             const acceptTermsBtn = document.getElementById('accept-terms-btn');
             const termsCheckbox = document.getElementById('terms-checkbox');
-            const mainContent = document.getElementById('main-content');
+            
+            // --- Elementos do Modal de Visualização de Imagem ---
+            const imageViewerModal = document.getElementById('image-viewer-modal');
+            const imageViewerClose = document.getElementById('image-viewer-close');
+            const imageViewerContent = document.getElementById('image-viewer-content');
+            const zoomInBtn = document.getElementById('zoom-in-btn');
+            const zoomOutBtn = document.getElementById('zoom-out-btn');
 
 
             // --- FUNÇÕES AUXILIARES ---
@@ -802,15 +835,102 @@
             // --- LÓGICA DO MODAL DE INFORMAÇÕES (CRÉDITOS) ---
             infoButton.addEventListener('click', () => {
                 infoModal.classList.remove('hidden');
+                mainContent.classList.add('blurred');
                 safeCreateIcons();
             });
 
             function closeModal() {
                 infoModal.classList.add('hidden');
+                mainContent.classList.remove('blurred');
             }
 
             modalOverlay.addEventListener('click', closeModal);
             modalCloseBtn.addEventListener('click', closeModal);
+            
+            // --- LÓGICA DO MODAL DE VISUALIZAÇÃO DE IMAGEM COM ZOOM ---
+            let zoomLevel = 1;
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            function applyTransform() {
+                imageViewerContent.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
+            }
+
+            function openImageViewer(src) {
+                if (!imageViewerModal || !mainContent || !imageViewerContent) return;
+                imageViewerContent.src = src;
+                imageViewerModal.classList.remove('hidden');
+                mainContent.classList.add('blurred');
+                safeCreateIcons();
+            }
+
+            function closeImageViewer() {
+                if (!imageViewerModal || !mainContent) return;
+                imageViewerModal.classList.add('hidden');
+                mainContent.classList.remove('blurred');
+                imageViewerContent.src = ''; // Limpa o src para evitar flash da imagem antiga
+                // Reset zoom and pan on close
+                zoomLevel = 1;
+                translateX = 0;
+                translateY = 0;
+                applyTransform();
+            }
+
+            zoomInBtn.addEventListener('click', () => {
+                zoomLevel = Math.min(zoomLevel + 0.2, 5); // Max zoom 5x
+                applyTransform();
+            });
+
+            zoomOutBtn.addEventListener('click', () => {
+                zoomLevel = Math.max(zoomLevel - 0.2, 0.5); // Min zoom 0.5x
+                if (zoomLevel <= 1) { // Reset pan when zooming out to fit
+                    translateX = 0;
+                    translateY = 0;
+                }
+                applyTransform();
+            });
+
+            imageViewerContent.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomInBtn.click();
+                } else {
+                    zoomOutBtn.click();
+                }
+            });
+
+            imageViewerContent.addEventListener('mousedown', (e) => {
+                if (zoomLevel > 1) {
+                    e.preventDefault();
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    imageViewerContent.classList.add('dragging');
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    applyTransform();
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                imageViewerContent.classList.remove('dragging');
+            });
+
+
+            imageViewerClose.addEventListener('click', closeImageViewer);
+            imageViewerModal.addEventListener('click', (e) => {
+                if (e.target === imageViewerModal) { // Fecha apenas se clicar no fundo
+                    closeImageViewer();
+                }
+            });
+
 
             // --- LÓGICA DA NAVEGAÇÃO E MÓDULOS ---
             let currentModuleId = null;
@@ -1773,11 +1893,6 @@
             
             resetAllBtn.addEventListener('click', () => {
                 const startValue = parseInt(startInput.value) || 0;
-                counters.forEach(counter => {
-                    // Esta parte precisa ser ajustada para resetar o valor interno
-                    // Por simplicidade, vamos remover e recriar os contadores
-                });
-
                 // Limpa todos os contadores da tela
                 while (countersGrid.firstChild) {
                     countersGrid.removeChild(countersGrid.firstChild);
@@ -1808,7 +1923,19 @@
                             "conta_energia": { 
                                 "name": "Conta de Energia", 
                                 "icon": "⚡",
-                                "imageUrls": ["./documents/endereco/conta_energia_1.jpg", "./documents/endereco/conta_energia_2.jpg"],
+                                "imageUrls": ["./documents/endereco/conta_energia/conta_energia_1.jpg", "./documents/endereco/conta_energia/conta_energia_2.jpg"],
+                                "checklist": {
+                                    "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                                    "O logradouro está correto?": "LOGRADOURO",
+                                    "O número do endereço é valido?": "NUMERO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                    "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
+                                }
+                            },
+                            "conta_internet": {
+                                "name": "Conta de Internet",
+                                "icon": "🌐",
+                                "imageUrl": "./documents/endereco/conta_internet/conta_internet.jpg",
                                 "checklist": {
                                     "O documento é valido?": "DOCUMENTO INVÁLIDO",
                                     "O logradouro está correto?": "LOGRADOURO",
@@ -1817,7 +1944,8 @@
                                     "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                                 }
                             }
-                        } },
+                        }
+                     },
                     "fonte_de_renda": { 
                         "icon": "💰", 
                         "name": "Fonte de Renda", 
@@ -1825,7 +1953,7 @@
                             "declaracao_de_renda": { 
                                 "name": "Declaração de Renda", 
                                 "icon": "📝", 
-                                "imageUrl": "./documents/renda/declaracao_renda.jpg",
+                                "imageUrl": "./documents/renda/declaracao_renda/declaracao_renda.jpg",
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
@@ -1837,7 +1965,9 @@
                             "pgdas_d" : {
                                 "name": "PGDAS-D",
                                 "icon": "📄",
-                                "imageUrls": ["./documents/renda/pgdas_d.jpg", "./documents/renda/recibo_pgdas_d.jpg", "./documents/renda/comprovante_opcao_simples.jpg"],
+                                "imageUrls": ["./documents/renda/pgdas_d/pgdas_d.jpg",
+                                              "./documents/renda/pgdas_d/recibo_pgdas_d.jpg",
+                                              "./documents/renda/pgdas_d/comprovante_opcao_simples.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O documento esta correto?": "DOCUMENTO INVÁLIDO",
@@ -1850,7 +1980,10 @@
                             "extrato_simples": {
                                 "name": "Extrato do simples",
                                 "icon": "📄",
-                                "imageUrls": ["./documents/renda/extrato_simples_1.jpg", "./documents/renda/extrato_simples_2.jpg", "./documents/renda/extrato_simples_3.jpg", "./documents/renda/comprovante_opcao_simples.jpg"],
+                                "imageUrls": ["./documents/renda/extrato_simples/extrato_simples_1.jpg",
+                                              "./documents/renda/extrato_simples/extrato_simples_2.jpg",
+                                              "./documents/renda/extrato_simples/extrato_simples_3.jpg",
+                                              "./documents/renda/extrato_simples/comprovante_opcao_simples.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O documento esta correto?": "DOCUMENTO INVÁLIDO",
@@ -1863,7 +1996,7 @@
                             "relatorio_inss":{
                                 "name": "Relatório INSS",
                                 "icon": "👴",
-                                "imageUrl": ["./documents/renda/relatorio_inss.jpg"],
+                                "imageUrl": ["./documents/renda/relatorio_inss/relatorio_inss.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
@@ -1874,7 +2007,8 @@
                             "holerite":{
                                 "name": "Holerite",
                                 "icon": "📃",
-                                "imageUrls": ["./documents/renda/holerite_1.jpg", "./documents/renda/holerite_2.jpg"],
+                                "imageUrls": ["./documents/renda/holerite/holerite_1.jpg",
+                                              "./documents/renda/holerite/holerite_2.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
@@ -1885,7 +2019,18 @@
                             "declaracao_inss":{
                                 "name": "Declaração INSS",
                                 "icon": "👵",
-                                "imageUrl": "./documents/renda/declaracao_inss.jpg",
+                                "imageUrl": "./documents/renda/declaracao_inss/declaracao_inss.jpg",
+                                "checklist": {
+                                    "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
+                                    "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
+                                    "O documento esta correto?": "DOCUMENTO INVÁLIDO",
+                                    "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                                }
+                            },
+                            "Notas Fiscais":{
+                                "name": "Notas Fiscais",
+                                "icon": "📄",
+                                "imageUrls": ["./documents/renda/nota_fiscal/nota_fiscal.jpg","./documents/renda/nota_fiscal/recibo_nf.jpg"],
                                 "checklist": {
                                     "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
                                     "O valor da renda está correto?": "RENDA MENSAL INVÁLIDA",
@@ -1904,7 +2049,7 @@
                             "cnh_digital":{
                                 "name": "CNH Digital",
                                 "icon": "🚗",
-                                "imageUrl": "./documents/pessoa/cnh_digital.jpg",
+                                "imageUrl": "./documents/pessoa/cnh_digital/cnh_digital.jpg",
                                 "checklist": {
                                     "O documento é válido?": "DOCUMENTO INVÁLIDO",
                                     "O tipo de documento é correto?": "TIPO DE DOCUMENTO",
@@ -1949,7 +2094,12 @@
                 const pageNextBtn = e.target.closest('.checklist-page-next');
                 const pagePrevBtn = e.target.closest('.checklist-page-prev');
                 const backToItemsBtn = e.target.closest('.checklist-back-to-items');
+                const imageToView = e.target.closest('#image-viewer-container img');
 
+                if (imageToView) {
+                    openImageViewer(imageToView.src);
+                    return;
+                }
                 if (flowBtn) {
                     showDocumentsView(flowBtn.dataset.flow);
                 } else if (docBtn) {
@@ -2183,7 +2333,7 @@
 
                 function updateView() {
                     const currentImage = images[currentIndex];
-                    imageContainer.innerHTML = `<img src="${currentImage}" alt="Documento" class="w-full h-full object-contain rounded-xl image-viewer-content" onerror="this.onerror=null;this.src='https://placehold.co/400x550/e0e5ec/5a6474?text=Imagem+não+encontrada';">`;
+                    imageContainer.innerHTML = `<img src="${currentImage}" alt="Documento" class="w-full h-full object-contain rounded-xl image-viewer-content cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x550/e0e5ec/5a6474?text=Imagem+não+encontrada';">`;
                     
                     if (images.length > 1) {
                         paginationContainer.innerHTML = `
@@ -2341,9 +2491,9 @@
                     termsModal.classList.add('animate-fade-out');
                     termsModal.addEventListener('animationend', () => {
                         termsModal.classList.add('hidden');
+                        mainContent.classList.remove('blurred');
                     }, { once: true });
 
-                    mainContent.classList.remove('blurred');
                     initializeApp();
                 }, { once: true });
             }
