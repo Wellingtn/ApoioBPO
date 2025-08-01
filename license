@@ -1,0 +1,84 @@
+LICENÇA DE USO DE SOFTWARE
+
+Sistema ApoioBPO
+Versão 1.6.0 – Agosto de 2025
+1. Identificação do Software
+
+Nome Comercial: ApoioBPO – Sistema de Apoio a Processos de BPO
+
+Descrição Técnica:
+Software destinado ao suporte operacional da equipe de Business Process Outsourcing (BPO), com funcionalidades especializadas para:
+
+    Cálculo de renda de Pessoa Física e Jurídica
+
+    Análise de atividades agropecuárias
+
+    Verificação automatizada de CNPJ
+
+    Checklist documental
+
+    Registro e contagem de atividades por hora
+
+    Consulta de pareceres técnicos e regras de operação
+
+O software é projetado para uso interno e exclusivo por equipe previamente autorizada.
+2. Titularidade e Direitos Autorais
+
+Titular da Propriedade Intelectual:
+© 2025 Wellington Juan Dutra Oliveira. Todos os direitos reservados.
+
+Colaboradores:
+Gabriel Artur Lopes Feltes
+Mauricio Gabriel Freiberger Konig
+Erika Mendonça Figueira
+Bruno Corrêa Alves
+
+Este software, incluindo código-fonte, design, lógica de negócio, banco de dados, documentação interna, modelos de cálculo e interface gráfica, está protegido pela Lei de Direitos Autorais Brasileira (Lei nº 9.610/98) e tratados internacionais.
+3. Concessão de Licença
+
+Concede-se o direito de uso limitado, não exclusivo, intransferível e revogável do software ApoioBPO, restrito à equipe interna da Meta Serviços em Informática S.A., para uso exclusivamente profissional no âmbito das atividades de BPO prestadas ao Banco Cooperativo Sicoob S.A.
+4. Restrições de Uso
+
+É estritamente proibido:
+
+    Utilizar o sistema fora do horário comercial ou ambiente corporativo;
+
+    Compartilhar acesso com terceiros não autorizados;
+
+    Copiar, distribuir, sublicenciar ou revender o sistema;
+
+    Modificar, descompilar, fazer engenharia reversa ou tentar acessar o código-fonte;
+
+    Utilizar ou copiar documentos, regras de negócio, pareceres ou checklists sem autorização formal;
+
+    Armazenar ou transmitir dados fora da rede corporativa sem autorização prévia.
+
+5. Confidencialidade
+
+Todas as informações acessadas, processadas ou armazenadas pelo ApoioBPO são estritamente confidenciais, incluindo:
+
+    Dados de clientes ou associados;
+
+    Cálculos realizados;
+
+    Regras e documentos de análise;
+
+    Pareceres técnicos e checklists.
+
+O usuário compromete-se a manter o sigilo e não divulgar, reproduzir ou armazenar externamente qualquer dado, mesmo após desligamento da empresa.
+6. Suporte Técnico
+
+Erros, falhas ou inconsistências devem ser reportados imediatamente ao suporte interno via canais oficiais (e-mail corporativo, Microsoft Teams, ou ferramenta designada).
+7. Responsabilidade Limitada
+
+O sistema é fornecido “como está” (“as is”), sem garantias expressas ou implícitas. Os autores não se responsabilizam por:
+
+    Decisões financeiras ou operacionais tomadas com base nos resultados;
+
+    Danos diretos, indiretos, incidentais ou consequenciais;
+
+    Falhas decorrentes de uso inadequado ou não autorizado.
+
+8. Rescisão
+
+Violação de qualquer cláusula implicará revogação imediata da licença, sem notificação prévia. A empresa pode restringir ou bloquear o acesso em caso de mau uso.
