@@ -1,6 +1,21 @@
 <p align="center">
-  <img src="./images/meta_logo.png" alt="Sicoob Logo" width="300"/>
-  <img src="./images/sicoob-seeklogo.png" alt="Sicoob Logo" width="300"/>
+<table>
+<tr>
+<td align="right" width="45%">
+<a href="https://www.meta.com.br/" target="_blank">
+<img src="./images/meta_logo.png" alt="Meta Logo" width="200"/>
+</a>
+</td>
+<td align="center" width="10%">
+<div style="border-left: 1px solid #555; height: 50px; margin-left: auto; margin-right: auto;"></div>
+</td>
+<td align="left" width="45%">
+<a href="https://www.sicoob.com.br/" target="_blank">
+<img src="./images/sicoob-seeklogo.png" alt="Sicoob Logo" width="200"/>
+</a>
+</td>
+</tr>
+</table>
 </p>
 
 # ApoioBPO – Sistema de Apoio a Processos de BPO
