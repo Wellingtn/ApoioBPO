@@ -1,21 +1,11 @@
 <p align="center">
-<table>
-<tr style="border: none;">
-<td align="right" width="45%" style="border: none;">
 <a href="https://www.meta.com.br/" target="_blank">
-<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/wellingtn/ApoioBPO/main/images/meta_logo.png" alt="Meta Logo" width="200"/>
+<img src="./images/meta_logo.png" alt="Meta Logo" width="220">
 </a>
-</td>
-<td align="center" width="10%" style="border: none;">
-<div style="border-left: 1px solid #555; height: 50px; margin-left: auto; margin-right: auto;"></div>
-</td>
-<td align="left" width="45%" style="border: none;">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="https://www.sicoob.com.br/" target="_blank">
-<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/wellingtn/ApoioBPO/main/images/sicoob-seeklogo.png" alt="Sicoob Logo" width="200"/>
+<img src="./images/sicoob-seeklogo.png" alt="Sicoob Logo" width="220">
 </a>
-</td>
-</tr>
-</table>
 </p>
 
 # ApoioBPO – Sistema de Apoio a Processos de BPO
