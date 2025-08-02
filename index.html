@@ -651,6 +651,7 @@
                     <!-- Abas do Módulo Contador -->
                     <div class="flex mb-4 border-b border-slate-300 dark:border-slate-600 flex-shrink-0">
                         <button class="contador-tab-button py-2 px-4 font-semibold" data-tab="contador-main">Contador</button>
+                        <button class="contador-tab-button py-2 px-4 font-semibold text-subtle" data-tab="contador-dashboard">Dashboard</button>
                         <button class="contador-tab-button py-2 px-4 font-semibold text-subtle" data-tab="contador-history">Histórico</button>
                     </div>
 
@@ -700,6 +701,49 @@
                          <div id="finalizar-dia-feedback" class="text-center p-4 rounded-2xl neumorphic-inset text-green-500 font-semibold hidden animate-fade-in"></div>
                     </div>
 
+                    <!-- Conteúdo da Aba de Dashboard -->
+                    <div id="contador-dashboard-tab" class="contador-tab-content hidden h-full">
+                        <div class="flex flex-col h-full gap-6">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                <!-- Card: Total de Registros -->
+                                <div class="p-4 rounded-2xl neumorphic-inset text-center">
+                                    <h4 class="text-sm font-medium text-subtle">Total de Registros</h4>
+                                    <p id="dashboard-total" class="text-3xl font-bold text-accent mt-1">0</p>
+                                </div>
+                                <!-- Card: Média Diária -->
+                                <div class="p-4 rounded-2xl neumorphic-inset text-center">
+                                    <h4 class="text-sm font-medium text-subtle">Média Diária</h4>
+                                    <p id="dashboard-avg" class="text-3xl font-bold text-accent mt-1">0</p>
+                                </div>
+                                <!-- Card: Dia Mais Produtivo -->
+                                <div class="p-4 rounded-2xl neumorphic-inset text-center">
+                                    <h4 class="text-sm font-medium text-subtle">Dia Mais Produtivo</h4>
+                                    <p id="dashboard-max-day" class="text-3xl font-bold text-accent mt-1">0</p>
+                                    <p id="dashboard-max-day-date" class="text-xs text-subtle"></p>
+                                </div>
+                                <!-- Card: Sequência Atual -->
+                                <div class="p-4 rounded-2xl neumorphic-inset text-center">
+                                    <h4 class="text-sm font-medium text-subtle">Sequência Atual</h4>
+                                    <p id="dashboard-streak" class="text-3xl font-bold text-accent mt-1">0 dias</p>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6 flex-1">
+                                <div class="p-4 rounded-2xl neumorphic-inset flex flex-col min-h-[300px]">
+                                    <h3 class="text-sm text-subtle uppercase tracking-wide mb-4 flex-shrink-0">Distribuição Semanal</h3>
+                                    <div class="relative flex-grow">
+                                        <canvas id="dashboard-pie-chart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-2xl neumorphic-inset flex flex-col min-h-[300px]">
+                                    <h3 class="text-sm text-subtle uppercase tracking-wide mb-4 flex-shrink-0">Totais das Últimas 4 Semanas</h3>
+                                    <div class="relative flex-grow">
+                                        <canvas id="dashboard-weekly-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Conteúdo da Aba de Histórico -->
                     <div id="contador-history-tab" class="contador-tab-content hidden h-full">
                         <div class="flex flex-col h-full gap-4">
@@ -708,10 +752,17 @@
                                 <button class="history-filter-btn p-2 px-4 rounded-xl neumorphic-outset-sm text-sm font-semibold" data-period="month">Últimos 12 Meses</button>
                                 <button class="history-filter-btn p-2 px-4 rounded-xl neumorphic-outset-sm text-sm font-semibold" data-period="year">Últimos 10 Anos</button>
                             </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset flex-1 flex flex-col min-h-[300px]">
+                            <div id="history-total-display" class="text-center font-semibold mt-2"></div>
+                            <div class="p-4 rounded-2xl neumorphic-inset flex-1 flex flex-col min-h-[250px]">
                                 <h3 id="history-chart-title" class="text-sm text-subtle uppercase tracking-wide mb-4 flex-shrink-0 text-center"></h3>
                                 <div class="relative flex-grow">
                                     <canvas id="history-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-2xl neumorphic-inset flex-1 flex flex-col min-h-[250px]">
+                                <h3 class="text-sm text-subtle uppercase tracking-wide mb-4 flex-shrink-0">Tendência dos Últimos 30 Dias</h3>
+                                <div class="relative flex-grow">
+                                    <canvas id="history-trend-chart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -885,6 +936,9 @@
                             renderHistoryChart(activeFilter.dataset.period);
                         }
                     }
+                    if(dashboardTrendChart) {
+                        renderDashboard();
+                    }
                 }
             });
             
@@ -1033,6 +1087,7 @@
                                updateCounterChart();
                                const defaultFilter = document.querySelector('.history-filter-btn[data-period="week"]');
                                if(defaultFilter) defaultFilter.click();
+                               renderDashboard();
                            }, 50);
                        }
                        if (targetModuleId === 'checklist-module') {
@@ -1560,6 +1615,9 @@
             let counters = [];
             let counterChart = null;
             let historyChart = null;
+            let dashboardTrendChart = null;
+            let dashboardPieChart = null;
+            let dashboardWeeklyChart = null;
             const DAILY_HISTORY_KEY = 'apoioBpoDailyHistory';
             const INCREMENT_HISTORY_KEY = 'apoioBpoIncrementHistory';
 
@@ -1649,47 +1707,41 @@
                 const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
 
                 if (counterChart) {
-                    counterChart.data.labels = fixedLabels;
-                    counterChart.data.datasets[0].data = data;
-                    counterChart.options.scales.x.ticks.color = textColor;
-                    counterChart.options.scales.y.ticks.color = textColor;
-                    counterChart.options.scales.x.grid.color = gridColor;
-                    counterChart.options.scales.y.grid.color = gridColor;
-                    counterChart.update();
-                } else {
-                    counterChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: fixedLabels,
-                            datasets: [{
-                                label: 'Adições',
-                                data: data,
-                                backgroundColor: accentColor,
-                                borderRadius: 5,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { 
-                                        color: textColor, 
-                                        stepSize: 1,
-                                        callback: v => (Number.isInteger(v) ? v : null)
-                                    },
-                                    grid: { color: gridColor }
+                    counterChart.destroy();
+                }
+                
+                counterChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: fixedLabels,
+                        datasets: [{
+                            label: 'Adições',
+                            data: data,
+                            backgroundColor: accentColor,
+                            borderRadius: 5,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { 
+                                    color: textColor, 
+                                    stepSize: 1,
+                                    callback: v => (Number.isInteger(v) ? v : null)
                                 },
-                                x: {
-                                    ticks: { color: textColor },
-                                    grid: { display: false }
-                                }
+                                grid: { color: gridColor }
+                            },
+                            x: {
+                                ticks: { color: textColor },
+                                grid: { display: false }
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
 
             function createCounterInstance(id, initialValue, isTimer, title, initialTimerVal, isStarred = false) {
@@ -1787,6 +1839,10 @@
             });
             
             finalizarDiaBtn.addEventListener('click', () => {
+                if (!confirm("Tem certeza que deseja finalizar o dia? O valor dos contadores com estrela será salvo no histórico e eles serão zerados.")) {
+                    return;
+                }
+
                 const totalDoDia = counters
                     .filter(c => c.isStarred && !c.isTimer)
                     .reduce((sum, counter) => sum + counter.getValue(), 0);
@@ -1845,24 +1901,41 @@
                         historyChart.destroy();
                         historyChart = null;
                     }
+                    if(dashboardTrendChart) {
+                        dashboardTrendChart.destroy();
+                        dashboardTrendChart = null;
+                    }
+                    if(dashboardPieChart) {
+                        dashboardPieChart.destroy();
+                        dashboardPieChart = null;
+                    }
+                    if(dashboardWeeklyChart) {
+                        dashboardWeeklyChart.destroy();
+                        dashboardWeeklyChart = null;
+                    }
                     
                     updateCounterChart();
                     loadCountersState();
                 }
             });
 
-            // --- LÓGICA DO HISTÓRICO DO CONTADOR ---
+            // --- LÓGICA DO HISTÓRICO E DASHBOARD DO CONTADOR ---
             const contadorTabButtons = document.querySelectorAll('.contador-tab-button');
             const contadorTabContents = document.querySelectorAll('.contador-tab-content');
             const historyFilterButtons = document.querySelectorAll('.history-filter-btn');
             const historyChartTitle = document.getElementById('history-chart-title');
+            const historyTotalDisplay = document.getElementById('history-total-display');
 
             contadorTabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetTabId = `${button.dataset.tab}-tab`;
                     
-                    contadorTabButtons.forEach(btn => btn.classList.add('text-subtle'));
+                    contadorTabButtons.forEach(btn => {
+                        btn.classList.add('text-subtle');
+                        btn.classList.remove('text-accent', 'font-semibold');
+                    });
                     button.classList.remove('text-subtle');
+                    button.classList.add('text-accent', 'font-semibold');
                     
                     contadorTabContents.forEach(content => {
                         content.classList.toggle('hidden', content.id !== targetTabId);
@@ -1872,6 +1945,9 @@
                         const activeFilter = document.querySelector('.history-filter-btn.active') || document.querySelector('.history-filter-btn[data-period="week"]');
                         activeFilter.classList.add('active');
                         renderHistoryChart(activeFilter.dataset.period);
+                        renderTrendChart(); // Renderiza o gráfico de tendência aqui
+                    } else if (targetTabId === 'contador-dashboard-tab') {
+                        renderDashboard();
                     }
                 });
             });
@@ -1948,51 +2024,230 @@
                 const { labels, data, title } = getHistoryChartData(period);
                 historyChartTitle.textContent = title;
 
+                const total = data.reduce((sum, value) => sum + value, 0);
+                historyTotalDisplay.innerHTML = `Total no Período: <span class="text-accent font-bold">${total}</span>`;
+
                 const isDarkMode = document.documentElement.classList.contains('dark');
                 const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
                 const textColor = isDarkMode ? '#d1d9e6' : '#5a6474';
                 const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
 
                 if (historyChart) {
-                    historyChart.data.labels = labels;
-                    historyChart.data.datasets[0].data = data;
-                    historyChart.options.scales.x.ticks.color = textColor;
-                    historyChart.options.scales.y.ticks.color = textColor;
-                    historyChart.options.scales.x.grid.color = gridColor;
-                    historyChart.options.scales.y.grid.color = gridColor;
-                    historyChart.update();
-                } else {
-                    historyChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Adições',
-                                data: data,
-                                backgroundColor: accentColor,
-                                borderRadius: 5,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { color: textColor, stepSize: 1, callback: v => (Number.isInteger(v) ? v : null) },
-                                    grid: { color: gridColor }
-                                },
-                                x: {
-                                    ticks: { color: textColor },
-                                    grid: { display: false }
-                                }
+                    historyChart.destroy();
+                }
+                
+                historyChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Adições',
+                            data: data,
+                            backgroundColor: accentColor,
+                            borderRadius: 5,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: textColor, stepSize: 1, callback: v => (Number.isInteger(v) ? v : null) },
+                                grid: { color: gridColor }
+                            },
+                            x: {
+                                ticks: { color: textColor },
+                                grid: { display: false }
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
 
+            function renderTrendChart() {
+                const trendCanvas = document.getElementById('history-trend-chart');
+                if (!trendCanvas) return;
+                const ctx = trendCanvas.getContext('2d');
+                const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
+                
+                const labels = [];
+                const data = [];
+                for (let i = 29; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    const dateString = d.toISOString().slice(0, 10);
+                    labels.push(d.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'}));
+                    
+                    const dayEntry = history.find(entry => entry.date === dateString);
+                    data.push(dayEntry ? dayEntry.count : 0);
+                }
+
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                const textColor = isDarkMode ? '#d1d9e6' : '#5a6474';
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
+
+                if (dashboardTrendChart) {
+                    dashboardTrendChart.destroy();
+                }
+
+                dashboardTrendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Contagem',
+                            data: data,
+                            borderColor: accentColor,
+                            backgroundColor: accentColor + '33', // com transparência
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: accentColor,
+                            pointBorderColor: accentColor,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
+                            },
+                            x: {
+                                ticks: { color: textColor },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderDashboard() {
+                const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
+                if (history.length === 0) {
+                    document.getElementById('dashboard-total').textContent = 0;
+                    document.getElementById('dashboard-avg').textContent = 0;
+                    document.getElementById('dashboard-max-day').textContent = 0;
+                    document.getElementById('dashboard-max-day-date').textContent = 'Nenhum registro';
+                    document.getElementById('dashboard-streak').textContent = '0 dias';
+                    return;
+                }
+
+                // Calcular Métricas
+                const total = history.reduce((sum, entry) => sum + entry.count, 0);
+                const avg = (total / history.length).toFixed(1);
+                const maxDay = history.reduce((max, entry) => entry.count > max.count ? entry : max, history[0]);
+                
+                // Calcular Sequência
+                const historyDates = new Set(history.map(e => e.date));
+                let streak = 0;
+                let currentDate = new Date();
+                while(true) {
+                    const dateString = currentDate.toISOString().slice(0, 10);
+                    if (historyDates.has(dateString)) {
+                        streak++;
+                        currentDate.setDate(currentDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
+                }
+
+                // Atualizar Cards
+                document.getElementById('dashboard-total').textContent = total;
+                document.getElementById('dashboard-avg').textContent = avg;
+                document.getElementById('dashboard-max-day').textContent = maxDay.count;
+                document.getElementById('dashboard-max-day-date').textContent = new Date(maxDay.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                document.getElementById('dashboard-streak').textContent = `${streak} dias`;
+                
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const textColor = isDarkMode ? '#d1d9e6' : '#5a6474';
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
+
+                // Gráfico de Pizza (Distribuição Semanal)
+                const pieCanvas = document.getElementById('dashboard-pie-chart');
+                const dayCounts = [0, 0, 0, 0, 0, 0, 0]; // Dom - Sab
+                history.forEach(entry => {
+                    const dayOfWeek = new Date(entry.date).getUTCDay();
+                    dayCounts[dayOfWeek] += entry.count;
+                });
+
+                if (dashboardPieChart) dashboardPieChart.destroy();
+                dashboardPieChart = new Chart(pieCanvas.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                        datasets: [{
+                            data: dayCounts,
+                            backgroundColor: ['#38bdf8', '#60a5fa', '#818cf8', '#a78bfa', '#c084fc', '#e879f9', '#f472b6'],
+                            borderColor: isDarkMode ? '#1f2937' : '#e0e5ec',
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: textColor }
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico de Colunas (Últimas 4 semanas)
+                const weeklyCanvas = document.getElementById('dashboard-weekly-chart');
+                const weeklyLabels = [];
+                const weeklyData = [];
+                for (let i = 3; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - (i * 7));
+                    const weekStart = new Date(d);
+                    weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Inicia no Domingo
+                    
+                    weeklyLabels.push(`Semana de ${weekStart.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'})}`);
+
+                    let weekTotal = 0;
+                    for (let j = 0; j < 7; j++) {
+                        const day = new Date(weekStart);
+                        day.setDate(day.getDate() + j);
+                        const dateString = day.toISOString().slice(0, 10);
+                        const dayEntry = history.find(entry => entry.date === dateString);
+                        if (dayEntry) {
+                            weekTotal += dayEntry.count;
+                        }
+                    }
+                    weeklyData.push(weekTotal);
+                }
+
+                if (dashboardWeeklyChart) dashboardWeeklyChart.destroy();
+                dashboardWeeklyChart = new Chart(weeklyCanvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: weeklyLabels,
+                        datasets: [{
+                            label: 'Contagem Semanal',
+                            data: weeklyData,
+                            backgroundColor: accentColor,
+                            borderRadius: 5,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } },
+                            x: { ticks: { color: textColor }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
 
             // --- LÓGICA DO MÓDULO CHECKLIST ---
             function renderChecklist() {
