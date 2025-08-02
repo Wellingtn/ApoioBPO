@@ -1,17 +1,17 @@
 <p align="center">
 <table>
-<tr>
-<td align="right" width="45%">
+<tr style="border: none;">
+<td align="right" width="45%" style="border: none;">
 <a href="https://www.meta.com.br/" target="_blank">
-<img src="./images/meta_logo.png" alt="Meta Logo" width="200"/>
+<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/wellingtn/ApoioBPO/main/images/meta_logo.png" alt="Meta Logo" width="200"/>
 </a>
 </td>
-<td align="center" width="10%">
+<td align="center" width="10%" style="border: none;">
 <div style="border-left: 1px solid #555; height: 50px; margin-left: auto; margin-right: auto;"></div>
 </td>
-<td align="left" width="45%">
+<td align="left" width="45%" style="border: none;">
 <a href="https://www.sicoob.com.br/" target="_blank">
-<img src="./images/sicoob-seeklogo.png" alt="Sicoob Logo" width="200"/>
+<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/wellingtn/ApoioBPO/main/images/sicoob-seeklogo.png" alt="Sicoob Logo" width="200"/>
 </a>
 </td>
 </tr>
