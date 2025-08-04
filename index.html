@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ApoioBPO - Sistema de Apoio BPO</title>
-    <link rel="icon" type="image/png" href="./images/icone_meta.png">
+    <link rel="icon" type="image/png" href="./images/icone_meta.png" onerror="this.style.display='none'">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -19,9 +19,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
     <!-- Carregando os arquivos de dados externos -->
-    <script src="./data/pareceres.js" defer></script>
-    <script src="./data/regras.js" defer></script>
-    <script src="./data/checklists.js" defer></script>
+    <script src="data/pareceres.js" defer></script>
+    <script src="data/regras.js" defer></script>
+    <script src="data/checklists.js" defer></script>
 
 
     <style type="text/tailwindcss">
@@ -853,6 +853,9 @@
             const zoomInBtn = document.getElementById('zoom-in-btn');
             const zoomOutBtn = document.getElementById('zoom-out-btn');
 
+            // --- Variável de estado para o Checklist ---
+            let checklistState = {};
+
 
             // --- FUNÇÕES AUXILIARES ---
             function formatCurrency(value) {
@@ -1302,6 +1305,7 @@
             const regrasTbody = document.getElementById('regras-irpf-tbody');
             
             function renderRegrasTable() {
+                if(typeof regrasData === 'undefined' || !regrasTbody) return;
                 regrasTbody.innerHTML = '';
                 regrasData.forEach(regra => {
                     const row = `
@@ -1340,21 +1344,23 @@
                 cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center">Consultando...</div>`;
 
                 try {
-                    const response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpj}`);
-                    if (!response.ok) {
-                         const errorData = await response.json().catch(() => null);
-                        let errorMessage = `Erro ${response.status}: Não foi possível consultar o CNPJ. Tente novamente.`;
-                        if (response.status === 404) errorMessage = "CNPJ não encontrado.";
-                        else if (response.status === 429) errorMessage = "Muitas requisições. Por favor, aguarde um minuto.";
-                        else if (errorData && errorData.detalhes) errorMessage = errorData.detalhes;
-                        throw new Error(errorMessage);
-                    }
+                    // Using a public CORS proxy for the CNPJ WS API
+                    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://publica.cnpj.ws/cnpj/${cnpj}`)}`);
+                    if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+                    
                     const data = await response.json();
-                    displayCnpjResults(data);
+                    const content = JSON.parse(data.contents);
+
+                    if (content.status === 404) throw new Error("CNPJ não encontrado.");
+                    if (content.status === 429) throw new Error("Muitas requisições. Por favor, aguarde um minuto.");
+                    if (content.status && content.status !== 200) throw new Error(content.detalhes || `Erro ao consultar o CNPJ.`);
+
+                    displayCnpjResults(content);
                 } catch (error) {
                     cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">${error.message}</div>`;
                 }
             });
+
 
             function displayCnpjResults(data) {
                 const isSimples = data.simples?.optante_pelo_simples ? 'Sim' : 'Não';
@@ -1437,6 +1443,7 @@
             const pareceresContainer = document.getElementById('pareceresContainer');
 
             function populateParecerFilter() {
+                if(typeof pareceresDataCorrigido === 'undefined' || !parecerCategoryFilter) return;
                 parecerCategoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
                 for (const mainCategory in pareceresDataCorrigido) {
                     parecerCategoryFilter.innerHTML += `<option value="${mainCategory}">${mainCategory}</option>`;
@@ -1504,6 +1511,7 @@
             }
             
             function filterPareceres() {
+                if(typeof pareceresDataCorrigido === 'undefined' || !pareceresContainer) return;
                 const searchTerm = searchInput.value.toLowerCase();
                 const selectedCategory = parecerCategoryFilter.value;
                 
@@ -1995,9 +2003,21 @@
 
 
             // --- LÓGICA DO MÓDULO CHECKLIST ---
+            function handleChecklistChange(e) {
+                const checkbox = e.target.closest('.checklist-item-checkbox');
+                if (checkbox) {
+                    const { flow, doc, itemKey } = checkbox.dataset;
+                    if (flow && doc && itemKey) {
+                        checklistState[flow] = checklistState[flow] || {};
+                        checklistState[flow][doc] = checklistState[flow][doc] || {};
+                        checklistState[flow][doc][itemKey] = checkbox.checked;
+                    }
+                }
+            }
+
             function renderChecklist() {
                 const container = document.getElementById('checklist-module');
-                if (!container) return;
+                if (!container || typeof checklistData === 'undefined') return;
                 
                 container.innerHTML = `
                     <div id="checklist-flows-view"></div>
@@ -2008,6 +2028,7 @@
                 showFlowsView();
                 
                 container.addEventListener('click', handleChecklistNavigation);
+                container.addEventListener('change', handleChecklistChange);
             }
 
             function handleChecklistNavigation(e) {
@@ -2039,14 +2060,17 @@
                     }
                 } else if (finishBtn) {
                     const { flow, doc, page } = finishBtn.dataset;
-                    const itemsView = finishBtn.closest('#checklist-items-view');
-                    const checkboxes = itemsView.querySelectorAll('.checklist-item-checkbox');
-                    const itemsContainer = document.getElementById('checklist-items-container');
                     
+                    const allChecklistItems = Object.entries(checklistData.flows[flow].documents[doc].checklist || {});
                     const devolucoes = [];
-                    checkboxes.forEach(cb => {
-                        if (!cb.checked) {
-                            devolucoes.push(cb.dataset.parecer);
+
+                    allChecklistItems.forEach(([itemKey, parecerKey]) => {
+                        const isChecked = checklistState[flow]?.[doc]?.[itemKey] || false;
+                        if (!isChecked) {
+                            const parecerText = findParecerText(parecerKey);
+                            // Formata para "TÍTULO: Parecer completo."
+                            const formattedParecer = `${parecerKey}: ${parecerText || 'Parecer não encontrado.'}`;
+                            devolucoes.push(formattedParecer);
                         }
                     });
 
@@ -2055,7 +2079,7 @@
                     if (devolucoes.length === 0) {
                         resultHTML += `<div class="flex-grow flex flex-col items-center justify-center text-center gap-4"><i data-lucide="party-popper" class="w-16 h-16 text-green-500"></i><p class="text-2xl text-green-500 font-bold">APROVAR</p></div>`;
                     } else {
-                        parecerTextForCopy = devolucoes.join('; ');
+                        parecerTextForCopy = devolucoes.join(' '); // Junta com espaço
                         resultHTML += `<div class="flex-grow"><p class="text-red-500 font-medium">${parecerTextForCopy}</p></div>`;
                     }
 
@@ -2071,6 +2095,7 @@
                     </div>
                     `;
                     
+                    const itemsContainer = document.getElementById('checklist-items-container');
                     itemsContainer.innerHTML = resultHTML;
                     safeCreateIcons();
 
@@ -2225,24 +2250,25 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                              <div class="flex flex-col gap-6 sticky top-4">
                                 <div id="image-viewer-container" class="p-2 rounded-2xl neumorphic-outset relative min-h-[400px] flex-grow">
-                                    </div>
-                                <div id="checklist-pagination-controls" class="flex justify-center">
-                                    </div>
+                                    <!-- Imagem aparece aqui -->
+                                </div>
+                                <div id="image-pagination-controls" class="flex justify-center">
+                                    <!-- Paginação SÓ PARA IMAGENS -->
+                                </div>
                             </div>
 
                             <div id="checklist-items-container" class="p-6 rounded-2xl neumorphic-inset flex flex-col h-full min-h-[50vh]">
-                                </div>
+                                <!-- Itens do checklist e sua paginação aparecem aqui -->
+                            </div>
                         </div>
                     </div>
                 `;
                 
                 const imageContainer = itemsView.querySelector('#image-viewer-container');
-                const paginationContainer = itemsView.querySelector('#checklist-pagination-controls');
+                const imagePaginationContainer = itemsView.querySelector('#image-pagination-controls');
                 
-                paginationContainer.innerHTML = '';
-
                 if (doc.imageUrl || doc.imageUrls) {
-                    setupImageSlider(doc, imageContainer, paginationContainer);
+                    setupImageSlider(doc, imageContainer, imagePaginationContainer);
                 } else {
                     imageContainer.innerHTML = `<div class="flex items-center justify-center h-full text-subtle">Nenhum documento para exibir.</div>`;
                 }
@@ -2258,7 +2284,7 @@
 
                 function updateView() {
                     const currentImage = images[currentIndex];
-                    imageContainer.innerHTML = `<img src="${currentImage}" alt="Documento" class="w-full h-full object-contain rounded-xl image-viewer-content cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x550/e0e5ec/5a6474?text=Imagem+não+encontrada';">`;
+                    imageContainer.innerHTML = `<img src="${currentImage}" alt="Documento" class="w-full h-full object-contain rounded-xl image-viewer-content cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x550/e0e5ec/5a6474?text=Imagem+indisponível';">`;
                     
                     if (images.length > 1) {
                         paginationContainer.innerHTML = `
@@ -2298,10 +2324,7 @@
 
             function renderChecklistPage(flowKey, docKey, pageIndex) {
                 const itemsContainer = document.getElementById('checklist-items-container');
-                const paginationControlsContainer = document.getElementById('checklist-pagination-controls');
-                if (!itemsContainer || !paginationControlsContainer) return;
-                
-                const isPaginationUsedByImageViewer = paginationControlsContainer.innerHTML.trim() !== '';
+                if (!itemsContainer) return;
 
                 const doc = checklistData.flows[flowKey].documents[docKey];
                 const checklistItems = Object.entries(doc.checklist || {});
@@ -2314,12 +2337,16 @@
 
                 let checklistHtml = '<ul class="space-y-4 flex-grow">';
                 pageItems.forEach(([itemKey, parecerKey]) => {
-                    const parecerText = findParecerText(parecerKey) || "Parecer não encontrado.";
-                    const fullParecer = `${parecerKey}: ${parecerText}`;
+                    const isChecked = checklistState[flowKey]?.[docKey]?.[itemKey] || false;
                     checklistHtml += `
                         <li class="checklist-list-item p-3 rounded-lg transition-colors duration-200">
                             <label class="flex items-start gap-4 cursor-pointer">
-                                <input type="checkbox" class="checklist-item-checkbox hidden" data-parecer="${fullParecer}">
+                                <input type="checkbox" class="checklist-item-checkbox hidden" 
+                                       data-parecer-key="${parecerKey}"
+                                       data-item-key="${itemKey}"
+                                       data-flow="${flowKey}"
+                                       data-doc="${docKey}"
+                                       ${isChecked ? 'checked' : ''}>
                                 <span class="custom-checkbox neumorphic-outset-sm">
                                     <i data-lucide="check" class="check-icon w-4 h-4"></i>
                                 </span>
@@ -2329,29 +2356,10 @@
                 });
                 checklistHtml += '</ul>';
 
-                let paginationHtml = '';
-                if (totalPages > 1 && !isPaginationUsedByImageViewer) {
-                    paginationHtml = `
-                        <div class="flex items-center justify-center gap-4">
-                            <button ${pageIndex === 0 ? 'disabled' : ''} class="checklist-page-prev p-3 rounded-full neumorphic-outset-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-90" data-flow="${flowKey}" data-doc="${docKey}" data-page="${pageIndex}">
-                                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                            </button>
-                            <div class="flex gap-2 items-center">
-                    `;
-                    for(let i = 0; i < totalPages; i++) {
-                        paginationHtml += `<div class="pagination-dot ${i === pageIndex ? 'active' : ''}"></div>`;
-                    }
-                    paginationHtml += `
-                            </div>
-                            <button ${pageIndex >= totalPages - 1 ? 'disabled' : ''} class="checklist-page-next p-3 rounded-full neumorphic-outset-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-90" data-flow="${flowKey}" data-doc="${docKey}" data-page="${pageIndex}">
-                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                    `;
-                }
-
+                let paginationHtml = '<div id="checklist-items-pagination" class="flex items-center justify-center gap-4 mt-4 py-2"></div>';
+                
                 let finishButtonHtml = '';
-                if (pageIndex === totalPages - 1 || totalPages === 0) {
+                if (totalPages === 0 || pageIndex >= totalPages - 1) {
                     finishButtonHtml = `
                         <div class="mt-auto pt-6">
                             <button class="checklist-finish-btn w-full p-4 rounded-2xl neumorphic-inset font-semibold text-accent transition-all duration-200 active:scale-95" data-flow="${flowKey}" data-doc="${docKey}" data-page="${pageIndex}">
@@ -2360,28 +2368,49 @@
                         </div>
                     `;
                 }
+                
+                itemsContainer.innerHTML = checklistHtml + paginationHtml + finishButtonHtml;
 
-                itemsContainer.innerHTML = checklistHtml + finishButtonHtml;
-                if (paginationHtml) {
-                    paginationControlsContainer.innerHTML = paginationHtml;
+                const checklistPaginationContainer = itemsContainer.querySelector('#checklist-items-pagination');
+                if (totalPages > 1 && checklistPaginationContainer) {
+                    let paginationControls = `
+                        <button ${pageIndex === 0 ? 'disabled' : ''} class="checklist-page-prev p-3 rounded-full neumorphic-outset-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-90" data-flow="${flowKey}" data-doc="${docKey}" data-page="${pageIndex}">
+                            <i data-lucide="arrow-left" class="w-5 h-5 pointer-events-none"></i>
+                        </button>
+                        <div class="flex gap-2 items-center">
+                            ${Array.from({ length: totalPages }, (_, i) => `<div class="pagination-dot ${i === pageIndex ? 'active' : ''}"></div>`).join('')}
+                        </div>
+                        <button ${pageIndex >= totalPages - 1 ? 'disabled' : ''} class="checklist-page-next p-3 rounded-full neumorphic-outset-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-90" data-flow="${flowKey}" data-doc="${docKey}" data-page="${pageIndex}">
+                            <i data-lucide="arrow-right" class="w-5 h-5 pointer-events-none"></i>
+                        </button>
+                    `;
+                    checklistPaginationContainer.innerHTML = paginationControls;
                 }
+
                 safeCreateIcons();
             }
             
-            function findParecerText(parecerKey) {
+            // *** NOVA FUNÇÃO PARA BUSCAR O TEXTO DO PARECER ***
+            function findParecerText(parecerKeyToFind) {
+                if (typeof pareceresDataCorrigido === 'undefined') return null;
+
                 for (const mainCategory in pareceresDataCorrigido) {
-                    for (const subCategory in pareceresDataCorrigido[mainCategory]) {
-                        if (typeof pareceresDataCorrigido[mainCategory][subCategory] === 'string' && subCategory === parecerKey) {
-                             return pareceresDataCorrigido[mainCategory][subCategory];
-                        }
-                        if (typeof pareceresDataCorrigido[mainCategory][subCategory] === 'object') {
-                            if (pareceresDataCorrigido[mainCategory][subCategory][parecerKey]) {
-                                return pareceresDataCorrigido[mainCategory][subCategory][parecerKey];
+                    const subCategories = pareceresDataCorrigido[mainCategory];
+                    for (const subCategoryTitle in subCategories) {
+                        const items = subCategories[subCategoryTitle];
+                        // Se for um objeto de pareceres (como em "Pareceres Gerais")
+                        if (typeof items === 'object' && items !== null) {
+                            if (items[parecerKeyToFind]) {
+                                return items[parecerKeyToFind];
                             }
+                        } 
+                        // Se a própria chave da subcategoria for o parecer (caso raro)
+                        else if (subCategoryTitle === parecerKeyToFind) {
+                             return items;
                         }
                     }
                 }
-                return null;
+                return null; // Retorna nulo se não encontrar
             }
 
 

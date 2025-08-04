@@ -57,6 +57,17 @@ const checklistData = {
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                     }
+                },
+                "cartao_cnpj": {
+                    "name": "Cartão CNPJ",
+                    "icon": "📄",
+                    "imageUrl": "./documents/endereco/cartao_cnpj/cartao_cnpj.jpg",
+                    "checklist": {
+                        "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                        "O tipo de endereço é valido?": "TIPO DE ENDEREÇO",
+                        "O logradouro está correto?": "LOGRADOURO",
+                        "O número do endereço é valido?": "NÚMERO",
+                    }
                 }
             }
          },
@@ -93,7 +104,7 @@ const checklistData = {
                 },
                 "extrato_simples": {
                     "name": "Extrato do simples",
-                    "icon": "📄",
+                    "icon": "🏪",
                     "imageUrls": ["./documents/renda/extrato_simples/extrato_simples_1.jpg",
                                   "./documents/renda/extrato_simples/extrato_simples_2.jpg",
                                   "./documents/renda/extrato_simples/extrato_simples_3.jpg",
@@ -165,7 +176,7 @@ const checklistData = {
                 },
                 "fcpr": {
                     "name": "FCPR",
-                    "icon": "📄",
+                    "icon": "🚜",
                     "imageUrls": ["./documents/renda/fcpr/fcpr_1.jpg", "./documents/renda/fcpr/fcpr_2.jpg","./documents/renda/fcpr/caf_pronaf.jpg", "./documents/renda/planilha_rebanho/comprovante_assinatura.jpg"],
                     "checklist": {
                         "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
@@ -177,7 +188,7 @@ const checklistData = {
                 },
                 "planilha_rebanho": {
                     "name": "Planilha de Rebanho",
-                    "icon": "📄",
+                    "icon": "🐑",
                     "imageUrls": ["./documents/renda/planilha_rebanho/planilha_rebanho.jpg", "./documents/renda/planilha_rebanho/comprovante_assinatura.jpg"],
                     "checklist": {
                         "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
@@ -208,8 +219,31 @@ const checklistData = {
                         "O estado civil é correto?": "ESTADO CIVIL",
                         "A naturalidade é correta?": "NATURALIDADE",
                     }
+                },
+                "alteracao_contratual": {
+                    "name": "Alteração Contratual",
+                    "icon": "📄",
+                    "imageUrls": ["./documents/pessoa/alteracao_contratual/alteracao_contratual_1.jpg",
+                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_2.jpg",
+                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_3.jpg",
+                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_4.jpg",
+                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_5.jpg",
+                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_6.jpg",
+                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_7.jpg"],
+                    "checklist": {
+                        "Possui documentos na aba 'Novo'?": "APROVAÇÃO SEM VALIDAÇÃO",
+                        "A data de constituição está correta?": "DATA DE CONSTITUIÇÃO",
+                        "O número de registro no órgão competente está correto?": "NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE",
+                        "A data de registro no órgão competente está correta?": "DATA DE REGISTRO NO ÓRGÃO COMPETENTE",
+                        "O número da última alteração do contrato social está correto?": "NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL",
+                        "A data da última alteração do contrato social está correta?": "DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL",
+                        "O número do contrato social está correto?": "NÚMERO DO CONTRATO SOCIAL",
+                        "O capital social está correto?": "CAPITAL SOCIAL",
+                        "A inscrição estadual está correta?": "INSCRIÇÃO ESTADUAL",
+                        "Opção MEI está correta?": "OPÇÃO MEI",
+                    }
                 }
-            } 
+            }
         },
         "produtividade": { "icon": "📊", "name": "Produtividade", "documents": {} },
         "produtor": { "icon": "🌾", "name": "Produtor", "documents": {} },

@@ -63,10 +63,10 @@ const pareceresDataCorrigido = {
             "DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "CORRIGIR A DATA DA ÚLTIMA ALTERAÇÃO DO CONTRato SOCIAL PARA {}.",
             "NÚMERO DE REGISTRO DE REPRESENTAÇÃO": "CORRIGIR O NÚMERO DE REGISTRO DE REPRESENTAÇÃO PARA {}.",
             "DATA DE REGISTRO DE REPRESENTAÇÃO": "CORRIGIR A DATA DE REGISTRO DE REPRESENTAÇÃO PARA {}.",
-            "OPÇÃO MEI": "AJUSTAR A OPÇÃO 'MEI' PARA {}.",
+            "OPÇÃO MEI": "Solicitamos a correção da Opção mei para {}, conforme consta no documento anexado. .",
             "NÚMERO DO CONTRATO SOCIAL": "CORRIGIR O NÚMERO DO CONTRATO SOCIAL PARA {}.",
             "CAPITAL SOCIAL": "CORRIGIR O CAPITAL SOCIAL PARA R$ {}.",
-            "INSCRIção ESTADUAL": "CORRIGIR A INSCRIÇÃO ESTADUAL PARA {}.",
+            "INSCRIÇÃO ESTADUAL": "CORRIGIR A INSCRIÇÃO ESTADUAL PARA {}.",
             "DATA DE REGISTRO NO ÓRGÃO COMPETENTE": "CORRIGIR A DATA DE REGISTRO NO ÓRGÃO COMPETENTE PARA {}."
         }
     },
