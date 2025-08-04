@@ -229,7 +229,7 @@ const checklistData = {
                                   "./documents/pessoa/alteracao_contratual/alteracao_contratual_4.jpg",
                                   "./documents/pessoa/alteracao_contratual/alteracao_contratual_5.jpg",
                                   "./documents/pessoa/alteracao_contratual/alteracao_contratual_6.jpg",
-                                  "./documents/pessoa/alteracao_contratual/alteracao_contratual_7.jpg"],
+                                  "./documents/pessoa/alteracao_contratual/termo_autenticacao.jpg"],
                     "checklist": {
                         "Possui documentos na aba 'Novo'?": "APROVAÇÃO SEM VALIDAÇÃO",
                         "A data de constituição está correta?": "DATA DE CONSTITUIÇÃO",
