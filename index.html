@@ -1615,9 +1615,13 @@
                 }
             }
             
-            function saveIncrementToHistory() {
+            function saveActivityToHistory(type, count) {
                 let history = JSON.parse(localStorage.getItem(INCREMENT_HISTORY_KEY) || '[]');
-                history.push(new Date().toISOString());
+                history.push({
+                    timestamp: new Date().toISOString(),
+                    type: type, // 'add' ou 'subtract'
+                    count: count
+                });
                 localStorage.setItem(INCREMENT_HISTORY_KEY, JSON.stringify(history));
             }
 
@@ -1629,11 +1633,11 @@
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
-                const incrementHistory = JSON.parse(localStorage.getItem(INCREMENT_HISTORY_KEY) || '[]');
+                const activityHistory = JSON.parse(localStorage.getItem(INCREMENT_HISTORY_KEY) || '[]');
 
-                const todaysIncrements = incrementHistory
-                    .map(iso => new Date(iso))
-                    .filter(date => date >= today);
+                const todaysActivities = activityHistory
+                    .map(item => ({ ...item, timestamp: new Date(item.timestamp) }))
+                    .filter(item => item.timestamp >= today);
 
                 const fixedLabels = [];
                 for (let i = 6; i <= 19; i++) {
@@ -1642,18 +1646,21 @@
                 
                 let data = Array(fixedLabels.length).fill(0);
 
-                todaysIncrements.forEach(date => {
-                    const hour = date.getHours();
+                todaysActivities.forEach(activity => {
+                    const hour = activity.timestamp.getHours();
                     const index = hour - 6;
                     if (index >= 0 && index < data.length) {
-                         data[index]++;
+                        if (activity.type === 'add') {
+                            data[index] += activity.count;
+                        } else if (activity.type === 'subtract') {
+                            data[index] -= activity.count;
+                        }
                     }
                 });
 
                 const isDarkMode = document.documentElement.classList.contains('dark');
                 const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
                 const textColor = isDarkMode ? '#d1d9e6' : '#5a6474';
-                
                 const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim();
 
                 if (counterChart) {
@@ -1670,7 +1677,7 @@
                         data: {
                             labels: fixedLabels,
                             datasets: [{
-                                label: 'Adições',
+                                label: 'Atividades',
                                 data: data,
                                 backgroundColor: accentColor,
                                 borderRadius: 5,
@@ -1699,6 +1706,7 @@
                     });
                 }
             }
+
 
             function createCounterInstance(id, initialValue, isTimer, title, initialTimerVal, isStarred = false) {
                 const counterElement = counterTemplate.content.cloneNode(true).firstElementChild;
@@ -1763,17 +1771,35 @@
                     // Lógica do Timer (inalterada)
                 } else {
                     plusBtn.addEventListener('click', () => {
-                        value += parseInt(incrementInput.value) || 1;
+                        const change = parseInt(incrementInput.value) || 1;
+                        value += change;
                         instance.updateDisplay();
                         if (instance.isStarred) {
-                           saveIncrementToHistory();
+                           saveActivityToHistory('add', change);
                            updateCounterChart();
                         }
                         saveCountersState();
                     });
+                    
+                    // *** CORREÇÃO: Event listener para o botão de subtrair com limite mínimo de 0 ***
                     minusBtn.addEventListener('click', () => {
-                        value -= parseInt(incrementInput.value) || 1;
+                        const change = parseInt(incrementInput.value) || 1;
+                        const originalValue = value;
+
+                        // Garante que o valor não ficará negativo
+                        const newValue = Math.max(0, originalValue - change);
+                        
+                        // Calcula a mudança real para registrar no histórico
+                        const actualChange = originalValue - newValue;
+
+                        value = newValue;
                         instance.updateDisplay();
+
+                        // Só registra a subtração se o valor realmente diminuiu
+                        if (instance.isStarred && actualChange > 0) {
+                            saveActivityToHistory('subtract', actualChange);
+                            updateCounterChart();
+                        }
                         saveCountersState();
                     });
                 }
