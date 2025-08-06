@@ -1319,7 +1319,7 @@
                 });
             }
 
-            // --- LÓGICA DO MÓDULO DE CONSULTA CNPJ ---
+            // --- LÓGICA DO MÓDULO DE CONSULTA CNPJ (CORRIGIDO) ---
             const cnpjInput = document.getElementById('cnpj-input');
             const consultarCnpjBtn = document.getElementById('consultar-cnpj');
             const limparCnpjBtn = document.getElementById('limpar-cnpj');
@@ -1337,43 +1337,57 @@
             consultarCnpjBtn.addEventListener('click', async () => {
                 const cnpj = cnpjInput.value.replace(/\D/g, '');
                 if (cnpj.length !== 14) {
-                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">Por favor, insira um CNPJ válido.</div>`;
+                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">Por favor, insira um CNPJ válido com 14 dígitos.</div>`;
                     return;
                 }
 
-                cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center">Consultando...</div>`;
+                consultarCnpjBtn.disabled = true;
+                consultarCnpjBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Consultando...
+                `;
 
                 try {
-                    // Using a public CORS proxy for the CNPJ WS API
-                    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://publica.cnpj.ws/cnpj/${cnpj}`)}`);
-                    if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+                    // **MUDANÇA**: Usando a BrasilAPI, que é mais rápida e estável, e não precisa de proxy.
+                    const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+                    
+                    if (response.status === 404) {
+                       throw new Error("CNPJ não encontrado na base de dados.");
+                    }
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.statusText}`);
+                    }
                     
                     const data = await response.json();
-                    const content = JSON.parse(data.contents);
+                    displayCnpjResults(data);
 
-                    if (content.status === 404) throw new Error("CNPJ não encontrado.");
-                    if (content.status === 429) throw new Error("Muitas requisições. Por favor, aguarde um minuto.");
-                    if (content.status && content.status !== 200) throw new Error(content.detalhes || `Erro ao consultar o CNPJ.`);
-
-                    displayCnpjResults(content);
                 } catch (error) {
-                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500">${error.message}</div>`;
+                    cnpjResultsContainer.innerHTML = `<div class="p-4 rounded-2xl neumorphic-inset text-center text-red-500"><strong>Falha na consulta:</strong> ${error.message}</div>`;
+                } finally {
+                    consultarCnpjBtn.disabled = false;
+                    consultarCnpjBtn.innerHTML = `
+                        <i data-lucide="search" class="w-5 h-5"></i> Consultar
+                    `;
+                    safeCreateIcons();
                 }
             });
 
 
             function displayCnpjResults(data) {
-                const isSimples = data.simples?.optante_pelo_simples ? 'Sim' : 'Não';
-                const isSimei = data.simples?.optante_pelo_simei ? 'Sim' : 'Não';
-                const porteEmpresa = data.porte?.descricao || 'Não informado';
-                const lastUpdated = data.atualizado_em ? new Date(data.atualizado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Não informado';
+                // **MUDANÇA**: Função adaptada para o formato de resposta da BrasilAPI.
+                const isSimples = data.opcao_pelo_simples ? 'Sim' : 'Não';
+                const isSimei = data.opcao_pelo_mei ? 'Sim' : 'Não';
+                const porteEmpresa = data.porte || 'Não informado';
+                const dataAbertura = data.data_inicio_atividade ? new Date(data.data_inicio_atividade).toLocaleDateString('pt-BR') : 'Não informado';
                 
                 const nomeEmpresa = data.razao_social || 'Não informado'; 
-                const data_abertura = data.data_inicio_atividade ? new Date(data.data_inicio_atividade.split('/').reverse().join('-')).toLocaleDateString('pt-BR') : 'Não informado';
 
                 let sociosHtml = '<p class="text-subtle">Nenhum sócio encontrado.</p>';
-                if (data.socios && data.socios.length > 0) {
-                    sociosHtml = `<ul class="list-disc list-inside">${data.socios.map(socio => `<li>${socio.nome} <span class="text-subtle">(${socio.qualificacao_socio.descricao || 'Sócio'})</span></li>`).join('')}</ul>`;
+                if (data.qsa && data.qsa.length > 0) {
+                    sociosHtml = `<ul class="list-disc list-inside space-y-1">${data.qsa.map(socio => `<li>${socio.nome_socio} <span class="text-subtle">(${socio.qualificacao_socio})</span></li>`).join('')}</ul>`;
                 }
 
                 const rawJsonHtml = `
@@ -1384,29 +1398,33 @@
                 `;
 
                 cnpjResultsContainer.innerHTML = `
-                    <div class="space-y-4">
+                    <div class="space-y-4 animate-fade-in">
                         <div class="p-4 rounded-2xl neumorphic-inset">
-                            <p class="text-sm text-subtle uppercase tracking-wide">Nome da Empresa</p>
+                            <p class="text-sm text-subtle uppercase tracking-wide">Razão Social</p>
                             <p class="text-lg font-bold text-accent mt-1">${nomeEmpresa}</p>
+                        </div>
+                        <div class="p-4 rounded-2xl neumorphic-inset">
+                            <p class="text-sm text-subtle uppercase tracking-wide">Nome Fantasia</p>
+                            <p class="font-semibold mt-1">${data.nome_fantasia || 'Não informado'}</p>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Data de Abertura</p>
-                                <p class="font-semibold mt-1">${data_abertura}</p>
+                                <p class="font-semibold mt-1">${dataAbertura}</p>
                             </div>
                             <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Última Atualização</p>
-                                <p class="font-semibold mt-1">${lastUpdated}</p>
+                                <p class="text-sm text-subtle uppercase tracking-wide">Situação Cadastral</p>
+                                <p class="text-lg font-bold text-accent mt-1">${data.descricao_situacao_cadastral || 'Não informado'}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Situação Cadastral</p>
-                                <p class="text-lg font-bold text-accent mt-1">${data.situacao_cadastral?.descricao || 'Não informado'}</p>
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Porte da Empresa</p>
                                 <p class="font-semibold mt-1">${porteEmpresa}</p>
+                            </div>
+                             <div class="p-4 rounded-2xl neumorphic-inset">
+                                <p class="text-sm text-subtle uppercase tracking-wide">Capital Social</p>
+                                <p class="font-semibold mt-1">${formatCurrency(data.capital_social)}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1415,16 +1433,20 @@
                                 <p class="text-lg font-bold text-accent mt-1">${isSimples}</p>
                             </div>
                             <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Optante SIMEI</p>
+                                <p class="text-sm text-subtle uppercase tracking-wide">Optante MEI</p>
                                 <p class="text-lg font-bold text-accent mt-1">${isSimei}</p>
                             </div>
                         </div>
                         <div class="p-4 rounded-2xl neumorphic-inset">
                             <p class="text-sm text-subtle uppercase tracking-wide">Atividade Principal (CNAE)</p>
-                            <p class="font-semibold mt-1">${data.estabelecimento?.atividade_principal?.descricao || 'Não informado'}</p>
+                            <p class="font-semibold mt-1">${data.cnae_fiscal_descricao || 'Não informado'}</p>
+                        </div>
+                         <div class="p-4 rounded-2xl neumorphic-inset">
+                            <p class="text-sm text-subtle uppercase tracking-wide">Endereço</p>
+                            <p class="font-semibold mt-1">${data.logradouro || ''}, ${data.numero || ''} - ${data.bairro || ''}, ${data.municipio || ''} - ${data.uf || ''}, CEP: ${data.cep || ''}</p>
                         </div>
                         <div class="p-4 rounded-2xl neumorphic-inset">
-                            <p class="text-sm text-subtle uppercase tracking-wide mb-2">Sócios</p>
+                            <p class="text-sm text-subtle uppercase tracking-wide mb-2">Quadro de Sócios e Administradores (QSA)</p>
                             <div class="font-semibold">${sociosHtml}</div>
                         </div>
                         ${rawJsonHtml}
