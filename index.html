@@ -663,7 +663,7 @@
                             <div class="flex flex-col gap-4 p-4 md:p-6 rounded-2xl neumorphic-inset h-full justify-center">
                                  <h3 class="text-sm text-subtle uppercase tracking-wide">Configurações</h3>
                                  <div class="flex items-center justify-between">
-                                     <label for="timer-toggle" class="font-medium text-sm">Modo Timer</label>
+                                     <label for="timer-toggle" class="font-medium text-sm">Modo Timer (Valor em minutos)</label>
                                      <div class="toggle-container">
                                          <input type="checkbox" name="toggle" id="timer-toggle" class="toggle-checkbox"/>
                                          <label for="timer-toggle" class="toggle-label"></label>
@@ -794,8 +794,8 @@
                 <button class="counter-minus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
                 <button class="counter-plus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
                 
-                <button class="timer-play w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play"></i></button>
-                <button class="timer-reset w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw"></i></button>
+                <button class="timer-play-pause w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play" class="w-6 h-6"></i></button>
+                <button class="timer-reset w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw" class="w-6 h-6"></i></button>
             </div>
         </div>
     </template>
@@ -1092,11 +1092,19 @@
             const relFaturamentoInputs = document.querySelectorAll('.rel-faturamento-input');
             const calcularRelFaturamento = () => {
                 let total = 0;
+                let camposPreenchidos = 0; // Conta os campos com valor
                 relFaturamentoInputs.forEach(input => {
-                    total += parseLocalFloat(input.value);
+                    const valor = parseLocalFloat(input.value);
+                    if (valor > 0) {
+                        total += valor;
+                        camposPreenchidos++; // Incrementa o contador se houver valor
+                    }
                 });
                 document.getElementById('rel-faturamento-renda-12-meses').textContent = formatCurrency(total);
-                document.getElementById('rel-faturamento-renda-mensal').textContent = formatCurrency(total / 12);
+                
+                // Divide pelo número de campos preenchidos, ou 0 se nenhum for preenchido
+                const rendaMensal = camposPreenchidos > 0 ? total / camposPreenchidos : 0;
+                document.getElementById('rel-faturamento-renda-mensal').textContent = formatCurrency(rendaMensal);
             };
             relFaturamentoInputs.forEach(input => input.addEventListener('input', calcularRelFaturamento));
             document.getElementById('rel-faturamento-limpar').addEventListener('click', () => {
@@ -1351,7 +1359,6 @@
                 `;
 
                 try {
-                    // **MUDANÇA**: Usando a BrasilAPI, que é mais rápida e estável, e não precisa de proxy.
                     const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
                     
                     if (response.status === 404) {
@@ -1377,7 +1384,6 @@
 
 
             function displayCnpjResults(data) {
-                // **MUDANÇA**: Função adaptada para o formato de resposta da BrasilAPI.
                 const isSimples = data.opcao_pelo_simples ? 'Sim' : 'Não';
                 const isSimei = data.opcao_pelo_mei ? 'Sim' : 'Não';
                 const porteEmpresa = data.porte || 'Não informado';
@@ -1592,31 +1598,32 @@
             let historyChart = null;
             const DAILY_HISTORY_KEY = 'apoioBpoDailyHistory';
             const INCREMENT_HISTORY_KEY = 'apoioBpoIncrementHistory';
+            const COUNTERS_STATE_KEY = 'apoioBpoCountersState_v3'; // Chave atualizada para nova estrutura
 
             function saveCountersState() {
-                const state = counters.map(c => ({
-                    id: c.id,
-                    title: c.getTitle(),
-                    value: c.getValue(),
-                    isTimer: c.isTimer,
-                    isStarred: c.isStarred, // Salva o estado da estrela
-                    initialTimerValue: c.initialTimerValue
-                }));
-                localStorage.setItem('apoioBpoCountersState', JSON.stringify(state));
+                const state = counters.map(c => c.getState());
+                localStorage.setItem(COUNTERS_STATE_KEY, JSON.stringify(state));
             }
 
             function loadCountersState() {
-                const savedState = JSON.parse(localStorage.getItem('apoioBpoCountersState') || 'null');
+                const savedState = JSON.parse(localStorage.getItem(COUNTERS_STATE_KEY) || 'null');
                 countersGrid.innerHTML = ''; 
+                counters.forEach(c => c.destroy()); // Limpa timers antigos
                 counters = [];
 
                 if (savedState && savedState.length > 0) {
                     savedState.forEach(state => {
-                        createCounterInstance(state.id, state.value, state.isTimer, state.title, state.initialTimerValue, state.isStarred);
+                        createCounterInstance(state);
                     });
                 } else {
-                    // Cria o primeiro contador como "starred" por padrão
-                    createCounterInstance(Date.now(), 0, false, "Contador Principal", undefined, true);
+                    // Estado inicial com um contador padrão
+                    createCounterInstance({
+                        id: Date.now(),
+                        title: "Contador Principal",
+                        isTimer: false,
+                        isStarred: true,
+                        value: 0
+                    });
                 }
                 updateCountersLayout();
             }
@@ -1641,7 +1648,7 @@
                 let history = JSON.parse(localStorage.getItem(INCREMENT_HISTORY_KEY) || '[]');
                 history.push({
                     timestamp: new Date().toISOString(),
-                    type: type, // 'add' ou 'subtract'
+                    type: type,
                     count: count
                 });
                 localStorage.setItem(INCREMENT_HISTORY_KEY, JSON.stringify(history));
@@ -1728,97 +1735,150 @@
                     });
                 }
             }
-
-
-            function createCounterInstance(id, initialValue, isTimer, title, initialTimerVal, isStarred = false) {
+            
+            // ==========================================================
+            // ===== INÍCIO DA SEÇÃO DO TIMER CORRIGIDA =================
+            // ==========================================================
+            function createCounterInstance(initialState) {
                 const counterElement = counterTemplate.content.cloneNode(true).firstElementChild;
+                const { id, title, isTimer, isStarred } = initialState;
                 counterElement.dataset.id = id;
                 
+                // Elementos do DOM
                 const titleElement = counterElement.querySelector('.counter-title');
                 const display = counterElement.querySelector('.counter-display');
                 const plusBtn = counterElement.querySelector('.counter-plus');
                 const minusBtn = counterElement.querySelector('.counter-minus');
                 const removeBtn = counterElement.querySelector('.remove-counter-btn');
                 const starBtn = counterElement.querySelector('.star-btn');
-                const playBtn = counterElement.querySelector('.timer-play');
+                const playPauseBtn = counterElement.querySelector('.timer-play-pause');
                 const resetBtn = counterElement.querySelector('.timer-reset');
+                const playPauseIcon = playPauseBtn.querySelector('i');
 
-                titleElement.textContent = title || (isTimer ? `Timer ${counters.length + 1}` : `Contador ${counters.length + 1}`);
+                // Estado da instância
+                let instanceState = { ...initialState };
+                let intervalId = null;
+
+                const formatTime = (totalSeconds) => {
+                    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                    return `${minutes}:${seconds}`;
+                };
                 
-                let value = initialValue;
-                let timerInterval = null;
-                let initialTimerValue = initialTimerVal || initialValue;
+                const updateDisplay = () => {
+                    if (instanceState.isTimer) {
+                        display.textContent = formatTime(instanceState.value);
+                        playPauseIcon.dataset.lucide = instanceState.isRunning ? 'pause' : 'play';
+                    } else {
+                        display.textContent = instanceState.value;
+                    }
+                    safeCreateIcons();
+                };
 
-                const instance = {
-                    id, element: counterElement, isTimer, isStarred, initialTimerValue,
-                    getValue: () => value,
-                    getTitle: () => titleElement.textContent,
-                    setValue(newValue) {
-                        value = newValue;
-                        this.updateDisplay();
-                    },
-                    updateDisplay() {
-                        if (isTimer) {
-                            const minutes = Math.floor(value / 60).toString().padStart(2, '0');
-                            const seconds = (value % 60).toString().padStart(2, '0');
-                            display.textContent = `${minutes}:${seconds}`;
-                        } else {
-                            display.textContent = value;
-                        }
-                    },
-                    remove() {
-                        clearInterval(timerInterval);
-                        counterElement.classList.add('animate-fade-out');
-                        counterElement.addEventListener('animationend', () => {
-                            counterElement.remove();
-                            counters = counters.filter(c => c.id !== id);
-                            updateCountersLayout();
+                const startTimer = () => {
+                    if (intervalId || !instanceState.isTimer) return; 
+                    instanceState.isRunning = true;
+                    intervalId = setInterval(() => {
+                        if (instanceState.value > 0) {
+                            instanceState.value--;
+                            updateDisplay();
                             saveCountersState();
-                        }, { once: true });
+                        } else {
+                            stopTimer();
+                        }
+                    }, 1000);
+                    updateDisplay();
+                    saveCountersState();
+                };
+
+                const stopTimer = () => {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    instanceState.isRunning = false;
+                    updateDisplay();
+                    saveCountersState();
+                };
+
+                const toggleTimer = () => {
+                    if (instanceState.isRunning) {
+                        stopTimer();
+                    } else {
+                        startTimer();
                     }
                 };
                 
-                starBtn.classList.toggle('active', instance.isStarred);
-                
-                starBtn.addEventListener('click', () => {
-                    instance.isStarred = !instance.isStarred;
-                    starBtn.classList.toggle('active', instance.isStarred);
+                const resetTimer = () => {
+                    stopTimer();
+                    instanceState.value = instanceState.initialValue;
+                    updateDisplay();
                     saveCountersState();
-                });
+                };
 
-                removeBtn.addEventListener('click', instance.remove);
-                titleElement.addEventListener('blur', saveCountersState);
+                const removeInstance = () => {
+                    stopTimer(); 
+                    counterElement.classList.add('animate-fade-out');
+                    counterElement.addEventListener('animationend', () => {
+                        counterElement.remove();
+                        counters = counters.filter(c => c.id !== id);
+                        updateCountersLayout();
+                        saveCountersState();
+                    }, { once: true });
+                };
+                
+                // Configuração inicial
+                titleElement.textContent = title;
+                starBtn.classList.toggle('active', isStarred);
 
                 if (isTimer) {
-                    // Lógica do Timer (inalterada)
+                    plusBtn.classList.add('hidden');
+                    minusBtn.classList.add('hidden');
+                    playPauseBtn.classList.remove('hidden');
+                    resetBtn.classList.remove('hidden');
+                    display.contentEditable = true;
+
+                    playPauseBtn.addEventListener('click', toggleTimer);
+                    resetBtn.addEventListener('click', resetTimer);
+
+                    display.addEventListener('blur', () => {
+                        const parts = display.textContent.split(':');
+                        let newSeconds = 0;
+                        if (parts.length === 2) {
+                            newSeconds = (parseInt(parts[0], 10) || 0) * 60 + (parseInt(parts[1], 10) || 0);
+                        } else if (parts.length === 1) {
+                            newSeconds = (parseInt(parts[0], 10) || 0) * 60;
+                        }
+                        instanceState.value = newSeconds;
+                        instanceState.initialValue = newSeconds;
+                        stopTimer();
+                        updateDisplay();
+                        saveCountersState();
+                    });
+
+                    if (instanceState.isRunning) {
+                       instanceState.isRunning = false; // Prevent auto-start on load
+                       startTimer();
+                    }
+
                 } else {
                     plusBtn.addEventListener('click', () => {
                         const change = parseInt(incrementInput.value) || 1;
-                        value += change;
-                        instance.updateDisplay();
-                        if (instance.isStarred) {
+                        instanceState.value += change;
+                        updateDisplay();
+                        if (instanceState.isStarred) {
                            saveActivityToHistory('add', change);
                            updateCounterChart();
                         }
                         saveCountersState();
                     });
                     
-                    // *** CORREÇÃO: Event listener para o botão de subtrair com limite mínimo de 0 ***
                     minusBtn.addEventListener('click', () => {
                         const change = parseInt(incrementInput.value) || 1;
-                        const originalValue = value;
-
-                        // Garante que o valor não ficará negativo
+                        const originalValue = instanceState.value;
                         const newValue = Math.max(0, originalValue - change);
-                        
-                        // Calcula a mudança real para registrar no histórico
                         const actualChange = originalValue - newValue;
-
-                        value = newValue;
-                        instance.updateDisplay();
-
-                        // Só registra a subtração se o valor realmente diminuiu
-                        if (instance.isStarred && actualChange > 0) {
+                        instanceState.value = newValue;
+                        updateDisplay();
+                        if (instanceState.isStarred && actualChange > 0) {
                             saveActivityToHistory('subtract', actualChange);
                             updateCounterChart();
                         }
@@ -1826,26 +1886,65 @@
                     });
                 }
                 
-                instance.updateDisplay();
+                // Eventos comuns
+                starBtn.addEventListener('click', () => {
+                    instanceState.isStarred = !instanceState.isStarred;
+                    starBtn.classList.toggle('active', instanceState.isStarred);
+                    saveCountersState();
+                });
+                titleElement.addEventListener('blur', () => {
+                    instanceState.title = titleElement.textContent;
+                    saveCountersState();
+                });
+                removeBtn.addEventListener('click', removeInstance);
+                
+                const instance = {
+                    id,
+                    element: counterElement,
+                    destroy: stopTimer,
+                    getState: () => instanceState,
+                };
+                
                 counters.push(instance);
                 countersGrid.appendChild(counterElement);
-                safeCreateIcons();
+                updateDisplay();
                 counterElement.classList.add('animate-fade-in');
             }
+            // ========================================================
+            // ===== FIM DA SEÇÃO DO TIMER CORRIGIDA ================
+            // ========================================================
+
 
             addCounterBtn.addEventListener('click', () => {
                 if (counters.length >= 4) return;
-                const initialValue = parseInt(startInput.value) || 0;
                 const isTimer = timerToggle.checked;
-                createCounterInstance(Date.now(), initialValue, isTimer, `Contador ${counters.length + 1}`, undefined, false);
+                const initialValue = parseInt(startInput.value) || 0;
+
+                const newState = {
+                    id: Date.now(),
+                    title: isTimer ? `Timer ${counters.length + 1}` : `Contador ${counters.length + 1}`,
+                    isTimer: isTimer,
+                    isStarred: false,
+                    isRunning: false,
+                };
+                
+                if (isTimer) {
+                    const seconds = initialValue * 60;
+                    newState.value = seconds;
+                    newState.initialValue = seconds;
+                } else {
+                    newState.value = initialValue;
+                }
+
+                createCounterInstance(newState);
                 updateCountersLayout();
                 saveCountersState();
             });
             
             finalizarDiaBtn.addEventListener('click', () => {
                 const totalDoDia = counters
-                    .filter(c => c.isStarred && !c.isTimer)
-                    .reduce((sum, counter) => sum + counter.getValue(), 0);
+                    .filter(c => c.getState().isStarred && !c.getState().isTimer)
+                    .reduce((sum, counter) => sum + counter.getState().value, 0);
 
                 if (totalDoDia <= 0) {
                     finalizarDiaFeedback.textContent = "Nenhuma contagem (com estrela) para salvar hoje.";
@@ -1856,7 +1955,7 @@
                 }
 
                 const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
-                const today = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
+                const today = new Date().toISOString().slice(0, 10);
 
                 const todayEntryIndex = history.findIndex(entry => entry.date === today);
 
@@ -1867,30 +1966,26 @@
                 }
 
                 localStorage.setItem(DAILY_HISTORY_KEY, JSON.stringify(history));
+                
+                localStorage.removeItem(INCREMENT_HISTORY_KEY);
+                updateCounterChart();
 
-                // Resetar contadores
-                const initialValue = parseInt(startInput.value) || 0;
-                counters.forEach(counter => {
-                    if (!counter.isTimer) {
-                        counter.setValue(initialValue);
-                    }
-                });
-                saveCountersState();
-
-                // Feedback visual
-                finalizarDiaFeedback.textContent = `Total de ${totalDoDia} salvo no histórico de hoje!`;
+                finalizarDiaFeedback.textContent = `Total de ${totalDoDia} salvo no histórico de hoje! Contadores resetados.`;
                 finalizarDiaFeedback.classList.remove('hidden', 'text-yellow-500');
                 finalizarDiaFeedback.classList.add('text-green-500');
-                setTimeout(() => finalizarDiaFeedback.classList.add('hidden'), 3000);
+                setTimeout(() => finalizarDiaFeedback.classList.add('hidden'), 4000);
+
+                loadCountersState();
             });
 
             resetAllBtn.addEventListener('click', () => {
                 if (confirm("Você tem certeza que deseja resetar tudo? ISSO APAGARÁ TODOS OS CONTADORES E O HISTÓRICO DE CONTAGEM PERMANENTEMENTE.")) {
                     countersGrid.innerHTML = '';
+                    counters.forEach(c => c.destroy());
                     counters = [];
                     
                     localStorage.removeItem(DAILY_HISTORY_KEY);
-                    localStorage.removeItem('apoioBpoCountersState');
+                    localStorage.removeItem(COUNTERS_STATE_KEY);
                     localStorage.removeItem(INCREMENT_HISTORY_KEY);
 
                     if (counterChart) {
@@ -1902,8 +1997,8 @@
                         historyChart = null;
                     }
                     
-                    updateCounterChart();
                     loadCountersState();
+                    updateCounterChart();
                 }
             });
 
@@ -1925,9 +2020,13 @@
                     });
 
                     if (targetTabId === 'contador-history-tab') {
-                        const activeFilter = document.querySelector('.history-filter-btn.active') || document.querySelector('.history-filter-btn[data-period="week"]');
-                        activeFilter.classList.add('active');
-                        renderHistoryChart(activeFilter.dataset.period);
+                        setTimeout(() => {
+                            const activeFilter = document.querySelector('.history-filter-btn.active') || document.querySelector('.history-filter-btn[data-period="week"]');
+                            if (activeFilter) {
+                               activeFilter.classList.add('active');
+                               renderHistoryChart(activeFilter.dataset.period);
+                            }
+                        }, 0);
                     }
                 });
             });
@@ -1994,6 +2093,7 @@
                     }
                     return { labels, data, title: 'Contagem Finalizada nos Últimos 10 Anos' };
                 }
+                 return { labels: [], data: [], title: '' }; // Fallback
             }
 
             function renderHistoryChart(period) {
@@ -2001,7 +2101,10 @@
                 if (!chartCanvas) return;
                 const ctx = chartCanvas.getContext('2d');
                 
-                const { labels, data, title } = getHistoryChartData(period);
+                const chartData = getHistoryChartData(period);
+                if (!chartData) return;
+
+                const { labels, data, title } = chartData;
                 historyChartTitle.textContent = title;
 
                 const isDarkMode = document.documentElement.classList.contains('dark');
@@ -2080,35 +2183,45 @@
             }
 
             function handleChecklistNavigation(e) {
-                const flowBtn = e.target.closest('.checklist-flow-btn');
-                const docBtn = e.target.closest('.checklist-doc-btn');
-                const backBtn = e.target.closest('.checklist-back-btn');
-                const finishBtn = e.target.closest('.checklist-finish-btn');
-                const copyResultBtn = e.target.closest('.checklist-copy-result-btn');
-                const pageNextBtn = e.target.closest('.checklist-page-next');
-                const pagePrevBtn = e.target.closest('.checklist-page-prev');
-                const backToItemsBtn = e.target.closest('.checklist-back-to-items');
-                const imageToView = e.target.closest('#image-viewer-container img');
+                const target = e.target;
 
+                const imageToView = target.closest('#image-viewer-container img');
                 if (imageToView) {
                     openImageViewer(imageToView.src);
                     return;
                 }
+
+                const flowBtn = target.closest('.checklist-flow-btn');
                 if (flowBtn) {
                     showDocumentsView(flowBtn.dataset.flow);
-                } else if (docBtn) {
+                    return;
+                }
+
+                const docBtn = target.closest('.checklist-doc-btn');
+                if (docBtn) {
                     showChecklistItemsView(docBtn.dataset.flow, docBtn.dataset.doc);
-                } else if (backBtn) {
+                    return;
+                }
+
+                const backBtn = target.closest('.checklist-back-btn');
+                if (backBtn) {
                     const targetView = backBtn.dataset.target;
-                    const flowKey = backBtn.dataset.flow;
                     if (targetView === 'flows') {
                         showFlowsView();
                     } else if (targetView === 'documents') {
-                        showDocumentsView(flowKey);
+                        const flowKey = backBtn.dataset.flow;
+                        if (flowKey) {
+                            showDocumentsView(flowKey);
+                        } else {
+                            showFlowsView();
+                        }
                     }
-                } else if (finishBtn) {
+                    return;
+                }
+
+                const finishBtn = target.closest('.checklist-finish-btn');
+                if (finishBtn) {
                     const { flow, doc, page } = finishBtn.dataset;
-                    
                     const allChecklistItems = Object.entries(checklistData.flows[flow].documents[doc].checklist || {});
                     const devolucoes = [];
 
@@ -2116,7 +2229,6 @@
                         const isChecked = checklistState[flow]?.[doc]?.[itemKey] || false;
                         if (!isChecked) {
                             const parecerText = findParecerText(parecerKey);
-                            // Formata para "TÍTULO: Parecer completo."
                             const formattedParecer = `${parecerKey}: ${parecerText || 'Parecer não encontrado.'}`;
                             devolucoes.push(formattedParecer);
                         }
@@ -2127,7 +2239,7 @@
                     if (devolucoes.length === 0) {
                         resultHTML += `<div class="flex-grow flex flex-col items-center justify-center text-center gap-4"><i data-lucide="party-popper" class="w-16 h-16 text-green-500"></i><p class="text-2xl text-green-500 font-bold">APROVAR</p></div>`;
                     } else {
-                        parecerTextForCopy = devolucoes.join(' '); // Junta com espaço
+                        parecerTextForCopy = devolucoes.join(' ');
                         resultHTML += `<div class="flex-grow"><p class="text-red-500 font-medium">${parecerTextForCopy}</p></div>`;
                     }
 
@@ -2140,25 +2252,40 @@
                                 <i data-lucide="arrow-left-circle" class="w-5 h-5"></i> Voltar
                             </button>
                         </div>
-                    </div>
-                    `;
+                    </div>`;
                     
                     const itemsContainer = document.getElementById('checklist-items-container');
-                    itemsContainer.innerHTML = resultHTML;
+                    if (itemsContainer) itemsContainer.innerHTML = resultHTML;
                     safeCreateIcons();
+                    return;
+                }
 
-                } else if (copyResultBtn) {
+                const copyResultBtn = target.closest('.checklist-copy-result-btn');
+                if (copyResultBtn) {
                     const textToCopy = decodeURIComponent(copyResultBtn.dataset.textToCopy);
                     copyParecer(textToCopy, copyResultBtn);
-                } else if (pageNextBtn) {
+                    return;
+                }
+
+                const pageNextBtn = target.closest('.checklist-page-next');
+                if (pageNextBtn) {
                     const { flow, doc, page } = pageNextBtn.dataset;
                     renderChecklistPage(flow, doc, parseInt(page) + 1);
-                } else if (pagePrevBtn) {
+                    return;
+                }
+
+                const pagePrevBtn = target.closest('.checklist-page-prev');
+                if (pagePrevBtn) {
                     const { flow, doc, page } = pagePrevBtn.dataset;
                     renderChecklistPage(flow, doc, parseInt(page) - 1);
-                } else if (backToItemsBtn) {
+                    return;
+                }
+
+                const backToItemsBtn = target.closest('.checklist-back-to-items');
+                if (backToItemsBtn) {
                     const { flow, doc, page } = backToItemsBtn.dataset;
                     renderChecklistPage(flow, doc, parseInt(page));
+                    return;
                 }
             }
             
@@ -2438,7 +2565,6 @@
                 safeCreateIcons();
             }
             
-            // *** NOVA FUNÇÃO PARA BUSCAR O TEXTO DO PARECER ***
             function findParecerText(parecerKeyToFind) {
                 if (typeof pareceresDataCorrigido === 'undefined') return null;
 
@@ -2446,19 +2572,17 @@
                     const subCategories = pareceresDataCorrigido[mainCategory];
                     for (const subCategoryTitle in subCategories) {
                         const items = subCategories[subCategoryTitle];
-                        // Se for um objeto de pareceres (como em "Pareceres Gerais")
                         if (typeof items === 'object' && items !== null) {
                             if (items[parecerKeyToFind]) {
                                 return items[parecerKeyToFind];
                             }
                         } 
-                        // Se a própria chave da subcategoria for o parecer (caso raro)
                         else if (subCategoryTitle === parecerKeyToFind) {
                              return items;
                         }
                     }
                 }
-                return null; // Retorna nulo se não encontrar
+                return null; 
             }
 
 
