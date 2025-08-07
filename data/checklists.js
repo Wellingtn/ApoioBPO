@@ -11,7 +11,7 @@ const checklistData = {
                     "imageUrl": "./documents/certidao/caf_pronaf/caf_pronaf.jpg",
                     "checklist": {
                         "O documento é valido?": "DOCUMENTO INVÁLIDO",
-                        "O número do documento está correto?": "NUMERO DO DOCUMENTO",
+                        "O número do documento está correto?": "NÚMERO DO DOCUMENTO",
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                     }
@@ -29,7 +29,7 @@ const checklistData = {
                     "checklist": {
                         "O documento é valido?": "DOCUMENTO INVÁLIDO",
                         "O logradouro está correto?": "LOGRADOURO",
-                        "O número do endereço é valido?": "NUMERO",
+                        "O número do endereço é valido?": "NÚMERO",
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                     }
@@ -41,7 +41,7 @@ const checklistData = {
                     "checklist": {
                         "O documento é valido?": "DOCUMENTO INVÁLIDO",
                         "O logradouro está correto?": "LOGRADOURO",
-                        "O número do endereço é valido?": "NUMERO",
+                        "O número do endereço é valido?": "NÚMERO",
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                     }
@@ -53,7 +53,7 @@ const checklistData = {
                     "checklist": {
                         "O documento é valido?": "DOCUMENTO INVÁLIDO",
                         "O logradouro está correto?": "LOGRADOURO",
-                        "O número do endereço é valido?": "NUMERO",
+                        "O número do endereço é valido?": "NÚMERO",
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                     }
