@@ -159,6 +159,15 @@
             fill: #facc15;
             color: #facc15;
         }
+        
+        /* Estilo para o input de data para mostrar o ícone do calendário */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: var(--color-text) invert(0.5) brightness(1.2);
+        }
+        html.dark input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
 
     </style>
 </head>
@@ -273,6 +282,7 @@
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="nfs">NF's</button>
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="quotas">Quotas</button>
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="fcpr">FCPR</button>
+                        <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="calc-datas">Cal. Datas</button>
                     </div>
                     <div>
                         <div id="calculo-simples-tab" class="faturamento-tab-content">
@@ -513,6 +523,30 @@
                                     </button>
                                 </div>
                            </div>
+                        </div>
+                        <div id="calc-datas-tab" class="faturamento-tab-content hidden">
+                            <h3 class="text-2xl font-bold mb-6">Calculadora de Datas</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-end">
+                                <div class="flex flex-col gap-2">
+                                    <label for="data-inicio" class="text-sm font-medium">Data de Início</label>
+                                    <input type="date" id="data-inicio" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="data-fim" class="text-sm font-medium">Data Final</label>
+                                    <input type="date" id="data-fim" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                                <button id="calcular-datas" type="button" class="p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                    <i data-lucide="calendar-clock" class="w-5 h-5"></i> Calcular
+                                </button>
+                                <button id="limpar-datas" type="button" class="p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                                </button>
+                            </div>
+                            <div id="resultado-datas" class="mt-6 p-6 rounded-2xl neumorphic-inset min-h-[100px] text-center flex items-center justify-center hidden animate-fade-in">
+                                <!-- O resultado será exibido aqui -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -794,11 +828,11 @@
             <h4 class="counter-title font-semibold text-center w-full px-8 truncate" contenteditable="true">Contador</h4>
             <span class="counter-display font-bold text-6xl text-accent cursor-pointer" contenteditable="false">0</span>
             <div class="flex items-center gap-3">
-                <button class="counter-minus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
-                <button class="counter-plus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
+                <button class="counter-minus w-16 h-16 rounded-2xl neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
+                <button class="counter-plus w-16 h-16 rounded-2xl neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
                 
-                <button class="timer-play-pause w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play" class="w-6 h-6"></i></button>
-                <button class="timer-reset w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw" class="w-6 h-6"></i></button>
+                <button class="timer-play-pause w-16 h-16  rounded-2xl neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play" class="w-6 h-6"></i></button>
+                <button class="timer-reset w-16 h-16  rounded-2xl neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw" class="w-6 h-6"></i></button>
             </div>
         </div>
     </template>
@@ -1250,6 +1284,81 @@
                 fcprPercentualInput.value = '100';
                 fcprMesesInput.value = '12';
                 calcularFCPR();
+            });
+
+            // Aba 7: Calculadora de Datas
+            const calcularDatasBtn = document.getElementById('calcular-datas');
+            const limparDatasBtn = document.getElementById('limpar-datas');
+            const dataInicioInput = document.getElementById('data-inicio');
+            const dataFimInput = document.getElementById('data-fim');
+            const resultadoDatasDiv = document.getElementById('resultado-datas');
+
+            calcularDatasBtn.addEventListener('click', () => {
+                const dataInicio = dataInicioInput.value;
+                const dataFim = dataFimInput.value;
+
+                if (!dataInicio || !dataFim) {
+                    resultadoDatasDiv.innerHTML = `<p class="text-red-500 font-semibold">Por favor, selecione as duas datas.</p>`;
+                    resultadoDatasDiv.classList.remove('hidden');
+                    return;
+                }
+
+                // Adiciona 'T00:00:00' para tratar as datas como local e evitar problemas de fuso horário
+                const start = new Date(dataInicio + 'T00:00:00');
+                const end = new Date(dataFim + 'T00:00:00');
+
+                if (start > end) {
+                    resultadoDatasDiv.innerHTML = `<p class="text-red-500 font-semibold">A data de início não pode ser posterior à data final.</p>`;
+                    resultadoDatasDiv.classList.remove('hidden');
+                    return;
+                }
+
+                let anos = end.getFullYear() - start.getFullYear();
+                let meses = end.getMonth() - start.getMonth();
+                let dias = end.getDate() - start.getDate();
+
+                if (dias < 0) {
+                    meses--;
+                    // Pega o último dia do mês anterior à data final para corrigir os dias
+                    const ultimoDiaMesAnterior = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+                    dias += ultimoDiaMesAnterior;
+                }
+
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                // O cálculo de dias corridos precisa incluir o dia inicial
+                const diffTime = Math.abs(end - start);
+                const totalDias = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                let resultadoTexto = [];
+                if (anos > 0) resultadoTexto.push(`${anos} ano${anos > 1 ? 's' : ''}`);
+                if (meses > 0) resultadoTexto.push(`${meses} ${meses > 1 ? 'meses' : 'mês'}`);
+                if (dias > 0 || (anos === 0 && meses === 0)) resultadoTexto.push(`${dias} dia${dias > 1 ? 's' : ''}`);
+                
+                // Caso as datas sejam as mesmas, o resultado é 1 dia
+                if (start.getTime() === end.getTime()) {
+                    resultadoTexto = ["1 dia"];
+                }
+
+
+                resultadoDatasDiv.innerHTML = `
+                    <div class="text-center">
+                        <p class="text-sm text-subtle uppercase tracking-wide">Período Detalhado</p>
+                        <p class="text-2xl font-bold text-accent mt-1">${resultadoTexto.join(', ')}</p>
+                        <p class="text-sm text-subtle mt-2">(Total de ${totalDias} dias corridos)</p>
+                    </div>
+                `;
+                resultadoDatasDiv.classList.remove('hidden');
+            });
+            
+            limparDatasBtn.addEventListener('click', () => {
+                dataInicioInput.value = '';
+                dataFimInput.value = '';
+                resultadoDatasDiv.classList.add('hidden');
+                resultadoDatasDiv.innerHTML = '';
             });
 
 
