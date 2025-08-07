@@ -328,31 +328,34 @@
                             </form>
                         </div>
                         <div id="rel-faturamento-tab" class="faturamento-tab-content hidden">
-                           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                                <div class="flex flex-col gap-2">
-                                    <h3 class="text-lg font-semibold mb-2">Valores Mensais</h3>
-                                    <div id="rel-faturamento-inputs" class="space-y-2">
-                                        <!-- Inputs serão gerados pelo JS -->
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                     <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-medium">Renda 12 Meses</label>
-                                        <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                            <p id="rel-faturamento-renda-12-meses" class="text-2xl font-bold text-accent">R$ 0,00</p>
-                                        </div>
+                                        <h3 class="text-lg font-semibold mb-2">Valores Mensais</h3>
+                                        <div id="rel-faturamento-inputs" class="space-y-2">
+                                            </div>
                                     </div>
-                                    <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-medium">Renda Mensal</label>
-                                        <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                            <p id="rel-faturamento-renda-mensal" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex flex-col gap-2">
+                                            <label for="rel-faturamento-divisor" class="text-sm font-medium">Dividir Total por (Nº de Meses)</label>
+                                            <input type="number" id="rel-faturamento-divisor" placeholder="Padrão: 12" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
                                         </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium">Soma Total dos Valores</label>
+                                            <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                                <p id="rel-faturamento-renda-12-meses" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium">Renda Mensal Resultante</label>
+                                            <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                                <p id="rel-faturamento-renda-mensal" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                            </div>
+                                        </div>
+                                        <button id="rel-faturamento-limpar" type="button" class="mt-4 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                            <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                                        </button>
                                     </div>
-                                    <button id="rel-faturamento-limpar" type="button" class="mt-4 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
-                                        <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
-                                    </button>
-                                </div>
-                           </div>
+                            </div>
                         </div>
                         <div id="semoventes-tab" class="faturamento-tab-content hidden">
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1090,25 +1093,30 @@
                 `;
             }
             const relFaturamentoInputs = document.querySelectorAll('.rel-faturamento-input');
+            const relFaturamentoDivisorInput = document.getElementById('rel-faturamento-divisor');
+
             const calcularRelFaturamento = () => {
                 let total = 0;
-                let camposPreenchidos = 0; // Conta os campos com valor
                 relFaturamentoInputs.forEach(input => {
-                    const valor = parseLocalFloat(input.value);
-                    if (valor > 0) {
-                        total += valor;
-                        camposPreenchidos++; // Incrementa o contador se houver valor
-                    }
+                    total += parseLocalFloat(input.value);
                 });
+
+                const divisor = parseInt(relFaturamentoDivisorInput.value) || 12;
+
                 document.getElementById('rel-faturamento-renda-12-meses').textContent = formatCurrency(total);
-                
-                // Divide pelo número de campos preenchidos, ou 0 se nenhum for preenchido
-                const rendaMensal = camposPreenchidos > 0 ? total / camposPreenchidos : 0;
-                document.getElementById('rel-faturamento-renda-mensal').textContent = formatCurrency(rendaMensal);
+                document.getElementById('rel-faturamento-renda-mensal').textContent = formatCurrency(divisor > 0 ? total / divisor : 0);
             };
+
             relFaturamentoInputs.forEach(input => input.addEventListener('input', calcularRelFaturamento));
+            if (relFaturamentoDivisorInput) {
+                relFaturamentoDivisorInput.addEventListener('input', calcularRelFaturamento);
+            }
+
             document.getElementById('rel-faturamento-limpar').addEventListener('click', () => {
                 relFaturamentoInputs.forEach(input => input.value = '');
+                if (relFaturamentoDivisorInput) {
+                    relFaturamentoDivisorInput.value = '';
+                }
                 calcularRelFaturamento();
             });
 
