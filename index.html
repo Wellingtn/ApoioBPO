@@ -794,8 +794,8 @@
             <h4 class="counter-title font-semibold text-center w-full px-8 truncate" contenteditable="true">Contador</h4>
             <span class="counter-display font-bold text-6xl text-accent cursor-pointer" contenteditable="false">0</span>
             <div class="flex items-center gap-3">
-                <button class="counter-minus w-16 h-16 rounded-2xl neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
-                <button class="counter-plus w-16 h-16 rounded-2xl neumorphic-outset-sm text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
+                <button class="counter-minus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">-</button>
+                <button class="counter-plus w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5">+</button>
                 
                 <button class="timer-play-pause w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="play" class="w-6 h-6"></i></button>
                 <button class="timer-reset w-12 h-12 rounded-2xl neumorphic-outset-sm text-2xl font-bold active:scale-95 transition-transform flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 hidden"><i data-lucide="rotate-cw" class="w-6 h-6"></i></button>
@@ -876,6 +876,11 @@
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
+            }
+            
+            function formatDate(dateString) {
+                if (!dateString) return 'N/A';
+                return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
             }
 
             // --- LÓGICA DO MODO CLARO/ESCURO ---
@@ -1335,7 +1340,7 @@
                 });
             }
 
-            // --- LÓGICA DO MÓDULO DE CONSULTA CNPJ (CORRIGIDO) ---
+            // --- LÓGICA DO MÓDULO DE CONSULTA CNPJ ---
             const cnpjInput = document.getElementById('cnpj-input');
             const consultarCnpjBtn = document.getElementById('consultar-cnpj');
             const limparCnpjBtn = document.getElementById('limpar-cnpj');
@@ -1390,14 +1395,49 @@
                 }
             });
 
-
+            // --- FUNÇÃO ATUALIZADA PARA EXIBIR RESULTADOS DO CNPJ COM HISTÓRICO FIXO ---
             function displayCnpjResults(data) {
                 const isSimples = data.opcao_pelo_simples ? 'Sim' : 'Não';
                 const isSimei = data.opcao_pelo_mei ? 'Sim' : 'Não';
                 const porteEmpresa = data.porte || 'Não informado';
-                const dataAbertura = data.data_inicio_atividade ? new Date(data.data_inicio_atividade).toLocaleDateString('pt-BR') : 'Não informado';
+                const dataAbertura = data.data_inicio_atividade;
+                const nomeEmpresa = data.razao_social || 'Não informado';
+
+                // --- LÓGICA DO HISTÓRICO SIMPLIFICADO DO SIMPLES NACIONAL ---
+                let conteudoHistorico = '';
+                let avisoExclusao = '';
+
+                if (data.opcao_pelo_simples !== null && data.data_opcao_pelo_simples) {
+                    if (data.opcao_pelo_simples) {
+                        conteudoHistorico = `<p class="text-sm">Optante desde: <strong class="text-green-600 dark:text-green-500">${formatDate(data.data_opcao_pelo_simples)}</strong></p>`;
+                    } else {
+                        if (data.data_exclusao_do_simples) {
+                            conteudoHistorico = `<p class="text-sm">Esteve no Simples de <strong class="text-subtle">${formatDate(data.data_opcao_pelo_simples)}</strong> até <strong class="text-red-600 dark:text-red-500">${formatDate(data.data_exclusao_do_simples)}</strong>.</p>`;
+                            const anoExclusao = new Date(data.data_exclusao_do_simples).getFullYear();
+                            if (anoExclusao === 2024 || anoExclusao === 2025) {
+                                avisoExclusao = `
+                                    <div class="mt-3 p-3 border-l-4 border-yellow-500 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300 rounded-r-lg">
+                                        <h4 class="font-bold">Atenção!</h4>
+                                        <p class="text-sm">A empresa foi desenquadrada em ${anoExclusao}. A análise de faturamento deve considerar o regime correspondente (Lucro Presumido/Real) a partir desta data.</p>
+                                    </div>
+                                `;
+                            }
+                        } else {
+                           conteudoHistorico = `<p class="text-sm">A empresa não é optante, mas não há data de exclusão registrada.</p>`;
+                        }
+                    }
+                } else {
+                     conteudoHistorico = `<p class="text-sm text-subtle">Não há informações sobre o histórico do Simples Nacional para esta empresa.</p>`;
+                }
                 
-                const nomeEmpresa = data.razao_social || 'Não informado'; 
+                const historicoSimplesHtml = `
+                    <div class="p-4 rounded-2xl neumorphic-inset">
+                        <p class="text-sm text-subtle uppercase tracking-wide mb-2">Histórico do Simples Nacional</p>
+                        ${conteudoHistorico}
+                        ${avisoExclusao}
+                    </div>
+                `;
+                // --- FIM DA LÓGICA DO HISTÓRICO SIMPLIFICADO ---
 
                 let sociosHtml = '<p class="text-subtle">Nenhum sócio encontrado.</p>';
                 if (data.qsa && data.qsa.length > 0) {
@@ -1424,11 +1464,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Data de Abertura</p>
-                                <p class="font-semibold mt-1">${dataAbertura}</p>
+                                <p class="font-semibold mt-1">${formatDate(dataAbertura)}</p>
                             </div>
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Situação Cadastral</p>
-                                <p class="text-lg font-bold text-accent mt-1">${data.descricao_situacao_cadastral || 'Não informado'}</p>
+                                <p class="font-bold text-lg ${data.descricao_situacao_cadastral === 'ATIVA' ? 'text-green-500' : 'text-red-500'} mt-1">${data.descricao_situacao_cadastral || 'Não informado'}</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1441,16 +1481,21 @@
                                 <p class="font-semibold mt-1">${formatCurrency(data.capital_social)}</p>
                             </div>
                         </div>
+                        
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Optante Simples</p>
-                                <p class="text-lg font-bold text-accent mt-1">${isSimples}</p>
+                                <p class="text-lg font-bold ${data.opcao_pelo_simples ? 'text-green-500' : 'text-red-500'} mt-1">${isSimples}</p>
                             </div>
                             <div class="p-4 rounded-2xl neumorphic-inset">
                                 <p class="text-sm text-subtle uppercase tracking-wide">Optante MEI</p>
-                                <p class="text-lg font-bold text-accent mt-1">${isSimei}</p>
+                                <p class="text-lg font-bold ${data.opcao_pelo_mei ? 'text-green-500' : 'text-red-500'} mt-1">${isSimei}</p>
                             </div>
                         </div>
+
+                        <!-- Bloco do Histórico Simplificado inserido aqui -->
+                        ${historicoSimplesHtml}
+
                         <div class="p-4 rounded-2xl neumorphic-inset">
                             <p class="text-sm text-subtle uppercase tracking-wide">Atividade Principal (CNAE)</p>
                             <p class="font-semibold mt-1">${data.cnae_fiscal_descricao || 'Não informado'}</p>
@@ -1466,7 +1511,9 @@
                         ${rawJsonHtml}
                     </div>
                 `;
+                safeCreateIcons();
             };
+            // --- FIM DA FUNÇÃO ATUALIZADA ---
 
             limparCnpjBtn.addEventListener('click', () => {
                 cnpjInput.value = '';
