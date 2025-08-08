@@ -1,6 +1,21 @@
 const checklistData = {
     "flows": {
-        "bem_novo": { "icon": "🏠", "name": "Bem Novo", "documents": {} },
+        "bem_novo": { 
+            "icon": "🏠",
+            "name": "Bem Novo",
+            "documents": {
+                "Ficha Sanitária - Animal": {
+                    "name": "Ficha Sanitária - Animal",
+                    "icon": "🦏",
+                    "imageUrl": "./documents/bem/ficha_sanitaria_animal/ficha_sanitaria_animal.jpg",
+                    "checklist": {
+                        "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                        "O nome do associado está correto?": "VÍNCULO NÃO ENCONTRADO",
+                        "O quantidade de rebanhos está correta?": "QUANTIDADE DE REBANHOS",
+                    }
+                }
+            }
+        },
         "certidao": {
             "icon": "📄",
             "name": "Certidão",
@@ -196,6 +211,20 @@ const checklistData = {
                         "O documento esta correto?": "DOCUMENTO INVÁLIDO",
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O documento está assinado?": "ASSINATURAS FALTANTES"
+                    }
+                },
+                "declaracao_faturamento":{
+                    "name": "Declaração de Faturamento",
+                    "icon": "📄",
+                    "imageUrls": ["./documents/renda/declaracao_faturamento/declaracao_faturamento.jpg", "./documents/renda/declaracao_faturamento/comprovante_opcao_simples.jpg"],
+                    "checklist": {
+                        "O documento esta correto?": "DOCUMENTO INVÁLIDO",
+                        "O tipo de renda está correto?": "TIPO DE RENDA INCORRETO",
+                        "O cnpj da empresa é correto?": "CADASTRO DIVERGENTE DO COMPROVANTE",
+                        "A divisão de faturamento está de acordo com os meses apresentados?": "DIVISÃO DE RENDA MENSAL INCORRETA",                        
+                        "A data de emissão está dentro do prazo(ultimos 12 meses)?": "PRAZO DE VALIDADE",
+                        "O campo de opção MEI está marcada corretamente?(Se sim, assinatura do contador dispensada)": "OPÇÃO MEI",
+                        "As assinaturas estão corretas?": "ASSINATURAS FALTANTES"
                     }
                 }
             }

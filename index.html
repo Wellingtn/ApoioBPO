@@ -368,49 +368,106 @@
                             </div>
                         </div>
                         <div id="semoventes-tab" class="faturamento-tab-content hidden">
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <div class="lg:col-span-2">
-                                    <h3 class="text-lg font-semibold mb-4">Rebanho</h3>
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full text-sm">
-                                            <thead class="border-b-2 border-slate-300 dark:border-slate-600">
-                                                <tr>
-                                                    <th class="p-2 text-left">Descrição</th>
-                                                    <th class="p-2 text-left">Quantidade</th>
-                                                    <th class="p-2 text-left">Valor Unitário</th>
-                                                    <th class="p-2 text-left">Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="semoventes-tbody">
-                                                <!-- Linhas geradas por JS -->
-                                            </tbody>
-                                        </table>
+                            <div class="flex flex-col gap-8">
+                                <!-- Calculadora de Rebanho -->
+                                 <!-- Calculadora IRPF -->
+                                <div>
+                                    <div class="max-w-md mx-auto space-y-4">
+                                        <h3 class="text-xl font-semibold text-center">Cálculo IRPF (Receita Bruta)</h3>
+
+                                        <!-- Campos em Grid 2x2 -->
+                                        <div class="grid grid-cols-2 gap-4">
+                                        <!-- Campo 1 -->
+                                        <div class="flex flex-col gap-2">
+                                            <label for="irpf-receita-bruta" class="text-sm font-medium">Receita Bruta - Brasil</label>
+                                            <input type="text" inputmode="decimal" id="irpf-receita-bruta" placeholder="R$ 0,00"
+                                                class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                                        </div>
+
+                                        <!-- Campo 2 -->
+                                        <div class="flex flex-col gap-2">
+                                            <label for="irpf-vendas" class="text-sm font-medium">Vendas (Quantidade)</label>
+                                            <input type="number" id="irpf-vendas" placeholder="0"
+                                                class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                                        </div>
+
+                                        <!-- Campo 3 -->
+                                        <div class="flex flex-col gap-2">
+                                            <label for="irpf-estoque-final" class="text-sm font-medium">Estoque Final (Quantidade)</label>
+                                            <input type="number" id="irpf-estoque-final" placeholder="0"
+                                                class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
+                                        </div>
+
+                                        <!-- Campo 4: Resultado (com label acima) -->
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium">Valor Apurado (Estoque Final)</label>
+                                            <div class="w-full p-3 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                            <p id="irpf-resultado-valor" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                        <!-- Botão de limpar -->
+                                        <button id="irpf-limpar" type="button"
+                                                class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                        <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar Cálculo IRPF
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-4">
-                                    <h3 class="text-lg font-semibold">Resultados</h3>
-                                     <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-medium">Quantidade Total</label>
-                                        <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                            <p id="semoventes-qtd-total" class="text-2xl font-bold text-accent">0</p>
+
+                                <!-- Separador -->
+                                <hr class="border-slate-300 dark:border-slate-600 my-4">
+
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-6 text-center">Cálculo de Rebanho (Valor Unitário)</h3>
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                        <div class="lg:col-span-2">
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-sm">
+                                                    <thead class="border-b-2 border-slate-300 dark:border-slate-600">
+                                                        <tr>
+                                                            <th class="p-2 text-left">Descrição</th>
+                                                            <th class="p-2 text-left">Quantidade</th>
+                                                            <th class="p-2 text-left">Valor Unitário</th>
+                                                            <th class="p-2 text-left">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="semoventes-tbody">
+                                                        <!-- Linhas geradas por JS -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col gap-4">
+                                            <h3 class="text-lg font-semibold">Resultados do Rebanho</h3>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="text-sm font-medium">Quantidade Total</label>
+                                                <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                                    <p id="semoventes-qtd-total" class="text-2xl font-bold text-accent">0</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="text-sm font-medium">Renda Anual</label>
+                                                <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                                    <p id="semoventes-renda-anual" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label class="text-sm font-medium">Renda Mensal</label>
+                                                <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
+                                                    <p id="semoventes-renda-mensal" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                                </div>
+                                            </div>
+                                            <button id="semoventes-limpar" type="button" class="mt-4 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                                <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                                            </button>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-medium">Renda Anual</label>
-                                        <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                            <p id="semoventes-renda-anual" class="text-2xl font-bold text-accent">R$ 0,00</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-medium">Renda Mensal</label>
-                                        <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                            <p id="semoventes-renda-mensal" class="text-2xl font-bold text-accent">R$ 0,00</p>
-                                        </div>
-                                    </div>
-                                    <button id="semoventes-limpar" type="button" class="mt-4 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
-                                        <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
-                                    </button>
                                 </div>
+                        
+                                <!-- Separador -->
+                                <hr class="border-slate-300 dark:border-slate-600 my-4">
+                    
                             </div>
                         </div>
                         <div id="nfs-tab" class="faturamento-tab-content hidden">
@@ -1119,6 +1176,10 @@
                 document.getElementById('resultado1').textContent = formatCurrency(0);
                 document.getElementById('resultado2').textContent = formatCurrency(0);
                 document.getElementById('resultado3').textContent = formatCurrency(0);
+                document.getElementById('rbt12').value = '';
+                document.getElementById('rpa').value = '';
+                document.getElementById('mes_anterior').value = '';
+                document.getElementById('num_meses').value = '';
             });
 
             // Aba 2: Rel. Faturamento
@@ -1159,13 +1220,14 @@
                 calcularRelFaturamento();
             });
 
-            // Aba 3: Semoventes
+            // Aba 3: Semoventes (Atualizado com a nova calculadora)
             const semoventesTbody = document.getElementById('semoventes-tbody');
             const semoventesData = [
                 'Matrizes (+ 36 meses)', 'Touros', 'Bois (+ 36 meses)', 'Novilhas (25 a 36 meses)',
                 'Novilhos (25 a 36 meses)', 'Novilhas (13 a 24 meses)', 'Novilhos (13 a 24 meses)',
                 'Bezerras/terneiras até 12 meses', 'Bezerros/terneiros até 12 meses'
             ];
+            semoventesTbody.innerHTML = ''; // Limpa o conteúdo antigo
             semoventesData.forEach((desc, index) => {
                 semoventesTbody.innerHTML += `
                     <tr class="border-b border-slate-300 dark:border-slate-700">
@@ -1198,8 +1260,41 @@
                 calcularSemoventes();
             });
 
+            // Lógica para a nova calculadora IRPF na sua própria aba
+            const irpfReceitaBrutaInput = document.getElementById('irpf-receita-bruta');
+            const irpfVendasInput = document.getElementById('irpf-vendas');
+            const irpfEstoqueFinalInput = document.getElementById('irpf-estoque-final');
+            const irpfResultadoValor = document.getElementById('irpf-resultado-valor');
+            const irpfLimparBtn = document.getElementById('irpf-limpar');
+
+            const calcularIrpfSemoventes = () => {
+                const receitaBruta = parseLocalFloat(irpfReceitaBrutaInput.value);
+                const vendas = parseInt(irpfVendasInput.value) || 0;
+                const estoqueFinal = parseInt(irpfEstoqueFinalInput.value) || 0;
+
+                let resultado = 0;
+                if (vendas > 0) {
+                    resultado = (receitaBruta / vendas) * estoqueFinal;
+                }
+                
+                irpfResultadoValor.textContent = formatCurrency(resultado);
+            };
+
+            [irpfReceitaBrutaInput, irpfVendasInput, irpfEstoqueFinalInput].forEach(input => {
+                input.addEventListener('input', calcularIrpfSemoventes);
+            });
+
+            irpfLimparBtn.addEventListener('click', () => {
+                irpfReceitaBrutaInput.value = '';
+                irpfVendasInput.value = '';
+                irpfEstoqueFinalInput.value = '';
+                calcularIrpfSemoventes();
+            });
+
+
             // Aba 4: NF's
             const nfsGrid = document.getElementById('nfs-grid');
+            nfsGrid.innerHTML = ''; // Limpa para evitar duplicatas
             for (let i = 1; i <= 50; i++) {
                 nfsGrid.innerHTML += `
                     <div class="flex items-center gap-2">
@@ -1254,6 +1349,7 @@
 
             // Aba 6: FCPR
             const fcprInputsContainer = document.getElementById('fcpr-inputs');
+            fcprInputsContainer.innerHTML = ''; // Limpa para evitar duplicatas
             for (let i = 1; i <= 10; i++) {
                 fcprInputsContainer.innerHTML += `
                     <div class="flex items-center gap-2">
