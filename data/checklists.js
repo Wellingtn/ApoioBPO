@@ -276,7 +276,36 @@ const checklistData = {
         },
         "produtividade": { "icon": "📊", "name": "Produtividade", "documents": {} },
         "produtor": { "icon": "🌾", "name": "Produtor", "documents": {} },
-        "relacionamento": { "icon": "🤝", "name": "Relacionamento", "documents": {} },
+        "relacionamento": { 
+            "icon": "🤝",
+             "name": "Relacionamento",
+              "documents": {
+                "alteracao_sociedade" : {
+                    "name": "Alteração de Sociedade",
+                    "icon": "📄",
+                    "imageUrls": ["./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_1.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_2.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_3.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_4.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_5.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_6.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_7.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_8.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_9.jpg",
+                                  "./documents/relacionamento/alteracao_sociedade/alteracao_sociedade_10.jpg"
+                                  ],
+                    "checklist": {
+                        "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                        "O socio cadastrado foi encontrado no documento?": "VÍNCULO NÃO ENCONTRADO",
+                        "O tipo de relacionamento é correto?": "TIPO DE RELACIONAMENTO INCORRETO",
+                        "O percentual de capital social é correto?": "PERCENTUAL NO CAPITAL SOCIAL INCORRETO",
+                        "Data de início do mandato está de acordo com o documento?": "DATA DE INÍCIO DO MANDATO INVÁLIDA",
+                        "Data de fim do mandato está de acordo com o documento?": "DATA DE FIM DO MANDATO INVÁLIDA",
+                        "As assinaturas estão corretas?": "ASSINATURAS FALTANTES",
+                    }
+                }
+            } 
+        },
         "responsavel": { "icon": "👨‍💼", "name": "Responsável", "documents": {} }
     }
 };
