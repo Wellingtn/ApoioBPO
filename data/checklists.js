@@ -30,6 +30,16 @@ const checklistData = {
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O titular do documento tem vinculo com o associado?": "VÍNCULO NÃO ENCONTRADO"
                     }
+                },
+                "comprovante_inscricao": {
+                    "name": "Comprovante de Inscricao",
+                    "icon": "📄",
+                    "imageUrl": "./documents/certidao/comprovante_inscricao/comprovante_inscricao.jpg",
+                    "checklist": {
+                        "O documento é valido?": "DOCUMENTO INVÁLIDO",
+                        "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
+                        "O numero de inscrição está correto?": "INSCRIÇÃO ESTADUAL",
+                    }
                 }
             } 
         },
