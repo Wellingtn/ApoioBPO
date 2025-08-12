@@ -170,23 +170,26 @@
             filter: invert(1);
         }
 
-        /* NOVO EFEITO DE BRILHO AO COPIAR */
-        /* EFEITO DE BRILHO SUTIL E TRANSPARENTE */
-        @keyframes subtle-green-pulse {
-        0% {
-            box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1), 0 0 0 0 rgba(34, 197, 94, 0);
-        }
-        40% {
-            /* O valor 0.4 deixa o brilho mais transparente */
-            box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1), 0 0 18px 4px rgba(34, 197, 94, 0.4);
-        }
-        100% {
-            box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1), 0 0 0 0 rgba(34, 197, 94, 0);
-        }
+        /* EFEITO DE LUZ AO COPIAR - SUAVIZADO */
+        @keyframes green-light-glow {
+            0% {
+                box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1);
+            }
+            40% {
+                box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1),
+                            /* Brilho interno (menor e mais suave) */
+                            0 0 7px 1px rgba(16, 185, 129, 0.85), 
+                            /* Brilho externo (menor e mais suave) */
+                            0 0 22px 8px rgba(16, 185, 129, 0.5);
+            }
+            100% {
+                box-shadow: 3px 3px 6px var(--color-shadow-2), -3px -3px 6px var(--color-shadow-1);
+            }
         }
 
-        .copy-success-pulse {
-        animation: subtle-green-pulse 1.5s ease-in-out;
+        .copy-success-glow {
+            /* Animação mais lenta */
+            animation: green-light-glow 1.5s ease-out;
         }
 
     </style>
@@ -927,27 +930,26 @@
             document.body.removeChild(textarea);
 
             if (buttonElement) {
-                // Remove a classe de animação para garantir que ela possa ser reativada
-                buttonElement.classList.remove('copy-success-pulse');
-                // Este truque força o navegador a "repintar", permitindo que a animação reinicie
+                // Garante que a animação possa ser reativada a cada clique
+                buttonElement.classList.remove('copy-success-glow');
+                // Força o navegador a "repintar", reiniciando a animação
                 void buttonElement.offsetWidth;
-                // Adiciona a classe novamente para iniciar a animação
-                buttonElement.classList.add('copy-success-pulse');
+                buttonElement.classList.add('copy-success-glow');
 
                 const icon = buttonElement.querySelector('i');
                 const originalIcon = icon.dataset.lucide;
                 icon.dataset.lucide = 'check';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
 
-                // Limpa o ícone após o mesmo tempo da animação
+                // Limpa o ícone após o mesmo tempo da nova animação (1.5s)
                 setTimeout(() => {
                     icon.dataset.lucide = originalIcon;
                     if (typeof lucide !== 'undefined') lucide.createIcons();
                 }, 1500);
                 
-                // Remove a classe da animação quando ela terminar, para deixar o botão limpo
+                // Remove a classe da animação ao final para deixar o botão limpo
                 buttonElement.addEventListener('animationend', () => {
-                    buttonElement.classList.remove('copy-success-pulse');
+                    buttonElement.classList.remove('copy-success-glow');
                 }, { once: true });
             }
         }
