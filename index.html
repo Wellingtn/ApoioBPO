@@ -998,6 +998,13 @@
                 return parseFloat(String(value).replace(/\./g, '').replace(',', '.')) || 0;
             }
 
+            // Função para remover acentos de uma string
+            function removeAccents(str) {
+                if (typeof str !== 'string') return '';
+                // Normaliza a string para decompor os caracteres acentuados e remove os diacríticos
+                return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            }
+
             function safeCreateIcons() {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
@@ -1835,7 +1842,9 @@
             
             function filterPareceres() {
                 if(typeof pareceresDataCorrigido === 'undefined' || !pareceresContainer) return;
-                const searchTerm = searchInput.value.toLowerCase();
+                
+                // Termo de busca normalizado (sem acentos e minúsculo)
+                const searchTerm = removeAccents(searchInput.value.toLowerCase());
                 const selectedCategory = parecerCategoryFilter.value;
                 
                 const sourceData = selectedCategory === 'all' 
@@ -1852,7 +1861,10 @@
                         if (typeof items === 'object' && items !== null) {
                             const filteredItems = {};
                             for(const key in items) {
-                                if (key.toLowerCase().includes(searchTerm) || items[key].toLowerCase().includes(searchTerm)) {
+                                // Normaliza os dados antes de comparar
+                                const normalizedKey = removeAccents(key.toLowerCase());
+                                const normalizedValue = removeAccents(items[key].toLowerCase());
+                                if (normalizedKey.includes(searchTerm) || normalizedValue.includes(searchTerm)) {
                                     filteredItems[key] = items[key];
                                     hasMatch = true;
                                 }
@@ -1861,7 +1873,10 @@
                                 filteredSubCategories[subCategoryTitle] = filteredItems;
                             }
                         } else {
-                            if (subCategoryTitle.toLowerCase().includes(searchTerm) || items.toLowerCase().includes(searchTerm)) {
+                            // Normaliza os dados antes de comparar
+                            const normalizedSubCategoryTitle = removeAccents(subCategoryTitle.toLowerCase());
+                            const normalizedItems = removeAccents(items.toLowerCase());
+                            if (normalizedSubCategoryTitle.includes(searchTerm) || normalizedItems.includes(searchTerm)) {
                                 filteredSubCategories[subCategoryTitle] = items;
                                 hasMatch = true;
                             }
