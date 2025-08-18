@@ -1719,6 +1719,27 @@
                 }
             });
 
+            document.addEventListener('paste', (e) => {
+                if (currentModuleId !== 'renda-pf-module' || document.querySelector('#calculadora-tab').classList.contains('hidden')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+                
+                // Sanitiza o dado colado
+                const sanitizedData = pasteData.replace(/[^0-9,.]/g, '').replace(',', '.');
+                
+                // Verifica se é um número válido
+                if (!isNaN(parseFloat(sanitizedData)) && isFinite(sanitizedData)) {
+                    if (calculator.historyElement.innerText.includes('=')) {
+                        calculator.clear();
+                    }
+                    calculator.currentOperand = sanitizedData;
+                    calculator.updateDisplay();
+                }
+            });
+
 
             // Aba 2: Média Holerites
             const mediaInputs = document.querySelectorAll('.media-holerite-input');
