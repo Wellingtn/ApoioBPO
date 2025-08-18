@@ -1552,7 +1552,7 @@
                 }
                 
                 delete() {
-                    this.currentOperand = this.currentOperand.toString().slice(0, -1);
+                    this.currentOperand = String(this.currentOperand).slice(0, -1);
                     if (this.currentOperand === '') {
                         this.currentOperand = '0';
                     }
@@ -1727,10 +1727,18 @@
                 e.preventDefault();
                 const pasteData = (e.clipboardData || window.clipboardData).getData('text');
                 
-                // Sanitiza o dado colado
-                const sanitizedData = pasteData.replace(/[^0-9,.]/g, '').replace(',', '.');
+                let sanitizedData = pasteData.replace(/[^0-9,.]/g, '');
+                const lastComma = sanitizedData.lastIndexOf(',');
+                const lastDot = sanitizedData.lastIndexOf('.');
+
+                if (lastComma > lastDot) {
+                    // Formato brasileiro: 1.234,56 -> 1234.56
+                    sanitizedData = sanitizedData.replace(/\./g, '').replace(',', '.');
+                } else if (lastDot > lastComma) {
+                    // Formato americano: 1,234.56 -> 1234.56
+                    sanitizedData = sanitizedData.replace(/,/g, '');
+                }
                 
-                // Verifica se é um número válido
                 if (!isNaN(parseFloat(sanitizedData)) && isFinite(sanitizedData)) {
                     if (calculator.historyElement.innerText.includes('=')) {
                         calculator.clear();
