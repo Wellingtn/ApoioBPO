@@ -639,23 +639,40 @@
                     </div>
                     <div>
                         <div id="calculadora-tab" class="renda-pf-tab-content">
-                           <h3 class="text-2xl font-bold mb-6">Calculadora Simples</h3>
-                           <div class="flex flex-col gap-6">
-                               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-end">
-                                   <input type="text" inputmode="decimal" id="valor_sisbr" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-full">
-                                   <div class="p-4 rounded-2xl neumorphic-inset">
-                                       <p class="text-sm text-subtle uppercase tracking-wide">Multiplicado por 12</p>
-                                       <p id="sisbr_mult" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
-                                   </div>
-                               </div>
-                               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 items-stretch">
-                                   <button id="limpar_sisbr" type="button" class="h-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">Limpar</button>
-                                   <div class="p-4 rounded-2xl neumorphic-inset">
-                                       <p class="text-sm text-subtle uppercase tracking-wide">Dividido por 12</p>
-                                       <p id="sisbr_div" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
-                                   </div>
-                               </div>
-                           </div>
+                           <h3 class="text-2xl font-bold mb-6 text-center">Calculadora Renda PF</h3>
+                            <div class="max-w-sm mx-auto p-4 rounded-2xl neumorphic-outset">
+                                <!-- Display -->
+                                <div class="p-4 rounded-2xl neumorphic-inset text-right mb-4">
+                                    <div id="renda-pf-history" class="text-sm text-subtle h-6 truncate"></div>
+                                    <input type="text" id="renda-pf-display" readonly class="w-full bg-transparent focus:outline-none text-4xl font-bold text-accent" value="0">
+                                </div>
+                                <!-- Buttons -->
+                                <div class="grid grid-cols-4 gap-3">
+                                    <button data-action="clear" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 text-accent">AC</button>
+                                    <button data-action="special" data-value="*12" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">x12</button>
+                                    <button data-action="special" data-value="/12" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">/12</button>
+                                    <button data-operator="/" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 text-accent">÷</button>
+                        
+                                    <button data-number="7" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">7</button>
+                                    <button data-number="8" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">8</button>
+                                    <button data-number="9" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">9</button>
+                                    <button data-operator="*" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 text-accent">×</button>
+                                    
+                                    <button data-number="4" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">4</button>
+                                    <button data-number="5" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">5</button>
+                                    <button data-number="6" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">6</button>
+                                    <button data-operator="-" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 text-accent">−</button>
+                        
+                                    <button data-number="1" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">1</button>
+                                    <button data-number="2" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">2</button>
+                                    <button data-number="3" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">3</button>
+                                    <button data-operator="+" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 text-accent">+</button>
+                        
+                                    <button data-number="0" class="calculator-btn col-span-2 p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">0</button>
+                                    <button data-number="." class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">.</button>
+                                    <button data-action="equals" class="calculator-btn p-4 rounded-2xl neumorphic-outset-sm font-semibold text-xl transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 text-accent">=</button>
+                                </div>
+                            </div>
                         </div>
                         <div id="media-tab" class="renda-pf-tab-content hidden">
                             <h3 class="text-2xl font-bold mb-6">Média de Holerites</h3>
@@ -1514,17 +1531,194 @@
                 });
             });
 
-            // Aba 1: Calculadora SISBR
-            const valorSisbrInput = document.getElementById('valor_sisbr');
-            valorSisbrInput.addEventListener('input', () => {
-                const valor = parseLocalFloat(valorSisbrInput.value);
-                document.getElementById('sisbr_mult').textContent = formatCurrency(valor * 12);
-                document.getElementById('sisbr_div').textContent = formatCurrency(valor / 12);
+            // Aba 1: Calculadora Renda PF (Completa)
+            const rendaPfDisplayElement = document.getElementById('renda-pf-display');
+            const rendaPfHistoryElement = document.getElementById('renda-pf-history');
+            const calculatorButtonsContainer = document.querySelector('#calculadora-tab');
+
+            class Calculator {
+                constructor(displayElement, historyElement) {
+                    this.displayElement = displayElement;
+                    this.historyElement = historyElement;
+                    this.clear();
+                }
+
+                clear() {
+                    this.currentOperand = '0';
+                    this.previousOperand = '';
+                    this.operation = undefined;
+                    this.historyElement.innerText = '';
+                    this.updateDisplay();
+                }
+                
+                delete() {
+                    this.currentOperand = this.currentOperand.toString().slice(0, -1);
+                    if (this.currentOperand === '') {
+                        this.currentOperand = '0';
+                    }
+                }
+
+                appendNumber(number) {
+                    if (this.historyElement.innerText.includes('=')) {
+                        this.clear();
+                    }
+                    if (number === '.' && this.currentOperand.includes('.')) return;
+                    if (this.currentOperand.length > 15) return;
+                    
+                    if (this.currentOperand === '0' && number !== '.') {
+                        this.currentOperand = number;
+                    } else {
+                        this.currentOperand = this.currentOperand.toString() + number.toString();
+                    }
+                }
+
+                chooseOperation(operation) {
+                    if (this.currentOperand === '' && this.previousOperand === '') return;
+                    if (this.currentOperand === '' && this.previousOperand !== '') {
+                        this.operation = operation;
+                        this.updateDisplay();
+                        return;
+                    }
+                    if (this.previousOperand !== '') {
+                        this.compute();
+                    }
+                    this.operation = operation;
+                    this.previousOperand = this.currentOperand;
+                    this.currentOperand = '';
+                }
+
+                compute() {
+                    let computation;
+                    const prev = parseFloat(this.previousOperand);
+                    const current = parseFloat(this.currentOperand);
+                    if (isNaN(prev) || isNaN(current)) return;
+                    
+                    const historyText = `${this.formatDisplay(this.previousOperand)} ${this.operation.replace('*','×').replace('/','÷')} ${this.formatDisplay(this.currentOperand)} =`;
+
+                    switch (this.operation) {
+                        case '+': computation = prev + current; break;
+                        case '-': computation = prev - current; break;
+                        case '*': computation = prev * current; break;
+                        case '/': computation = prev / current; break;
+                        default: return;
+                    }
+                    this.currentOperand = computation.toString();
+                    this.operation = undefined;
+                    this.previousOperand = '';
+                    this.historyElement.innerText = historyText;
+                }
+                
+                handleSpecial(op) {
+                    if (this.currentOperand === '') return;
+                    const current = parseFloat(this.currentOperand);
+                    if (isNaN(current)) return;
+                    let computation;
+                    let historyText;
+                    if (op === '*12') {
+                        computation = current * 12;
+                        historyText = `${this.formatDisplay(this.currentOperand)} × 12 =`;
+                    } else if (op === '/12') {
+                        computation = current / 12;
+                        historyText = `${this.formatDisplay(this.currentOperand)} ÷ 12 =`;
+                    } else {
+                        return;
+                    }
+                    this.currentOperand = computation.toString();
+                    this.operation = undefined;
+                    this.previousOperand = '';
+                    this.historyElement.innerText = historyText;
+                    this.updateDisplay();
+                }
+
+                formatDisplay(numberStr) {
+                    if (numberStr === '' || numberStr === null || numberStr === undefined) return '';
+                    const stringNumber = numberStr.toString();
+                    const [integerPart, decimalPart] = stringNumber.split('.');
+                    
+                    let integerDisplay;
+                    if (integerPart === '' || isNaN(parseFloat(integerPart))) {
+                       integerDisplay = '0';
+                    } else {
+                       integerDisplay = parseFloat(integerPart).toLocaleString('pt-BR');
+                    }
+                    
+                    if (decimalPart != null) {
+                        return `${integerDisplay},${decimalPart}`;
+                    } else {
+                        if (stringNumber.endsWith('.')) {
+                            return `${integerDisplay},`;
+                        }
+                        return integerDisplay;
+                    }
+                }
+
+                updateDisplay() {
+                    this.displayElement.value = this.formatDisplay(this.currentOperand);
+                    if (this.operation != null) {
+                        this.historyElement.innerText = `${this.formatDisplay(this.previousOperand)} ${this.operation.replace('*','×').replace('/','÷')}`;
+                    }
+                }
+            }
+
+            const calculator = new Calculator(rendaPfDisplayElement, rendaPfHistoryElement);
+
+            calculatorButtonsContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('.calculator-btn');
+                if (!button) return;
+
+                if (button.dataset.number !== undefined) {
+                    calculator.appendNumber(button.dataset.number);
+                    calculator.updateDisplay();
+                }
+                if (button.dataset.operator !== undefined) {
+                    calculator.chooseOperation(button.dataset.operator);
+                    calculator.updateDisplay();
+                }
+                if (button.dataset.action === 'equals') {
+                    calculator.compute();
+                    calculator.updateDisplay();
+                }
+                if (button.dataset.action === 'clear') {
+                    calculator.clear();
+                }
+                if (button.dataset.action === 'special') {
+                    calculator.handleSpecial(button.dataset.value);
+                }
             });
-            document.getElementById('limpar_sisbr').addEventListener('click', () => {
-                valorSisbrInput.value = '';
-                valorSisbrInput.dispatchEvent(new Event('input'));
+            
+            document.addEventListener('keydown', (e) => {
+                if (currentModuleId !== 'renda-pf-module' || document.querySelector('#calculadora-tab').classList.contains('hidden')) {
+                    return;
+                }
+
+                const key = e.key;
+                
+                if (key >= '0' && key <= '9') {
+                    e.preventDefault();
+                    calculator.appendNumber(key);
+                    calculator.updateDisplay();
+                } else if (key === ',' || key === '.') {
+                    e.preventDefault();
+                    calculator.appendNumber('.');
+                    calculator.updateDisplay();
+                } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                    e.preventDefault();
+                    calculator.chooseOperation(key);
+                    calculator.updateDisplay();
+                } else if (key === 'Enter' || key === '=') {
+                    e.preventDefault();
+                    calculator.compute();
+                    calculator.updateDisplay();
+                } else if (key === 'Backspace') {
+                    e.preventDefault();
+                    calculator.delete();
+                    calculator.updateDisplay();
+                } else if (key === 'Escape' || key === 'Delete') {
+                    e.preventDefault();
+                    calculator.clear();
+                }
             });
+
 
             // Aba 2: Média Holerites
             const mediaInputs = document.querySelectorAll('.media-holerite-input');
