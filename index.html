@@ -309,53 +309,90 @@
                     </div>
                     <div>
                         <div id="calculo-simples-tab" class="faturamento-tab-content">
-                             <form id="faturamento-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                                <div class="flex flex-col gap-2">
-                                    <label for="rbt12" class="text-sm font-medium">Receita Bruta 12 Meses (RBT12)</label>
-                                    <input type="text" inputmode="decimal" id="rbt12" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-medium">1º Cálculo (Somente RBT12)</label>
-                                    <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                        <p id="resultado1" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                            <form id="faturamento-form" class="space-y-6">
+                                <!-- 1º MÉTODO DE CÁLCULO -->
+                                <div class="p-4 rounded-2xl neumorphic-outset space-y-4">
+                                    <h3 class="text-lg font-bold text-center text-accent">1º MÉTODO DE CÁLCULO (SOMENTE RBT12)</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                                        <div class="space-y-4">
+                                            <div class="flex flex-col gap-2">
+                                                <label for="rbt12_metodo1" class="text-sm font-medium">Receita Bruta Acumulada (RBT12)</label>
+                                                <input type="text" inputmode="decimal" id="rbt12_metodo1" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="meses_metodo1" class="text-sm font-medium">Quantidade de Meses RBT12</label>
+                                                <input type="number" id="meses_metodo1" placeholder="12" value="12" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium">Renda 1º Cálculo</label>
+                                            <div class="p-3 rounded-xl neumorphic-inset h-28 flex items-center justify-center">
+                                                <p id="resultado1" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="flex flex-col gap-2">
-                                    <label for="rpa" class="text-sm font-medium">Receita Bruta do Período (RPA)</label>
-                                    <input type="text" inputmode="decimal" id="rpa" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-medium">2º Cálculo (+12 Meses)</label>
-                                    <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                        <p id="resultado2" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                        
+                                <!-- 2º MÉTODO DE CÁLCULO -->
+                                <div class="p-4 rounded-2xl neumorphic-outset space-y-4">
+                                    <h3 class="text-lg font-bold text-center text-accent">2º MÉTODO DE CÁLCULO (> 12 MESES)</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                                        <div class="space-y-4">
+                                            <div class="flex flex-col gap-2">
+                                                <label for="rpa_metodo2" class="text-sm font-medium">Receita Bruta do PA (RPA)</label>
+                                                <input type="text" inputmode="decimal" id="rpa_metodo2" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="rbt12_metodo2" class="text-sm font-medium">Receita Bruta Acumulada (RBT12)</label>
+                                                <input type="text" inputmode="decimal" id="rbt12_metodo2" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="mes_anterior_metodo2" class="text-sm font-medium">Valor a ser Reduzido (Mês Anterior)</label>
+                                                <input type="text" inputmode="decimal" id="mes_anterior_metodo2" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium">Renda 2º Cálculo</label>
+                                            <div class="p-3 rounded-xl neumorphic-inset h-28 flex items-center justify-center">
+                                                <p id="resultado2" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="flex flex-col gap-2">
-                                    <label for="mes_anterior" class="text-sm font-medium">Redução Mês Ano Anterior</label>
-                                    <input type="text" inputmode="decimal" id="mes_anterior" placeholder="0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
-                                </div>
-                                 <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-medium">3º Cálculo (&lt;12 Meses)</label>
-                                    <div class="p-4 rounded-2xl neumorphic-inset h-16 flex items-center">
-                                        <p id="resultado3" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                        
+                                <!-- 3º MÉTODO DE CÁLCULO -->
+                                <div class="p-4 rounded-2xl neumorphic-outset space-y-4">
+                                    <h3 class="text-lg font-bold text-center text-accent">3º MÉTODO DE CÁLCULO (&lt; 12 MESES)</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                                        <div class="space-y-4">
+                                            <div class="flex flex-col gap-2">
+                                                <label for="rpa_metodo3" class="text-sm font-medium">Receita Bruta do PA (RPA)</label>
+                                                <input type="text" inputmode="decimal" id="rpa_metodo3" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="rbt12_metodo3" class="text-sm font-medium">Receita Bruta Acumulada (RBT12)</label>
+                                                <input type="text" inputmode="decimal" id="rbt12_metodo3" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="num_meses_metodo3" class="text-sm font-medium">Quantidade de Meses (RBT12 + RPA)</label>
+                                                <input type="number" id="num_meses_metodo3" placeholder="Ex: 1" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium">Renda 3º Cálculo</label>
+                                            <div class="p-3 rounded-xl neumorphic-inset h-28 flex items-center justify-center">
+                                                <p id="resultado3" class="text-2xl font-bold text-accent">R$ 0,00</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="flex flex-col gap-2">
-                                    <label for="num_meses" class="text-sm font-medium">Quantidade de Meses (&lt; 12)</label>
-                                    <input type="number" id="num_meses" placeholder="1" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm h-16">
-                                </div>
-                                
-                                <div></div>
-
-                                <div class="md:col-span-2 flex gap-4 mt-4">
+                        
+                                <div class="flex gap-4 mt-4">
                                     <button id="calcular-faturamento" type="button" class="flex-1 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
-                                        <i data-lucide="calculator" class="w-5 h-5"></i> Calcular
+                                        <i data-lucide="calculator" class="w-5 h-5"></i> Calcular Todos
                                     </button>
                                     <button id="limpar-faturamento" type="button" class="flex-1 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
-                                        <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                                        <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar Tudo
                                     </button>
                                 </div>
                             </form>
@@ -1219,27 +1256,40 @@
                 });
             });
 
-            // Aba 1: Calculo do Simples
+            // Aba 1: Calculo do Simples (Reestruturado)
             const faturamentoForm = document.getElementById('faturamento-form');
-            document.getElementById('calcular-faturamento').addEventListener('click', () => {
-                const rbt12 = parseLocalFloat(document.getElementById('rbt12').value);
-                const rpa = parseLocalFloat(document.getElementById('rpa').value);
-                const mesAnterior = parseLocalFloat(document.getElementById('mes_anterior').value);
-                const numMeses = parseInt(document.getElementById('num_meses').value) || 0;
-                document.getElementById('resultado1').textContent = formatCurrency(rbt12 / 12);
-                document.getElementById('resultado2').textContent = formatCurrency(((rbt12 + rpa) - mesAnterior) / 12);
-                document.getElementById('resultado3').textContent = formatCurrency(numMeses > 0 ? (rpa + rbt12) / numMeses : 0);
-            });
-            document.getElementById('limpar-faturamento').addEventListener('click', () => {
+            const calcularFaturamentoBtn = document.getElementById('calcular-faturamento');
+            const limparFaturamentoBtn = document.getElementById('limpar-faturamento');
+
+            function calcularTodosMetodos() {
+                // Método 1
+                const rbt12_m1 = parseLocalFloat(document.getElementById('rbt12_metodo1').value);
+                const meses_m1 = parseInt(document.getElementById('meses_metodo1').value) || 12;
+                document.getElementById('resultado1').textContent = formatCurrency(meses_m1 > 0 ? rbt12_m1 / meses_m1 : 0);
+
+                // Método 2
+                const rpa_m2 = parseLocalFloat(document.getElementById('rpa_metodo2').value);
+                const rbt12_m2 = parseLocalFloat(document.getElementById('rbt12_metodo2').value);
+                const mesAnterior_m2 = parseLocalFloat(document.getElementById('mes_anterior_metodo2').value);
+                document.getElementById('resultado2').textContent = formatCurrency(((rbt12_m2 + rpa_m2) - mesAnterior_m2) / 12);
+
+                // Método 3
+                const rpa_m3 = parseLocalFloat(document.getElementById('rpa_metodo3').value);
+                const rbt12_m3 = parseLocalFloat(document.getElementById('rbt12_metodo3').value);
+                const numMeses_m3 = parseInt(document.getElementById('num_meses_metodo3').value) || 0;
+                document.getElementById('resultado3').textContent = formatCurrency(numMeses_m3 > 0 ? (rpa_m3 + rbt12_m3) / numMeses_m3 : 0);
+            }
+
+            calcularFaturamentoBtn.addEventListener('click', calcularTodosMetodos);
+
+            limparFaturamentoBtn.addEventListener('click', () => {
                 faturamentoForm.reset();
+                document.getElementById('meses_metodo1').value = '12';
                 document.getElementById('resultado1').textContent = formatCurrency(0);
                 document.getElementById('resultado2').textContent = formatCurrency(0);
                 document.getElementById('resultado3').textContent = formatCurrency(0);
-                document.getElementById('rbt12').value = '';
-                document.getElementById('rpa').value = '';
-                document.getElementById('mes_anterior').value = '';
-                document.getElementById('num_meses').value = '';
             });
+
 
             // Aba 2: Rel. Faturamento
             const relFaturamentoInputsContainer = document.getElementById('rel-faturamento-inputs');
