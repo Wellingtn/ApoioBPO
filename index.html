@@ -623,10 +623,6 @@
                                                         <label for="produtor-renda-nao-agro" class="text-sm font-medium">Renda Não Agro</label>
                                                         <input type="text" inputmode="decimal" id="produtor-renda-nao-agro" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
                                                     </div>
-                                                    <div class="flex items-center gap-3 pt-2">
-                                                        <input type="checkbox" id="produtor-possui-caf" class="h-5 w-5 rounded border-gray-300 text-accent focus:ring-accent cursor-pointer">
-                                                        <label for="produtor-possui-caf" class="text-sm font-medium cursor-pointer select-none">Possui CAF?</label>
-                                                    </div>
                                                 </div>
                                                 <!-- Results -->
                                                 <div class="space-y-4">
@@ -648,8 +644,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Alerta CAF -->
-                                            <div id="produtor-alerta-caf" class="hidden mt-4 p-3 rounded-xl neumorphic-inset text-sm font-semibold text-yellow-600 dark:text-yellow-400 text-center"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -1552,7 +1546,6 @@
                         } else if (activeCalc.id === 'calculadora-produtor-container') {
                             document.getElementById('produtor-renda-agro').value = '';
                             document.getElementById('produtor-renda-nao-agro').value = '';
-                            document.getElementById('produtor-possui-caf').checked = false;
                             calcularProdutor();
                         }
                     });
@@ -1562,32 +1555,25 @@
             // --- LÓGICA DA CALCULADORA DE PRODUTOR (ATUALIZADA) ---
             const produtorRendaAgroInput = document.getElementById('produtor-renda-agro');
             const produtorRendaNaoAgroInput = document.getElementById('produtor-renda-nao-agro');
-            const produtorCafCheckbox = document.getElementById('produtor-possui-caf');
-            const produtorAlertaCaf = document.getElementById('produtor-alerta-caf');
             
             const calcularProdutor = () => {
                 if (!produtorRendaAgroInput) return;
 
                 const rendaAgro = parseLocalFloat(produtorRendaAgroInput.value);
                 const rendaNaoAgro = parseLocalFloat(produtorRendaNaoAgroInput.value);
-                const possuiCaf = produtorCafCheckbox.checked;
                 
                 const total = rendaAgro + rendaNaoAgro;
                 const percAgro = total > 0 ? (rendaAgro / total) * 100 : 0;
                 const percNaoAgro = total > 0 ? (rendaNaoAgro / total) * 100 : 0;
 
                 let classificacao = '-';
-                let mostrarAlerta = false;
 
                 if (total > 0) {
                     if (percNaoAgro > 20) {
                         classificacao = 'Grande Produtor';
                     } else { // percAgro is >= 80%
-                        if (rendaAgro <= 500000 || possuiCaf) {
+                        if (rendaAgro <= 500000) {
                             classificacao = 'Pequeno Produtor';
-                            if (rendaAgro <= 500000 && !possuiCaf) {
-                                mostrarAlerta = true;
-                            }
                         } else if (rendaAgro <= 3500000) {
                             classificacao = 'Médio Produtor';
                         } else {
@@ -1599,17 +1585,10 @@
                 document.getElementById('produtor-renda-total').textContent = formatCurrency(total);
                 document.getElementById('produtor-porcentagens').textContent = `${percAgro.toFixed(2).replace('.', ',')}% / ${percNaoAgro.toFixed(2).replace('.', ',')}%`;
                 document.getElementById('produtor-classificacao').textContent = classificacao;
-
-                if(mostrarAlerta) {
-                    produtorAlertaCaf.textContent = 'Atenção: Anexar CAF, pois o produtor é de pequeno porte.';
-                    produtorAlertaCaf.classList.remove('hidden');
-                } else {
-                    produtorAlertaCaf.classList.add('hidden');
-                }
             };
 
-            if (produtorRendaAgroInput && produtorRendaNaoAgroInput && produtorCafCheckbox) {
-                [produtorRendaAgroInput, produtorRendaNaoAgroInput, produtorCafCheckbox].forEach(el => {
+            if (produtorRendaAgroInput && produtorRendaNaoAgroInput) {
+                [produtorRendaAgroInput, produtorRendaNaoAgroInput].forEach(el => {
                     el.addEventListener('input', calcularProdutor);
                 });
             }
