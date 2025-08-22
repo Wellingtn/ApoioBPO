@@ -303,7 +303,7 @@
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="rel-faturamento">Rel. Faturamento</button>
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="semoventes">Semoventes</button>
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="nfs">NF's</button>
-                        <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="quotas">Quotas</button>
+                        <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="porcentagem">Porcentagem</button>
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="fcpr">FCPR</button>
                         <button class="faturamento-tab-button py-2 px-4 font-semibold text-subtle whitespace-nowrap" data-tab="calc-datas">Cal. Datas</button>
                     </div>
@@ -562,44 +562,106 @@
                                 </div>
                             </div>
                         </div>
-                         <div id="quotas-tab" class="faturamento-tab-content hidden">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="space-y-4 p-4 rounded-2xl neumorphic-inset">
-                                    <h3 class="text-lg font-semibold text-center">Calcular % por Valor</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <label for="quotas-valor-total-empresa-1" class="text-sm font-medium">Valor total das quotas da empresa</label>
-                                        <input type="text" inputmode="decimal" id="quotas-valor-total-empresa-1" placeholder="R$ 0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                         <div id="porcentagem-tab" class="faturamento-tab-content hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                                <!-- Calculators container -->
+                                <div class="lg:col-span-3">
+                                    <!-- Calculator 1: Quotas -->
+                                    <div id="calculadora-quotas-container" class="porcentagem-calc-container">
+                                        <div class="space-y-6">
+                                            <h3 class="text-xl font-bold text-center text-accent">Calculadora de Quotas</h3>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <div class="space-y-4 p-4 rounded-2xl neumorphic-inset">
+                                                    <h4 class="text-lg font-semibold text-center">Calcular % por Valor</h4>
+                                                    <div class="flex flex-col gap-2">
+                                                        <label for="quotas-valor-total-empresa-1" class="text-sm font-medium">Valor total das quotas da empresa</label>
+                                                        <input type="text" inputmode="decimal" id="quotas-valor-total-empresa-1" placeholder="R$ 0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                                    </div>
+                                                    <div class="flex flex-col gap-2">
+                                                        <label for="quotas-valor-associado-1" class="text-sm font-medium">Valor monetário das quotas do associado</label>
+                                                        <input type="text" inputmode="decimal" id="quotas-valor-associado-1" placeholder="R$ 0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                                    </div>
+                                                    <div class="flex flex-col gap-2 mt-2">
+                                                        <label class="text-sm font-medium">% Percentual Propriedade do Associado</label>
+                                                        <div class="p-3 rounded-2xl neumorphic-inset min-h-[44px] flex items-center">
+                                                            <p id="quotas-percentual-resultado" class="font-bold text-accent">0.00%</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="space-y-4 p-4 rounded-2xl neumorphic-inset">
+                                                    <h4 class="text-lg font-semibold text-center">Calcular Valor por %</h4>
+                                                    <div class="flex flex-col gap-2">
+                                                        <label for="quotas-valor-total-empresa-2" class="text-sm font-medium">Valor total das quotas da empresa</label>
+                                                        <input type="text" inputmode="decimal" id="quotas-valor-total-empresa-2" placeholder="R$ 0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                                    </div>
+                                                    <div class="flex flex-col gap-2">
+                                                        <label for="quotas-percentual-associado-2" class="text-sm font-medium">% Percentual Propriedade do Associado</label>
+                                                        <input type="text" inputmode="decimal" id="quotas-percentual-associado-2" placeholder="0,00%" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                                    </div>
+                                                    <div class="flex flex-col gap-2 mt-2">
+                                                        <label class="text-sm font-medium">Valor monetário das quotas do associado</label>
+                                                        <div class="p-3 rounded-2xl neumorphic-inset min-h-[44px] flex items-center">
+                                                            <p id="quotas-valor-resultado" class="font-bold text-accent">R$ 0,00</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex flex-col gap-2">
-                                        <label for="quotas-valor-associado-1" class="text-sm font-medium">Valor monetário das quotas do associado</label>
-                                        <input type="text" inputmode="decimal" id="quotas-valor-associado-1" placeholder="R$ 0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                    </div>
-                                    <div class="flex flex-col gap-2 mt-2">
-                                        <label class="text-sm font-medium">% Percentual Propriedade do Associado</label>
-                                        <div class="p-3 rounded-2xl neumorphic-inset min-h-[44px] flex items-center">
-                                            <p id="quotas-percentual-resultado" class="font-bold text-accent">0.00%</p>
+                                    <!-- Calculator 2: Produtor -->
+                                    <div id="calculadora-produtor-container" class="porcentagem-calc-container hidden">
+                                        <div class="space-y-6">
+                                            <h3 class="text-xl font-bold text-center text-accent">Calculadora de Produtor</h3>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <!-- Inputs -->
+                                                <div class="space-y-4 p-4 rounded-2xl neumorphic-inset">
+                                                    <div class="flex flex-col gap-2">
+                                                        <label for="produtor-renda-agro" class="text-sm font-medium">Renda Agro</label>
+                                                        <input type="text" inputmode="decimal" id="produtor-renda-agro" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                                    </div>
+                                                    <div class="flex flex-col gap-2">
+                                                        <label for="produtor-renda-nao-agro" class="text-sm font-medium">Renda Não Agro</label>
+                                                        <input type="text" inputmode="decimal" id="produtor-renda-nao-agro" placeholder="R$ 0,00" class="w-full p-3 rounded-xl neumorphic-inset focus:outline-none text-sm h-14">
+                                                    </div>
+                                                    <div class="flex items-center gap-3 pt-2">
+                                                        <input type="checkbox" id="produtor-possui-caf" class="h-5 w-5 rounded border-gray-300 text-accent focus:ring-accent cursor-pointer">
+                                                        <label for="produtor-possui-caf" class="text-sm font-medium cursor-pointer select-none">Possui CAF?</label>
+                                                    </div>
+                                                </div>
+                                                <!-- Results -->
+                                                <div class="space-y-4">
+                                                    <div class="p-3 rounded-xl neumorphic-inset h-full flex flex-col justify-around">
+                                                        <div>
+                                                            <label class="text-sm font-medium">Renda Total</label>
+                                                            <p id="produtor-renda-total" class="text-xl font-bold text-accent">R$ 0,00</p>
+                                                        </div>
+                                                        <hr class="border-slate-300 dark:border-slate-600 my-2">
+                                                        <div>
+                                                            <label class="text-sm font-medium">Porcentagens (Agro / Não Agro)</label>
+                                                            <p id="produtor-porcentagens" class="text-xl font-bold text-accent">0,00% / 0,00%</p>
+                                                        </div>
+                                                         <hr class="border-slate-300 dark:border-slate-600 my-2">
+                                                        <div>
+                                                            <label class="text-sm font-medium">Classificação do Produtor</label>
+                                                            <p id="produtor-classificacao" class="text-xl font-bold text-accent">-</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Alerta CAF -->
+                                            <div id="produtor-alerta-caf" class="hidden mt-4 p-3 rounded-xl neumorphic-inset text-sm font-semibold text-yellow-600 dark:text-yellow-400 text-center"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="space-y-4 p-4 rounded-2xl neumorphic-inset">
-                                    <h3 class="text-lg font-semibold text-center">Calcular Valor por %</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <label for="quotas-valor-total-empresa-2" class="text-sm font-medium">Valor total das quotas da empresa</label>
-                                        <input type="text" inputmode="decimal" id="quotas-valor-total-empresa-2" placeholder="R$ 0,00" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                    </div>
-                                    <div class="flex flex-col gap-2">
-                                        <label for="quotas-percentual-associado-2" class="text-sm font-medium">% Percentual Propriedade do Associado</label>
-                                        <input type="text" inputmode="decimal" id="quotas-percentual-associado-2" placeholder="0,00%" class="w-full p-3 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                    </div>
-                                    <div class="flex flex-col gap-2 mt-2">
-                                        <label class="text-sm font-medium">Valor monetário das quotas do associado</label>
-                                        <div class="p-3 rounded-2xl neumorphic-inset min-h-[44px] flex items-center">
-                                            <p id="quotas-valor-resultado" class="font-bold text-accent">R$ 0,00</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="md:col-span-2">
-                                     <button id="quotas-limpar" type="button" class="w-full mt-4 p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2">
+                                <!-- Navigation buttons -->
+                                <div class="flex flex-col gap-4 pt-16">
+                                    <button class="porcentagem-calc-button p-4 rounded-2xl font-semibold neumorphic-inset transition-all duration-200 active:scale-95" data-target="calculadora-quotas-container">
+                                        Quotas
+                                    </button>
+                                    <button class="porcentagem-calc-button p-4 rounded-2xl font-semibold neumorphic-outset-sm transition-all duration-200 active:scale-95" data-target="calculadora-produtor-container">
+                                        Produtor
+                                    </button>
+                                    <button id="porcentagem-limpar-btn" type="button" class="p-4 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center gap-2 mt-4">
                                         <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
                                     </button>
                                 </div>
@@ -1174,7 +1236,7 @@
                 if (isDragging) {
                     e.preventDefault();
                     translateX = e.clientX - startX;
-                    translateY = e.clientY - startY;
+                    translateY = e.clientY - translateY;
                     applyTransform();
                 }
             });
@@ -1432,8 +1494,8 @@
                 calcularNFs();
             });
 
-            // Aba 5: Quotas
-            const quotasInputs = document.querySelectorAll('#quotas-tab input');
+            // Aba 5: Porcentagem (Antiga Quotas) - Lógica da Calculadora de Quotas
+            const quotasCalcInputs = document.querySelectorAll('#calculadora-quotas-container input');
             const calcularQuotas = () => {
                 // Bloco 1: Calcular %
                 const valorTotal1 = parseLocalFloat(document.getElementById('quotas-valor-total-empresa-1').value);
@@ -1450,11 +1512,107 @@
                 const valorMonetario = valorTotal2 * (percentualAssociado2 / 100);
                 document.getElementById('quotas-valor-resultado').textContent = formatCurrency(valorMonetario);
             };
-            quotasInputs.forEach(input => input.addEventListener('input', calcularQuotas));
-            document.getElementById('quotas-limpar').addEventListener('click', () => {
-                quotasInputs.forEach(input => input.value = '');
-                calcularQuotas();
-            });
+            quotasCalcInputs.forEach(input => input.addEventListener('input', calcularQuotas));
+            
+            // --- LÓGICA DA ABA PORCENTAGEM (NOVA) ---
+            const porcentagemTab = document.getElementById('porcentagem-tab');
+            if (porcentagemTab) {
+                const calcButtons = porcentagemTab.querySelectorAll('.porcentagem-calc-button');
+                const calcContainers = porcentagemTab.querySelectorAll('.porcentagem-calc-container');
+                const limparBtn = document.getElementById('porcentagem-limpar-btn');
+
+                calcButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetId = button.dataset.target;
+
+                        calcContainers.forEach(container => container.classList.add('hidden'));
+                        const targetContainer = document.getElementById(targetId);
+                        if (targetContainer) targetContainer.classList.remove('hidden');
+
+                        calcButtons.forEach(btn => {
+                            btn.classList.remove('neumorphic-inset');
+                            btn.classList.add('neumorphic-outset-sm');
+                        });
+                        button.classList.add('neumorphic-inset');
+                        button.classList.remove('neumorphic-outset-sm');
+                    });
+                });
+
+                if(limparBtn) {
+                    limparBtn.addEventListener('click', () => {
+                        const activeCalc = document.querySelector('.porcentagem-calc-container:not(.hidden)');
+                        if (!activeCalc) return;
+
+                        if(activeCalc.id === 'calculadora-quotas-container') {
+                            document.getElementById('quotas-valor-total-empresa-1').value = '';
+                            document.getElementById('quotas-valor-associado-1').value = '';
+                            document.getElementById('quotas-valor-total-empresa-2').value = '';
+                            document.getElementById('quotas-percentual-associado-2').value = '';
+                            calcularQuotas();
+                        } else if (activeCalc.id === 'calculadora-produtor-container') {
+                            document.getElementById('produtor-renda-agro').value = '';
+                            document.getElementById('produtor-renda-nao-agro').value = '';
+                            document.getElementById('produtor-possui-caf').checked = false;
+                            calcularProdutor();
+                        }
+                    });
+                }
+            }
+
+            // --- LÓGICA DA CALCULADORA DE PRODUTOR (ATUALIZADA) ---
+            const produtorRendaAgroInput = document.getElementById('produtor-renda-agro');
+            const produtorRendaNaoAgroInput = document.getElementById('produtor-renda-nao-agro');
+            const produtorCafCheckbox = document.getElementById('produtor-possui-caf');
+            const produtorAlertaCaf = document.getElementById('produtor-alerta-caf');
+            
+            const calcularProdutor = () => {
+                if (!produtorRendaAgroInput) return;
+
+                const rendaAgro = parseLocalFloat(produtorRendaAgroInput.value);
+                const rendaNaoAgro = parseLocalFloat(produtorRendaNaoAgroInput.value);
+                const possuiCaf = produtorCafCheckbox.checked;
+                
+                const total = rendaAgro + rendaNaoAgro;
+                const percAgro = total > 0 ? (rendaAgro / total) * 100 : 0;
+                const percNaoAgro = total > 0 ? (rendaNaoAgro / total) * 100 : 0;
+
+                let classificacao = '-';
+                let mostrarAlerta = false;
+
+                if (total > 0) {
+                    if (percNaoAgro > 20) {
+                        classificacao = 'Grande Produtor';
+                    } else { // percAgro is >= 80%
+                        if (rendaAgro <= 500000 || possuiCaf) {
+                            classificacao = 'Pequeno Produtor';
+                            if (rendaAgro <= 500000 && !possuiCaf) {
+                                mostrarAlerta = true;
+                            }
+                        } else if (rendaAgro <= 3500000) {
+                            classificacao = 'Médio Produtor';
+                        } else {
+                            classificacao = 'Grande Produtor';
+                        }
+                    }
+                }
+
+                document.getElementById('produtor-renda-total').textContent = formatCurrency(total);
+                document.getElementById('produtor-porcentagens').textContent = `${percAgro.toFixed(2).replace('.', ',')}% / ${percNaoAgro.toFixed(2).replace('.', ',')}%`;
+                document.getElementById('produtor-classificacao').textContent = classificacao;
+
+                if(mostrarAlerta) {
+                    produtorAlertaCaf.textContent = 'Atenção: Anexar CAF, pois o produtor é de pequeno porte.';
+                    produtorAlertaCaf.classList.remove('hidden');
+                } else {
+                    produtorAlertaCaf.classList.add('hidden');
+                }
+            };
+
+            if (produtorRendaAgroInput && produtorRendaNaoAgroInput && produtorCafCheckbox) {
+                [produtorRendaAgroInput, produtorRendaNaoAgroInput, produtorCafCheckbox].forEach(el => {
+                    el.addEventListener('input', calcularProdutor);
+                });
+            }
 
             // Aba 6: FCPR
             const fcprInputsContainer = document.getElementById('fcpr-inputs');
