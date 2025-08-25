@@ -198,17 +198,7 @@
 </head>
 
 <body>
-    <!-- Ads Laterais (Visíveis apenas em telas grandes) -->
-    <div id="left-ad-container" class="hidden xl:block fixed top-1/2 -translate-y-1/2 left-4 z-10">
-        <!-- Cole o código do seu anúncio vertical (160x600) aqui -->
-        <img src="https://via.placeholder.com/160x600.png?text=Anúncio+Lateral" alt="Anúncio Lateral Esquerdo" />
-    </div>
-
-    <div id="right-ad-container" class="hidden xl:block fixed top-1/2 -translate-y-1/2 right-4 z-10">
-        <!-- Cole o código do seu anúncio vertical (160x600) aqui -->
-        <img src="https://via.placeholder.com/160x600.png?text=Anúncio+Lateral" alt="Anúncio Lateral Direito" />
-    </div>
-
+    <!-- Os anúncios laterais foram removidos. -->
 
     <!-- MODAL DE TERMOS DE USO -->
     <div id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
@@ -649,7 +639,7 @@
                                                         <div>
                                                             <label class="text-sm font-medium">Porcentagens (Agro / Não Agro)</label>
                                                             <p id="produtor-porcentagens" class="text-xl font-bold text-accent">0,00% / 0,00%</p>
-                                                        </div>
+                                                         </div>
                                                          <hr class="border-slate-300 dark:border-slate-600 my-2">
                                                         <div>
                                                             <label class="text-sm font-medium">Classificação do Produtor</label>
@@ -2127,7 +2117,7 @@
                 
                 const historicoSimplesHtml = `
                     <div class="p-4 rounded-2xl neumorphic-inset">
-                        <p class="text-sm text-subtle uppercase tracking-wide mb-2">Histórico do Simples Nacional</p>
+                        <p class="text-sm text-subtle uppercase tracking-wide">Histórico do Simples Nacional</p>
                         ${conteudoHistorico}
                         ${avisoExclusao}
                     </div>
