@@ -116,8 +116,10 @@
 
         .custom-checkbox { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: all 0.2s ease-in-out; cursor: pointer; }
         .custom-checkbox .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease-in-out; color: var(--color-accent); }
-        .checklist-item-checkbox:checked + .custom-checkbox { box-shadow: inset 3px 3px 6px var(--color-shadow-2), inset -3px -3px 6px var(--color-shadow-1); }
-        .checklist-item-checkbox:checked + .custom-checkbox .check-icon { opacity: 1; transform: scale(1); }
+        .checklist-item-checkbox:checked + .custom-checkbox,
+        .soma-valor-checkbox:checked + .custom-checkbox { box-shadow: inset 3px 3px 6px var(--color-shadow-2), inset -3px -3px 6px var(--color-shadow-1); }
+        .checklist-item-checkbox:checked + .custom-checkbox .check-icon,
+        .soma-valor-checkbox:checked + .custom-checkbox .check-icon { opacity: 1; transform: scale(1); }
         .checklist-list-item:has(.checklist-item-checkbox:checked) { background-color: rgba(0,0,0,0.02); }
         html.dark .checklist-list-item:has(.checklist-item-checkbox:checked) { background-color: rgba(255,255,255,0.02); }
         
@@ -196,91 +198,103 @@
 </head>
 
 <body>
+    <!-- Ads Laterais (Visíveis apenas em telas grandes) -->
+    <div id="left-ad-container" class="hidden xl:block fixed top-1/2 -translate-y-1/2 left-4 z-10">
+        <!-- Cole o código do seu anúncio vertical (160x600) aqui -->
+        <img src="https://via.placeholder.com/160x600.png?text=Anúncio+Lateral" alt="Anúncio Lateral Esquerdo" />
+    </div>
+
+    <div id="right-ad-container" class="hidden xl:block fixed top-1/2 -translate-y-1/2 right-4 z-10">
+        <!-- Cole o código do seu anúncio vertical (160x600) aqui -->
+        <img src="https://via.placeholder.com/160x600.png?text=Anúncio+Lateral" alt="Anúncio Lateral Direito" />
+    </div>
+
+
     <!-- MODAL DE TERMOS DE USO -->
-<div id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-[var(--color-bg)] opacity-90"></div>
-    <div class="relative w-full max-w-2xl p-6 sm:p-8 rounded-2xl neumorphic-outset animate-fade-in">
-        <h2 class="text-2xl font-bold mb-2 text-accent">Termos e Condições de Uso — ApoioBPO</h2>
-        <p class="text-xs text-subtle mb-4">Versão 1.6.0 — Agosto de 2025</p>
+    <div id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-[var(--color-bg)] opacity-90"></div>
+        <div class="relative w-full max-w-2xl p-6 sm:p-8 rounded-2xl neumorphic-outset animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2 text-accent">Termos e Condições de Uso — ApoioBPO</h2>
+            <p class="text-xs text-subtle mb-4">Versão 1.6.0 — Agosto de 2025</p>
 
-        <div class="max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 text-sm space-y-4">
-            <p>Bem-vindo ao ApoioBPO. Antes de utilizar o sistema, leia atentamente estes termos. Ao clicar em “Aceitar e Continuar”, você declara estar de acordo com as condições estabelecidas.</p>
+            <div class="max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 text-sm space-y-4">
+                <p>Bem-vindo ao ApoioBPO. Antes de utilizar o sistema, leia atentamente estes termos. Ao clicar em “Aceitar e Continuar”, você declara estar de acordo com as condições estabelecidas.</p>
 
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">1. Propriedade Intelectual</h3>
-                <p class="text-subtle">Este sistema foi desenvolvido por <strong>Wellington Juan Dutra Oliveira</strong>, com colaboração de:</p>
-                <ul class="list-disc list-inside pl-4 text-subtle">
-                    <li>Gabriel Artur Lopes Feltes</li>
-                    <li>Mauricio Gabriel Freiberger Konig</li>
-                    <li>Erika Mendonça Figueira</li>
-                    <li>Bruno Corrêa Alves</li>
-                </ul>
-                <p class="text-subtle mt-2">Todos os direitos sobre o sistema, incluindo código-fonte, design, funcionalidades e lógica, são reservados ao autor.</p>
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">1. Propriedade Intelectual</h3>
+                    <p class="text-subtle">Este sistema foi desenvolvido por <strong>Wellington Juan Dutra Oliveira</strong>, com colaboração de:</p>
+                    <ul class="list-disc list-inside pl-4 text-subtle">
+                        <li>Gabriel Artur Lopes Feltes</li>
+                        <li>Mauricio Gabriel Freiberger Konig</li>
+                        <li>Erika Mendonça Figueira</li>
+                        <li>Bruno Corrêa Alves</li>
+                    </ul>
+                    <p class="text-subtle mt-2">Todos os direitos sobre o sistema, incluindo código-fonte, design, funcionalidades e lógica, são reservados ao autor.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">2. Finalidade de Uso</h3>
+                    <p class="text-subtle">O ApoioBPO destina-se exclusivamente ao uso interno e profissional da equipe da Meta Serviços em Informática S.A., no âmbito dos serviços de BPO prestados ao Banco Cooperativo Sicoob S.A.</p>
+                    <p class="text-subtle mt-2">Principais funcionalidades:</p>
+                    <ul class="list-disc list-inside pl-4 text-subtle">
+                        <li>Cálculo de renda para pessoas físicas (PF) e jurídicas (PJ);</li>
+                        <li>Análise de atividades agropecuárias;</li>
+                        <li>Verificação automatizada de CNPJ;</li>
+                        <li>Checklist documental;</li>
+                        <li>Registro e contagem de atividades por hora;</li>
+                        <li>Consulta de pareceres técnicos e regras de operação.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">3. Restrições de Uso</h3>
+                    <p class="text-subtle">É estritamente proibido:</p>
+                    <ul class="list-disc list-inside pl-4 text-subtle">
+                        <li>Utilizar o sistema fora do ambiente corporativo e horário comercial;</li>
+                        <li>Compartilhar acesso com pessoas não autorizadas;</li>
+                        <li>Copiar, modificar, distribuir, vender ou sublicenciar o sistema sem autorização expressa;</li>
+                        <li>Realizar engenharia reversa, descompilar ou tentar acessar o código-fonte;</li>
+                        <li>Utilizar documentos, regras ou pareceres sem permissão formal;</li>
+                        <li>Armazenar ou transmitir dados do sistema fora da rede corporativa sem autorização prévia.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">4. Confidencialidade</h3>
+                    <p class="text-subtle">Todas as informações acessadas, processadas ou armazenadas são confidenciais, incluindo dados de clientes, cálculos, regras de negócio e pareceres técnicos. O usuário compromete-se a manter sigilo absoluto, mesmo após o desligamento da empresa, e a não divulgar ou armazenar externamente qualquer informação sem autorização.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">5. Responsabilidade Limitada</h3>
+                    <p class="text-subtle">O sistema é fornecido “como está” e pode apresentar limitações técnicas decorrentes de atualizações, integrações externas ou uso indevido. Os desenvolvedores se responsabilizam apenas pelo funcionamento correto das funcionalidades especificadas.</p>
+                    <p class="text-subtle mt-2">Decisões operacionais, financeiras ou jurídicas baseadas no sistema devem ser validadas pelo usuário. Falhas devem ser comunicadas imediatamente pelos canais oficiais.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">6. Suporte e Comunicação de Incidentes</h3>
+                    <p class="text-subtle">Dúvidas, falhas ou incidentes devem ser reportados imediatamente pelo canal oficial da Meta Serviços em Informática S.A. (Microsoft Teams, e-mail corporativo ou ferramenta designada). O não reporte pode limitar a responsabilidade dos autores.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-base mt-4 mb-2">7. Vigência e Atualizações</h3>
+                    <p class="text-subtle">Estes termos entram em vigor na data da versão indicada e podem ser atualizados a qualquer momento por motivos técnicos, legais ou operacionais. O usuário deve manter-se informado sobre a versão vigente.</p>
+                </div>
             </div>
 
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">2. Finalidade de Uso</h3>
-                <p class="text-subtle">O ApoioBPO destina-se exclusivamente ao uso interno e profissional da equipe da Meta Serviços em Informática S.A., no âmbito dos serviços de BPO prestados ao Banco Cooperativo Sicoob S.A.</p>
-                <p class="text-subtle mt-2">Principais funcionalidades:</p>
-                <ul class="list-disc list-inside pl-4 text-subtle">
-                    <li>Cálculo de renda para pessoas físicas (PF) e jurídicas (PJ);</li>
-                    <li>Análise de atividades agropecuárias;</li>
-                    <li>Verificação automatizada de CNPJ;</li>
-                    <li>Checklist documental;</li>
-                    <li>Registro e contagem de atividades por hora;</li>
-                    <li>Consulta de pareceres técnicos e regras de operação.</li>
-                </ul>
+            <div class="mt-6 space-y-4">
+                <label for="terms-checkbox" class="flex items-center justify-center gap-2 text-sm cursor-pointer">
+                    <input type="checkbox" id="terms-checkbox" class="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent">
+                    <span>Declaro que li, compreendi e aceito todos os termos e condições de uso descritos acima</span>
+                </label>
+                <button id="accept-terms-btn" class="w-full px-8 py-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 text-accent" disabled>
+                    Aceitar e Continuar
+                </button>
             </div>
-
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">3. Restrições de Uso</h3>
-                <p class="text-subtle">É estritamente proibido:</p>
-                <ul class="list-disc list-inside pl-4 text-subtle">
-                    <li>Utilizar o sistema fora do ambiente corporativo e horário comercial;</li>
-                    <li>Compartilhar acesso com pessoas não autorizadas;</li>
-                    <li>Copiar, modificar, distribuir, vender ou sublicenciar o sistema sem autorização expressa;</li>
-                    <li>Realizar engenharia reversa, descompilar ou tentar acessar o código-fonte;</li>
-                    <li>Utilizar documentos, regras ou pareceres sem permissão formal;</li>
-                    <li>Armazenar ou transmitir dados do sistema fora da rede corporativa sem autorização prévia.</li>
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">4. Confidencialidade</h3>
-                <p class="text-subtle">Todas as informações acessadas, processadas ou armazenadas são confidenciais, incluindo dados de clientes, cálculos, regras de negócio e pareceres técnicos. O usuário compromete-se a manter sigilo absoluto, mesmo após o desligamento da empresa, e a não divulgar ou armazenar externamente qualquer informação sem autorização.</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">5. Responsabilidade Limitada</h3>
-                <p class="text-subtle">O sistema é fornecido “como está” e pode apresentar limitações técnicas decorrentes de atualizações, integrações externas ou uso indevido. Os desenvolvedores se responsabilizam apenas pelo funcionamento correto das funcionalidades especificadas.</p>
-                <p class="text-subtle mt-2">Decisões operacionais, financeiras ou jurídicas baseadas no sistema devem ser validadas pelo usuário. Falhas devem ser comunicadas imediatamente pelos canais oficiais.</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">6. Suporte e Comunicação de Incidentes</h3>
-                <p class="text-subtle">Dúvidas, falhas ou incidentes devem ser reportados imediatamente pelo canal oficial da Meta Serviços em Informática S.A. (Microsoft Teams, e-mail corporativo ou ferramenta designada). O não reporte pode limitar a responsabilidade dos autores.</p>
-            </div>
-
-            <div>
-                <h3 class="font-semibold text-base mt-4 mb-2">7. Vigência e Atualizações</h3>
-                <p class="text-subtle">Estes termos entram em vigor na data da versão indicada e podem ser atualizados a qualquer momento por motivos técnicos, legais ou operacionais. O usuário deve manter-se informado sobre a versão vigente.</p>
-            </div>
-        </div>
-
-        <div class="mt-6 space-y-4">
-            <label for="terms-checkbox" class="flex items-center justify-center gap-2 text-sm cursor-pointer">
-                <input type="checkbox" id="terms-checkbox" class="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent">
-                <span>Declaro que li, compreendi e aceito todos os termos e condições de uso descritos acima</span>
-            </label>
-            <button id="accept-terms-btn" class="w-full px-8 py-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 text-accent" disabled>
-                Aceitar e Continuar
-            </button>
         </div>
     </div>
-</div>
 
 
-    <div id="main-content" class="min-h-screen w-full flex flex-col items-center p-4 sm:p-8 transition-all duration-300">
+    <div id="main-content" class="min-h-screen w-full flex flex-col items-center p-4 sm:p-8 transition-all duration-300 xl:mx-48">
 
         <main class="w-full max-w-5xl mx-auto flex flex-col gap-4 mb-24">
             <header class="flex justify-between items-center w-full px-2 flex-shrink-0">
@@ -786,43 +800,29 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- INÍCIO DA ABA SOMA DE VALORES ATUALIZADA -->
                         <div id="soma-tab" class="renda-pf-tab-content hidden">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div class="flex flex-col gap-2">
-                                    <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Valores a Somar</h4>
-                                    <div id="soma-inputs-container" class="flex flex-col gap-2">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="soma-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
+                                    <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Lançamentos</h4>
+                                    <div id="soma-valores-container" class="space-y-2 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
+                                        <!-- Inputs serão gerados dinamicamente aqui -->
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-2">
-                                    <h4 class="text-sm text-subtle uppercase tracking-wide mb-2">Valores a Subtrair</h4>
-                                    <div id="sub-inputs-container" class="flex flex-col gap-2">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                        <input type="text" inputmode="decimal" placeholder="0,00" class="sub-valor-input w-full p-2 rounded-2xl neumorphic-inset focus:outline-none text-sm">
-                                    </div>
-                                </div>
-                                <div class="md:col-span-2 flex flex-col md:flex-row gap-4 mt-4">
-                                     <div class="flex-1 p-4 rounded-2xl neumorphic-inset">
-                                         <p class="text-sm font-medium">Soma Total</p>
+                                <div class="flex flex-col gap-4">
+                                     <div class="p-4 rounded-2xl neumorphic-inset">
+                                         <p class="text-sm font-medium">Soma dos Itens Marcados</p>
                                          <p id="soma_total_resultado" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                                      </div>
-                                     <div class="flex-1 p-4 rounded-2xl neumorphic-inset">
-                                         <p class="text-sm font-medium">Divisão por 12</p>
+                                     <div class="p-4 rounded-2xl neumorphic-inset">
+                                         <p class="text-sm font-medium">Resultado / 12</p>
                                          <p id="soma_div12_resultado" class="text-2xl font-bold text-accent mt-1">R$ 0,00</p>
                                      </div>
-                                </div>
-                                <div class="md:col-span-2 mt-4">
-                                    <button id="limpar_soma" type="button" class="w-full p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">Limpar</button>
+                                     <button id="limpar_soma" type="button" class="w-full mt-auto p-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 hover:bg-black/5 dark:hover:bg-white/5">Limpar</button>
                                 </div>
                             </div>
                         </div>
+                        <!-- FIM DA ABA SOMA DE VALORES ATUALIZADA -->
                     </div>
                 </div>
 
@@ -1230,7 +1230,7 @@
                 if (isDragging) {
                     e.preventDefault();
                     translateX = e.clientX - startX;
-                    translateY = e.clientY - translateY;
+                    translateY = e.clientY - startY;
                     applyTransform();
                 }
             });
@@ -1958,26 +1958,64 @@
                 calcularMedia();
             });
 
-            // Aba 3: Soma de Valores
-            const somaInputs = document.querySelectorAll('.soma-valor-input');
-            const subInputs = document.querySelectorAll('.sub-valor-input');
+            // --- INÍCIO DA LÓGICA ATUALIZADA PARA SOMA DE VALORES ---
+            const somaValoresContainer = document.getElementById('soma-valores-container');
             const limparSomaBtn = document.getElementById('limpar_soma');
+            const NUM_SOMA_INPUTS = 12;
+
             function calcularSomaTotal() {
                 let totalSoma = 0;
-                somaInputs.forEach(inp => totalSoma += parseLocalFloat(inp.value));
-                let totalSub = 0;
-                subInputs.forEach(inp => totalSub += parseLocalFloat(inp.value));
-                const somaFinal = totalSoma - totalSub;
-                document.getElementById('soma_total_resultado').textContent = formatCurrency(somaFinal);
-                document.getElementById('soma_div12_resultado').textContent = formatCurrency(somaFinal / 12);
+                const items = document.querySelectorAll('#soma-valores-container .soma-valor-item');
+                items.forEach(item => {
+                    const checkbox = item.querySelector('.soma-valor-checkbox');
+                    const input = item.querySelector('.soma-valor-input');
+                    if (checkbox && input && checkbox.checked) {
+                        totalSoma += parseLocalFloat(input.value);
+                    }
+                });
+
+                document.getElementById('soma_total_resultado').textContent = formatCurrency(totalSoma);
+                document.getElementById('soma_div12_resultado').textContent = formatCurrency(totalSoma / 12);
             }
-            somaInputs.forEach(input => input.addEventListener('input', calcularSomaTotal));
-            subInputs.forEach(input => input.addEventListener('input', calcularSomaTotal));
-            limparSomaBtn.addEventListener('click', () => {
-                somaInputs.forEach(input => input.value = '');
-                subInputs.forEach(input => input.value = '');
-                calcularSomaTotal();
-            });
+
+            if (somaValoresContainer) {
+                somaValoresContainer.innerHTML = ''; // Limpa o container para evitar duplicatas
+                for (let i = 0; i < NUM_SOMA_INPUTS; i++) {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'soma-valor-item';
+                    itemDiv.innerHTML = `
+                        <label class="flex items-center gap-3 cursor-pointer p-1 rounded-lg">
+                            <input type="checkbox" id="soma-check-${i}" class="soma-valor-checkbox hidden">
+                            <span class="custom-checkbox neumorphic-outset-sm">
+                                <i data-lucide="check" class="check-icon w-4 h-4"></i>
+                            </span>
+                            <input type="text" inputmode="decimal" placeholder="R$ 0,00" class="soma-valor-input w-full p-2 rounded-xl neumorphic-inset focus:outline-none text-sm">
+                        </label>
+                    `;
+                    somaValoresContainer.appendChild(itemDiv);
+                }
+                safeCreateIcons(); 
+
+                somaValoresContainer.addEventListener('input', (e) => {
+                    if (e.target.classList.contains('soma-valor-input')) {
+                        calcularSomaTotal();
+                    }
+                });
+                somaValoresContainer.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('soma-valor-checkbox')) {
+                        calcularSomaTotal();
+                    }
+                });
+            }
+
+            if (limparSomaBtn) {
+                limparSomaBtn.addEventListener('click', () => {
+                    document.querySelectorAll('#soma-valores-container .soma-valor-input').forEach(input => input.value = '');
+                    document.querySelectorAll('#soma-valores-container .soma-valor-checkbox').forEach(checkbox => checkbox.checked = false);
+                    calcularSomaTotal();
+                });
+            }
+            // --- FIM DA LÓGICA ATUALIZADA PARA SOMA DE VALORES ---
 
             // --- LÓGICA DO MÓDULO DE REGRAS (ABAS E FILTRO) ---
             const regrasTbody = document.getElementById('regras-irpf-tbody');
