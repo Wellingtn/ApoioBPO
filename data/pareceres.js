@@ -54,9 +54,10 @@ const pareceresDataCorrigido = {
             "UF DO ÓRGÃO EXPEDIDOR": "CORRIGIR A UF DO ÓRGÃO EXPEDIDOR PARA {}."
         },
         "Pareceres de Pessoa Física": {
-            "ESTADO CIVIL": "CORRIGIR O ESTADO CIVIL PARA {}.",
-            "ÓRGÃO EXPEDIDOR": "CORRIGIR O ÓRGÃO EXPEDIDOR PARA {}.",
-            "NATURALIDADE": "CORRIGIR A NATURALIDADE PARA {}."
+            "ESTADO CIVIL": "CORRIGIR O ESTADO CIVIL PARA {}, CONFORME DOCUMENTO ANEXADO.",
+            "ÓRGÃO EXPEDIDOR": "CORRIGIR O ÓRGÃO EXPEDIDOR PARA {}, CONFORME DOCUMENTO ANEXADO.",
+            "NATURALIDADE": "CORRIGIR A NATURALIDADE PARA {}, CONFORME DOCUMENTO ANEXADO.",
+            "FILIAÇÃO": "CORRIGIR O NOME DO PAI/MÃE PARA {}, CONFORME DOCUMENTO ANEXADO."
         },
         "Pareceres de Pessoa Jurídica": {
             "DATA DE CONSTITUIÇÃO": "CORRIGIR A DATA DE CONSTITUIÇÃO PARA {}.",
