@@ -2132,30 +2132,42 @@
                                 <p class="font-bold text-lg ${data.descricao_situacao_cadastral === 'ATIVA' ? 'text-green-500' : 'text-red-500'} mt-1">${data.descricao_situacao_cadastral || 'Não informado'}</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Porte da Empresa</p>
-                                <p class="font-semibold mt-1">${porteEmpresa}</p>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-2xl neumorphic-inset">
+                                    <p class="text-sm text-subtle uppercase tracking-wide">Porte da Empresa</p>
+                                    <p class="font-semibold mt-1">${porteEmpresa}</p>
+                                </div>
+                                <div class="p-4 rounded-2xl neumorphic-inset">
+                                    <p class="text-sm text-subtle uppercase tracking-wide">Capital Social</p>
+                                    <p class="font-semibold mt-1">${formatCurrency(data.capital_social)}</p>
+                                </div>
                             </div>
-                             <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Capital Social</p>
-                                <p class="font-semibold mt-1">${formatCurrency(data.capital_social)}</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-2xl neumorphic-inset">
+                                    <p class="text-sm text-subtle uppercase tracking-wide">Optante Simples</p>
+                                    <p class="text-lg font-bold ${data.opcao_pelo_simples ? 'text-green-500' : 'text-red-500'} mt-1">${isSimples}</p>
+                                </div>
+                                <div class="p-4 rounded-2xl neumorphic-inset">
+                                    <p class="text-sm text-subtle uppercase tracking-wide">Optante MEI</p>
+                                    <p class="text-lg font-bold ${data.opcao_pelo_mei ? 'text-green-500' : 'text-red-500'} mt-1">${isSimei}</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Optante Simples</p>
-                                <p class="text-lg font-bold ${data.opcao_pelo_simples ? 'text-green-500' : 'text-red-500'} mt-1">${isSimples}</p>
-                            </div>
-                            <div class="p-4 rounded-2xl neumorphic-inset">
-                                <p class="text-sm text-subtle uppercase tracking-wide">Optante MEI</p>
-                                <p class="text-lg font-bold ${data.opcao_pelo_mei ? 'text-green-500' : 'text-red-500'} mt-1">${isSimei}</p>
-                            </div>
-                        </div>
 
-                        <!-- Bloco do Histórico Simplificado inserido aqui -->
-                        ${historicoSimplesHtml}
+                            ${historicoSimplesHtml}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-2xl neumorphic-inset">
+                                    <p class="text-sm text-subtle uppercase tracking-wide">CNAE Fiscal</p>
+                                    <p class="font-semibold mt-1">${data.cnae_fiscal}</p>
+                                </div>
+                                <div class="p-4 rounded-2xl neumorphic-inset">
+                                    <p class="text-sm text-subtle uppercase tracking-wide">Código Natureza Jurídica</p>
+                                    <p class="font-semibold mt-1">${String(data.codigo_natureza_juridica).slice(0, 3)}-${String(data.codigo_natureza_juridica).slice(3)}</p>
+                                </div>
+                            </div>
+
+                        </div>
 
                         <div class="p-4 rounded-2xl neumorphic-inset">
                             <p class="text-sm text-subtle uppercase tracking-wide">Atividade Principal (CNAE)</p>
