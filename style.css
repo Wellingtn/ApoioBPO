@@ -1,0 +1,229 @@
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg-color: #ffffff;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --accent-color: #0ea5e9; /* Azul ciano */
+    --accent-color-dark: #0284c7;
+}
+
+html.dark {
+    --bg-color: #111827;
+    --card-bg-color: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+    --accent-color: #38bdf8;
+    --accent-color-dark: #0ea5e9;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background-color: #9ca3af; border-radius: 20px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #6b7280; }
+
+/* Estilo Principal dos Módulos */
+.main-module-card {
+    background-color: var(--card-bg-color);
+    border-radius: 1.5rem; /* 24px */
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilo para Cards Internos */
+.content-card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem; /* 16px */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Estilo para Inputs e Selects */
+.form-input {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem; /* 12px */
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color);
+}
+select option {
+    background: var(--card-bg-color); 
+    color: var(--text-primary);
+}
+
+/* Estilo para Botões */
+.primary-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.primary-btn:hover { background-color: var(--accent-color-dark); }
+.primary-btn:active { transform: scale(0.97); }
+.primary-btn:disabled { background-color: var(--text-secondary); opacity: 0.7; cursor: not-allowed; }
+
+
+.secondary-btn {
+    background-color: var(--card-bg-color);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.secondary-btn:hover { 
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+.secondary-btn:active { transform: scale(0.97); }
+.secondary-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+
+/* Estilo para Resultados e Displays */
+.result-display {
+    background-color: var(--bg-color);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+}
+.result-display .value { color: var(--accent-color); }
+
+/* Abas de Navegação */
+.tab-button {
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+.tab-button.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+/* Dock de Navegação Inferior */
+.bottom-dock-container {
+    background-color: var(--card-bg-color);
+    box-shadow: 0 -5px 20px -5px rgb(0 0 0 / 0.1);
+    border-radius: 1.5rem;
+    padding: 0.75rem; /* 12px */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* 8px */
+    overflow-x: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.bottom-dock-container::-webkit-scrollbar { display: none; }
+
+.dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 1rem;
+    color: var(--text-secondary);
+    transition: all 0.25s ease;
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.dock-item .icon-bg {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+.dock-item .icon {
+    color: white;
+    width: 28px;
+    height: 28px;
+}
+.dock-item .label {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.dock-item.active {
+    color: var(--accent-color);
+    background-color: var(--bg-color);
+}
+
+@keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+@keyframes fade-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
+.animate-fade-out { animation: fade-out 0.3s ease-in forwards; }
+
+#main-content.blurred { filter: blur(5px); transform: scale(0.99); pointer-events: none; user-select: none; }
+
+.custom-checkbox { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: all 0.2s ease-in-out; cursor: pointer; border: 1px solid var(--border-color); background-color: var(--bg-color); }
+.custom-checkbox .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease-in-out; color: white; }
+.checklist-item-checkbox:checked + .custom-checkbox { background-color: var(--accent-color); border-color: var(--accent-color); }
+.checklist-item-checkbox:checked + .custom-checkbox .check-icon { opacity: 1; transform: scale(1); }
+html.dark .checklist-list-item:has(.checklist-item-checkbox:checked) { background-color: rgba(255,255,255,0.05); }
+
+.checklist-list-item:has(.checklist-item-checkbox:checked) {
+    background-color: rgba(56, 189, 248, 0.05);
+}
+
+/* Paginação */
+.pagination-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background-color: var(--text-secondary);
+    opacity: 0.3;
+}
+.pagination-dot.active {
+    opacity: 1;
+    transform: scale(1.2);
+    background-color: var(--accent-color);
+}
+
+/* Efeito de cópia */
+@keyframes green-light-glow {
+    0% {
+        border-color: var(--border-color);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    40% {
+        border-color: #10b981;
+        box-shadow: 0 0 15px 2px rgba(16, 185, 129, 0.5);
+    }
+    100% {
+        border-color: var(--border-color);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+}
+
+.copy-success-glow {
+    animation: green-light-glow 1.5s ease-out;
+}
+
+/* Visualizador de Imagem */
+#image-viewer-content {
+    transition: transform 0.2s ease-out;
+    cursor: grab;
+}
+#image-viewer-content.dragging {
+    cursor: grabbing;
+}
