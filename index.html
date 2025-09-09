@@ -121,6 +121,48 @@
             will-change: transform;
             cursor: inherit; /* Herda o cursor do wrapper (grab/grabbing) */
         }
+
+        /* NOVOS ESTILOS PARA O POSICIONAMENTO DO DOCK */
+        #main-dock, #dock-inner-container {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #main-content {
+            transition: padding-left 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* DOCK INFERIOR (PADRÃO) */
+        #main-dock.dock-bottom {
+            bottom: 0; left: 0; right: 0; padding: 1rem; display: flex; justify-content: center;
+        }
+        #dock-inner-container.dock-bottom {
+            flex-direction: row; gap: 0.5rem; padding: 0.75rem; border-radius: 1.5rem;
+        }
+        #main-content.dock-bottom {
+            padding-bottom: 8rem; /* Espaço para o dock inferior */
+        }
+        .dock-item .label { display: inline; }
+
+        /* DOCK LATERAL */
+        #main-dock.dock-side {
+            /* A propriedade 'left' será definida via JavaScript para posicionamento dinâmico */
+            top: 64px; /* Altura do header */ 
+            bottom: 0; 
+            width: auto;
+            display: flex; 
+            align-items: center;   /* Centraliza o container interno na vertical */
+        }
+        #dock-inner-container.dock-side {
+            flex-direction: column; 
+            width: fit-content; 
+            height: fit-content;
+            gap: 0.75rem; 
+            padding: 1rem; /* Ajuste no padding para estética */
+            border-radius: 1.5rem; /* Garante o formato retangular arredondado */
+        }
+        #main-content.dock-side {
+            padding-left: 0; 
+            padding-bottom: 2rem;
+        }
+        #dock-inner-container.dock-side .label { display: none; }
     </style>
 
 </head>
@@ -205,12 +247,16 @@
     </div>
 
     <!-- BARRA SUPERIOR FIXA -->
-    <header class="w-full bg-[var(--card-bg-color)] border-b border-[var(--border-color)] transition-colors duration-300 sticky top-0 z-30">
+    <header class="w-full bg-[var(--card-bg-color)] border-b border-[var(--border-color)] transition-colors duration-300 sticky top-0 z-30 h-[64px]">
         <div class="flex justify-between items-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex items-center gap-3">
                 <span class="font-bold text-xl hidden sm:block">ApoioBPO</span>
             </div>
             <div class="flex items-center gap-3">
+                <!-- BOTÃO PARA ALTERNAR POSIÇÃO DO DOCK -->
+                <button id="dock-toggle-btn" title="Mudar Posição do Dock" class="p-3 rounded-full secondary-btn hidden sm:flex">
+                    <i data-lucide="layout-sidebar-left" class="w-5 h-5"></i>
+                </button>
                 <button id="info-button" class="p-3 rounded-full secondary-btn">
                     <i data-lucide="info" class="w-5 h-5"></i>
                 </button>
@@ -230,7 +276,7 @@
 
     <!-- Conteúdo Principal -->
     <div id="main-content" class="min-h-screen w-full flex flex-col items-center p-4 sm:p-8 transition-all duration-300">
-        <main class="w-full max-w-7xl mx-auto flex flex-col gap-4 mb-32">
+        <main class="w-full max-w-7xl mx-auto flex flex-col gap-4">
             <div id="module-container" class="w-full p-6 md:p-8 main-module-card min-h-[60vh]">
                 <h1 id="module-title" class="text-3xl font-bold mb-8 text-center"></h1>
                 
@@ -246,8 +292,8 @@
         </main>
 
         <!-- DOCK DE NAVEGAÇÃO -->
-        <nav class="fixed bottom-0 left-0 right-0 p-4 w-full flex justify-center z-40">
-            <div class="bottom-dock-container">
+        <nav id="main-dock" class="fixed z-40">
+            <div id="dock-inner-container" class="bottom-dock-container">
                 <button class="dock-item" data-target="faturamento-module" data-title="Cálculo Renda PJ">
                     <div class="icon-bg" style="background: linear-gradient(135deg, #6dd5ed, #2193b0);">
                         <i data-lucide="building-2" class="icon"></i>
@@ -376,6 +422,7 @@
             const COUNTERS_STATE_KEY = 'apoioBpoCountersState_v3';
             const TERMS_KEY = 'apoioBpoTermsAccepted_v1.1';
             const PROFILE_PIC_KEY = 'apoioBpoProfilePic';
+            const DOCK_POSITION_KEY = 'apoioBpoDockPosition'; // Chave para posição do dock
 
             // --- SELEÇÃO INICIAL DE ELEMENTOS DO DOM ---
             const mainContent = document.getElementById('main-content');
@@ -389,6 +436,84 @@
             const removeAccents = (str) => (typeof str !== 'string') ? '' : str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             const safeCreateIcons = () => { if (typeof lucide !== 'undefined') lucide.createIcons(); };
             const formatDate = (dateString) => dateString ? new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
+
+            // --- GERENCIAMENTO DA POSIÇÃO DO DOCK ---
+            function setupDockToggling() {
+                const dockToggleBtn = document.getElementById('dock-toggle-btn');
+                const mainDock = document.getElementById('main-dock');
+                const dockInnerContainer = document.getElementById('dock-inner-container');
+                const mainContentEl = document.getElementById('main-content');
+                const dockToggleIcon = dockToggleBtn ? dockToggleBtn.querySelector('i') : null;
+
+                if (!dockToggleBtn || !mainDock || !dockInnerContainer || !mainContentEl || !dockToggleIcon) {
+                    console.error("Um ou mais elementos do dock não foram encontrados. A funcionalidade de troca de posição não funcionará.");
+                    if(dockToggleBtn) dockToggleBtn.style.display = 'none'; // Esconde o botão se algo der errado
+                    return;
+                }
+
+                function positionSideDock() {
+                    if (!mainDock.classList.contains('dock-side')) return;
+
+                    const mainContainer = mainContentEl.querySelector('main');
+                    if (!mainContainer) return;
+
+                    const mainRect = mainContainer.getBoundingClientRect();
+                    const dockWidth = mainDock.offsetWidth;
+                    const gap = 16; // 1rem em pixels
+
+                    // Calcula a posição à esquerda do container principal
+                    let newLeft = mainRect.left - dockWidth - gap;
+
+                    // Garante que o dock não saia da tela em viewports menores
+                    if (newLeft < gap) {
+                        newLeft = gap;
+                    }
+
+                    mainDock.style.left = `${newLeft}px`;
+                    mainDock.style.right = 'auto'; // Remove a propriedade 'right' se existir
+                }
+
+                function setDockPosition(position) { // 'side' or 'bottom'
+                    // Reset inline styles to allow for correct measurements and default positioning
+                    mainDock.style.left = '';
+                    mainDock.style.right = '';
+
+                    if (position === 'side') {
+                        mainDock.classList.remove('dock-bottom');
+                        dockInnerContainer.classList.remove('dock-bottom');
+                        mainContentEl.classList.remove('dock-bottom');
+                        mainDock.classList.add('dock-side');
+                        dockInnerContainer.classList.add('dock-side');
+                        mainContentEl.classList.add('dock-side');
+                        dockToggleIcon.setAttribute('data-lucide', 'layout-panel-left');
+                        // Use requestAnimationFrame to ensure the new classes are applied before calculating position
+                        requestAnimationFrame(positionSideDock);
+                    } else { // Default to bottom
+                        mainDock.classList.remove('dock-side');
+                        dockInnerContainer.classList.remove('dock-side');
+                        mainContentEl.classList.remove('dock-side');
+                        mainDock.classList.add('dock-bottom');
+                        dockInnerContainer.classList.add('dock-bottom');
+                        mainContentEl.classList.add('dock-bottom');
+                        dockToggleIcon.setAttribute('data-lucide', 'layout-sidebar-left');
+                    }
+                    safeCreateIcons();
+                    localStorage.setItem(DOCK_POSITION_KEY, position);
+                }
+
+                // Add resize listener to reposition the dock
+                window.addEventListener('resize', positionSideDock);
+
+                dockToggleBtn.addEventListener('click', () => {
+                    const currentPosition = localStorage.getItem(DOCK_POSITION_KEY) || 'bottom';
+                    const newPosition = currentPosition === 'bottom' ? 'side' : 'bottom';
+                    setDockPosition(newPosition);
+                });
+
+                // Configuração inicial no carregamento
+                const savedDockPosition = localStorage.getItem(DOCK_POSITION_KEY) || 'bottom';
+                setDockPosition(savedDockPosition);
+            }
 
             function copyText(text, buttonElement) {
                 navigator.clipboard.writeText(text).then(() => {
@@ -978,7 +1103,7 @@
                             <h3 class="text-2xl font-bold mb-6 text-center">Calculadora Renda PF</h3>
                             <div class="max-w-sm mx-auto p-4 content-card">
                                 <div class="p-4 result-display text-right mb-4">
-                                    <div id="renda-pf-history" class="text-sm text-[var(--text-secondary)] h-6 truncate"></div>
+                                    <div id="renda-pf-history" class="text-2xl text-[var(--text-secondary)] h-10 truncate"></div>
                                     <input type="text" id="renda-pf-display" readonly class="w-full bg-transparent focus:outline-none text-4xl font-bold value" value="0">
                                 </div>
                                 <div class="grid grid-cols-4 gap-3">
@@ -1370,7 +1495,7 @@
                                 <div class="p-3 result-display h-full flex-grow flex flex-col justify-around">
                                     <div>
                                         <label class="text-sm font-medium text-[var(--text-secondary)]">Renda Total</label>
-                                        <p id="produtor-renda-total" class="text-xl font-bold value">R$ 0,00</p>
+                                        <p id="produtor-renda-total" class="text-2xl font-bold value">R$ 0,00</p>
                                     </div>
                                     <hr class="border-[var(--border-color)] my-2">
                                     <div>
@@ -1948,7 +2073,9 @@
                         tabButtons.forEach(btn => btn.classList.remove('active'));
                         button.classList.add('active');
                         const targetTabId = `${button.dataset.tab}-tab`;
-                        tabContents.forEach(content => content.classList.toggle('hidden', content.id !== targetTabId));
+                        tabContents.forEach(content => {
+                            content.classList.toggle('hidden', content.id !== targetTabId);
+                        });
                         if (targetTabId === 'contador-history-tab') {
                             setTimeout(() => {
                                 const activeFilter = container.querySelector('.history-filter-btn.active') || container.querySelector('.history-filter-btn[data-period="week"]');
@@ -2532,6 +2659,7 @@
             const termsModal = document.getElementById('terms-modal');
             if (localStorage.getItem(TERMS_KEY) === 'true') {
                 initializeApp();
+                setupDockToggling();
             } else {
                 const acceptTermsBtn = document.getElementById('accept-terms-btn');
                 const termsCheckbox = document.getElementById('terms-checkbox');
@@ -2552,9 +2680,11 @@
                     }, { once: true });
 
                     initializeApp();
+                    setupDockToggling();
                 }, { once: true });
             }
         };
     </script>
 </body>
 </html>
+
