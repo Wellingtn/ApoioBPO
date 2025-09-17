@@ -437,6 +437,23 @@
             const safeCreateIcons = () => { if (typeof lucide !== 'undefined') lucide.createIcons(); };
             const formatDate = (dateString) => dateString ? new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
 
+            // --- FORÇA O ÍCONE DO BOTÃO DOCK A APARECER NA PRIMEIRA CARGA ---
+            const dockToggleBtnInit = document.getElementById("dock-toggle-btn");
+            if (dockToggleBtnInit) {
+                const dockToggleIcon = dockToggleBtnInit.querySelector("i");
+                const savedDockPosition = localStorage.getItem("apoioBpoDockPosition") || "bottom";
+                if (dockToggleIcon) {
+                    if (savedDockPosition === "side") {
+                    dockToggleIcon.setAttribute("data-lucide", "layout-panel-left");
+                    } else {
+                    dockToggleIcon.setAttribute("data-lucide", "layout-sidebar-left");
+                    }
+                if (typeof lucide !== "undefined") {
+                lucide.createIcons();
+                }   
+            }
+}
+
             // --- GERENCIAMENTO DA POSIÇÃO DO DOCK ---
             function setupDockToggling() {
                 const dockToggleBtn = document.getElementById('dock-toggle-btn');
@@ -805,7 +822,7 @@
                                         </div>
                                         <div class="flex flex-col gap-2">
                                             <label class="text-sm font-medium text-[var(--text-secondary)]">Renda 2º Cálculo</label>
-                                            <div class="p-3 result-display h-full flex items-center justify-center">
+                                            <div class="p-3 result-display h-28 flex items-center justify-center">
                                                 <p id="resultado2" class="text-2xl font-bold value">R$ 0,00</p>
                                             </div>
                                         </div>
@@ -831,7 +848,7 @@
                                         </div>
                                         <div class="flex flex-col gap-2">
                                             <label class="text-sm font-medium text-[var(--text-secondary)]">Renda 3º Cálculo</label>
-                                            <div class="p-3 result-display h-full flex items-center justify-center">
+                                            <div class="p-3 result-display h-28 flex items-center justify-center">
                                                 <p id="resultado3" class="text-2xl font-bold value">R$ 0,00</p>
                                             </div>
                                         </div>
@@ -1258,12 +1275,14 @@
                 container.innerHTML = `
                     <div class="flex mb-6 border-b border-[var(--border-color)] flex-shrink-0 overflow-x-auto">
                         <button class="tab-button py-3 px-4 font-semibold whitespace-nowrap active" data-tab="semoventes">Semoventes</button>
+                        <button class="tab-button py-3 px-4 font-semibold whitespace-nowrap" data-tab="mov_economica">Mov. Econômica</button>
                         <button class="tab-button py-3 px-4 font-semibold whitespace-nowrap" data-tab="nfs">NF's</button>
                         <button class="tab-button py-3 px-4 font-semibold whitespace-nowrap" data-tab="produtor">Produtor</button>
                         <button class="tab-button py-3 px-4 font-semibold whitespace-nowrap" data-tab="fcpr">FCPR</button>
                     </div>
                     <div>
                         <div id="semoventes-tab" class="renda-agro-tab-content"></div>
+                        <div id="mov_economica-tab" class="renda-agro-tab-content hidden"></div>
                         <div id="nfs-tab" class="renda-agro-tab-content hidden"></div>
                         <div id="produtor-tab" class="renda-agro-tab-content hidden"></div>
                         <div id="fcpr-tab" class="renda-agro-tab-content hidden"></div>
@@ -1418,6 +1437,62 @@
                     calcularIrpfSemoventes();
                 });
 
+                // --- Aba Mov. Econômica ---
+                const movEconomicaTab = container.querySelector('#mov_economica-tab');
+                movEconomicaTab.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2 overflow-x-auto content-card p-2">
+                            <table class="w-full text-sm">
+                                <thead class="border-b-2 border-[var(--border-color)]">
+                                    <tr>
+                                        <th class="p-2 text-left">Produtos</th>
+                                        <th class="p-2 text-left">Quant CB/KG</th>
+                                        <th class="p-2 text-left">Valor no doc. CONAB</th>
+                                        <th class="p-2 text-left">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mov-economica-tbody">
+                                    ${Array.from({ length: 10 }, (_, i) => `
+                                        <tr class="border-b border-[var(--border-color)] last:border-b-0">
+                                            <td class="p-2">Produto ${i+1}</td>
+                                            <td class="p-2"><input type="number" id="mov-cb-${i}" class="mov-input w-24 p-2 form-input" placeholder="0"></td>
+                                            <td class="p-2"><input type="text" inputmode="decimal" id="mov-valor-${i}" class="mov-input w-32 p-2 form-input" placeholder="0,00"></td>
+                                            <td class="p-2 font-semibold" id="mov-total-${i}">R$ 0,00</td>
+                                        </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div class="content-card p-4 space-y-4 text-center">
+                                <h3 class="text-lg font-semibold">Total</h3>
+                                <p id="mov-total-geral" class="text-2xl font-bold value">R$ 0,00</p>
+                            </div>
+                            <button id="mov-limpar" type="button" class="w-full p-3 secondary-btn flex items-center justify-center gap-2">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                            </button>
+                        </div>
+                    </div>`;
+                    const calcularMovEconomica = () => {
+                        let totalGeral = 0;
+                        for (let i = 0; i < 10; i++) {
+                            const cb = parseInt(movEconomicaTab.querySelector(`#mov-cb-${i}`).value) || 0;
+                            const valor = parseLocalFloat(movEconomicaTab.querySelector(`#mov-valor-${i}`).value);
+                            const total = cb * valor;
+                            movEconomicaTab.querySelector(`#mov-total-${i}`).textContent = formatCurrency(total);
+                            totalGeral += total;
+                        }
+                        movEconomicaTab.querySelector('#mov-total-geral').textContent = formatCurrency(totalGeral);
+                    };
+
+                    movEconomicaTab.addEventListener('input', (e) => {
+                        if (e.target.classList.contains('mov-input')) {
+                            calcularMovEconomica();
+                        }
+                    });
+                    movEconomicaTab.querySelector('#mov-limpar').addEventListener('click', () => {
+                        movEconomicaTab.querySelectorAll('.mov-input').forEach(input => input.value = '');
+                        calcularMovEconomica();
+                    });
 
                 // --- Aba NFs ---
                 const nfsTab = container.querySelector('#nfs-tab');
