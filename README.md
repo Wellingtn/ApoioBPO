@@ -1,6 +1,11 @@
 # ApoioBPO – Sistema de Apoio a Processos de BPO
 
 <p align="center">
+  <a href="https://wellingtn.github.io/ApoioBPO/" target="_blank">
+    <img src="./images/logo/logo_apoiobpo_main_semfundo.png" alt="Meta Logo" width="180">
+  </a>
+</p>
+<p align="center">
   <a href="https://www.meta.com.br/" target="_blank">
     <img src="./images/meta_logo.png" alt="Meta Logo" width="180">
   </a>
