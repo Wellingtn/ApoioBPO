@@ -15,6 +15,9 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script>
+
 
     <!-- Carregando os arquivos de dados externos -->
     <script src="data/pareceres.js" defer></script>
@@ -266,7 +269,7 @@
                 </button>
                 <label for="profile-pic-input" 
                     class="w-11 h-11 rounded-full flex items-center justify-center bg-[var(--bg-color)] border border-[var(--border-color)] cursor-pointer overflow-hidden">
-                    <img id="profile-pic" src="" alt="Foto do Perfil" class="w-full h-full object-cover hidden">
+                    <img id="profile-pic" src="/placeholder.svg" alt="Foto do Perfil" class="w-full h-full object-cover hidden">
                     <i data-lucide="user-circle-2" id="profile-pic-icon" class="w-5 h-5 text-[var(--text-secondary)]"></i>
                 </label>
                 <input type="file" id="profile-pic-input" class="hidden" accept="image/*">
@@ -360,7 +363,7 @@
             </button>
         </div>
         <div id="image-viewer-wrapper" class="relative w-full h-full flex items-center justify-center">
-            <img id="image-viewer-content" src="" alt="Imagem Ampliada" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+            <img id="image-viewer-content" src="/placeholder.svg" alt="Imagem Ampliada" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
         </div>
     </div>
 
@@ -386,6 +389,25 @@
             </div>
         </div>
     </div>
+    
+    <!-- MODAL DE EDIÇÃO DO HISTÓRICO DO CONTADOR -->
+    <div id="edit-history-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="edit-history-modal-overlay"></div>
+        <div class="relative w-full max-w-sm p-6 rounded-2xl bg-[var(--card-bg-color)] shadow-xl animate-fade-in">
+            <h2 class="text-xl font-bold mb-4">Editar Registro</h2>
+            <p class="mb-2 text-sm">Data: <strong id="edit-history-date"></strong></p>
+            <div class="flex flex-col gap-2">
+                <label for="edit-history-count" class="text-sm font-medium text-[var(--text-secondary)]">Nova contagem</label>
+                <input type="number" id="edit-history-count" class="w-full p-3 form-input">
+                <input type="hidden" id="edit-history-original-date">
+            </div>
+            <div class="flex gap-4 mt-6">
+                <button id="edit-history-cancel" class="w-full p-3 secondary-btn">Cancelar</button>
+                <button id="edit-history-save" class="w-full p-3 primary-btn">Salvar</button>
+            </div>
+        </div>
+    </div>
+
 
     <template id="counter-template">
         <div class="counter-card p-3 rounded-2xl content-card flex flex-col items-center justify-center gap-2 relative h-full">
@@ -435,7 +457,18 @@
             const parseLocalFloat = (value) => parseFloat(String(value).replace(/\./g, '').replace(',', '.')) || 0;
             const removeAccents = (str) => (typeof str !== 'string') ? '' : str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             const safeCreateIcons = () => { if (typeof lucide !== 'undefined') lucide.createIcons(); };
-            const formatDate = (dateString) => dateString ? new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
+            const formatDate = (dateString, options = { timeZone: 'UTC' }) => {
+                if (!dateString) return 'N/A';
+                try {
+                    const date = new Date(dateString);
+                    if (isNaN(date.getTime())) return 'Data inválida';
+                    return date.toLocaleDateString('pt-BR', options);
+                } catch (e) {
+                    console.error("Erro ao formatar data:", dateString, e);
+                    return 'Erro na data';
+                }
+            };
+
 
             // --- FORÇA O ÍCONE DO BOTÃO DOCK A APARECER NA PRIMEIRA CARGA ---
             const dockToggleBtnInit = document.getElementById("dock-toggle-btn");
@@ -574,6 +607,7 @@
                 setupEventListeners();
                 setupProfilePic();
                 setupImageViewerModal(); // Configura o modal de imagem
+                setupHistoryEditModal(); // Configura o novo modal de edição
                 updateTheme(localStorage.getItem('apoioBpoTheme') === 'dark');
                 if (dockButtons.length > 0) {
                     requestAnimationFrame(() => dockButtons[0].click());
@@ -619,10 +653,11 @@
                 };
                 
                 // Delegação de evento para abrir o modal
-                const checklistModule = document.getElementById('checklist-module');
+                const checklistModule = document.getElementById('checklist-module'); // Seleciona o módulo correto
                 if (checklistModule) {
                     checklistModule.addEventListener('click', e => {
                         const image = e.target;
+                        // Verifica se o elemento clicado é uma imagem dentro do layout do checklist
                         if (image.tagName === 'IMG' && image.closest('#checklist-main-layout')) {
                              openModal(image.src);
                         }
@@ -666,12 +701,14 @@
                     const delta = e.deltaY > 0 ? -1 : 1;
                     const newScale = Math.max(1, Math.min(scale + delta * zoomIntensity, 5));
                     
+                    // Calcula a posição do mouse relativo ao wrapper
                     const rect = wrapper.getBoundingClientRect();
                     const mouseX = e.clientX - rect.left;
                     const mouseY = e.clientY - rect.top;
                     
-                    const newTranslateX = translateX - (mouseX - (rect.width/2) - translateX) * (newScale/scale - 1);
-                    const newTranslateY = translateY - (mouseY - (rect.height/2) - translateY) * (newScale/scale - 1);
+                    // Calcula a nova posição de translateX/translateY para centralizar o zoom no mouse
+                    const newTranslateX = translateX - (mouseX - translateX) * (newScale / scale - 1);
+                    const newTranslateY = translateY - (mouseY - translateY) * (newScale / scale - 1);
 
                     scale = newScale;
                     translateX = newTranslateX;
@@ -725,7 +762,7 @@
                     if (counterChart) updateCounterChart();
                     if (historyChart) {
                         const activeFilter = document.querySelector('.history-filter-btn.active');
-                        if (activeFilter) renderHistoryChart(activeFilter.dataset.period);
+                        if (activeFilter) updateHistoryDashboard(activeFilter.dataset.period);
                     }
                 }
             }
@@ -2057,7 +2094,7 @@
                  container.innerHTML = `
                     <div class="flex mb-4 border-b border-[var(--border-color)] flex-shrink-0">
                         <button class="tab-button py-2 px-4 font-semibold active" data-tab="contador-main">Contador</button>
-                        <button class="tab-button py-2 px-4 font-semibold" data-tab="contador-history">Histórico</button>
+                        <button class="tab-button py-2 px-4 font-semibold" data-tab="contador-history">Dashboard</button>
                     </div>
                     <div id="contador-main-tab" class="contador-tab-content flex flex-col gap-8 h-full">
                         <div class="grid md:grid-cols-2 gap-8">
@@ -2087,8 +2124,8 @@
                                          <i data-lucide="check-circle" class="w-4 h-4"></i> Finalizar Dia
                                      </button>
                                   </div>
-                                  <button id="contador-reset" class="col-span-2 w-full p-3 secondary-btn text-xs flex items-center justify-center gap-2 text-red-500">
-                                     <i data-lucide="trash-2" class="w-4 h-4"></i> Resetar Tudo
+                                  <button id="limpar-contador-btn" class="col-span-2 w-full p-3 secondary-btn text-xs flex items-center justify-center gap-2">
+                                     <i data-lucide="rotate-cw" class="w-4 h-4"></i> Limpar Contador
                                  </button>
                             </div>
                         </div>
@@ -2104,6 +2141,7 @@
                         <div class="flex flex-col h-full gap-4">
                             <div class="flex items-center justify-center gap-2 flex-wrap">
                                 <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="week">Última Semana</button>
+                                <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="weeks-in-month">Semanas do Mês</button>
                                 <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="month">Últimos 12 Meses</button>
                                 <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="year">Últimos 10 Anos</button>
                             </div>
@@ -2113,6 +2151,11 @@
                                     <canvas id="history-chart"></canvas>
                                 </div>
                             </div>
+                             <div id="history-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                             <div class="p-4 content-card">
+                                 <h3 class="text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-4">Registros Detalhados</h3>
+                                 <div id="history-table-container" class="max-h-64 overflow-y-auto custom-scrollbar"></div>
+                             </div>
                         </div>
                     </div>
                 `;
@@ -2122,14 +2165,26 @@
                 const incrementInput = container.querySelector('#increment-by-input');
                 const startInput = container.querySelector('#counter-start-input');
                 const timerToggle = container.querySelector('#timer-toggle');
-                const resetAllBtn = container.querySelector('#contador-reset');
+                const limparContadorBtn = container.querySelector('#limpar-contador-btn');
                 const finalizarDiaBtn = container.querySelector('#finalizar-dia-btn');
                 const finalizarDiaFeedback = container.querySelector('#finalizar-dia-feedback');
                 const counterTemplate = document.getElementById('counter-template');
                 const tabButtons = container.querySelectorAll('.tab-button');
                 const tabContents = container.querySelectorAll('.contador-tab-content');
-                const historyFilterButtons = container.querySelectorAll('.history-filter-btn');
-                const historyChartTitle = container.querySelector('#history-chart-title');
+                
+                let activePeriod = 'week';
+
+                function showFeedback(message, type = 'success') {
+                    const colorClasses = {
+                        success: 'text-green-500',
+                        warning: 'text-yellow-500',
+                        error: 'text-red-500'
+                    };
+                    finalizarDiaFeedback.textContent = message;
+                    finalizarDiaFeedback.className = `text-center p-4 content-card font-semibold animate-fade-in ${colorClasses[type]}`;
+                    finalizarDiaFeedback.classList.remove('hidden');
+                    setTimeout(() => finalizarDiaFeedback.classList.add('hidden'), 4000);
+                }
 
                 // --- Lógica das abas do contador ---
                 tabButtons.forEach(button => {
@@ -2141,20 +2196,34 @@
                             content.classList.toggle('hidden', content.id !== targetTabId);
                         });
                         if (targetTabId === 'contador-history-tab') {
-                            setTimeout(() => {
+                             setTimeout(() => {
                                 const activeFilter = container.querySelector('.history-filter-btn.active') || container.querySelector('.history-filter-btn[data-period="week"]');
                                 if (activeFilter) activeFilter.click();
                             }, 50);
                         }
                     });
                 });
-
-                historyFilterButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        historyFilterButtons.forEach(btn => btn.classList.remove('active'));
-                        button.classList.add('active');
-                        renderHistoryChart(button.dataset.period);
-                    });
+                
+                const historyTab = container.querySelector('#contador-history-tab');
+                historyTab.addEventListener('click', (e) => {
+                    const filterBtn = e.target.closest('.history-filter-btn');
+                    if (filterBtn) {
+                        historyTab.querySelectorAll('.history-filter-btn').forEach(btn => btn.classList.remove('active'));
+                        filterBtn.classList.add('active');
+                        activePeriod = filterBtn.dataset.period;
+                        updateHistoryDashboard(activePeriod);
+                        return;
+                    }
+                    
+                    const editBtn = e.target.closest('.edit-history-btn');
+                    if (editBtn) {
+                        const date = editBtn.dataset.date;
+                        const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
+                        const entry = history.find(item => item.date === date);
+                        if(entry) {
+                            openHistoryEditModal(entry);
+                        }
+                    }
                 });
 
                 function saveCountersState() {
@@ -2207,8 +2276,6 @@
                         if (index >= 0 && index < data.length) {
                              if (activity.type === 'add') {
                                 data[index] += activity.count;
-                            } else if (activity.type === 'subtract') {
-                                data[index] -= activity.count;
                             }
                         }
                     });
@@ -2286,7 +2353,7 @@
                     starBtn.addEventListener('click', () => { instanceState.isStarred = !instanceState.isStarred; starBtn.classList.toggle('active', instanceState.isStarred); saveCountersState(); });
                     titleElement.addEventListener('blur', () => { instanceState.title = titleElement.textContent; saveCountersState(); });
                     removeBtn.addEventListener('click', removeInstance);
-                    counters.push({ id, element: counterElement, destroy: stopTimer, getState: () => instanceState });
+                    counters.push({ id, element: counterElement, destroy: stopTimer, getState: () => instanceState, setState: (newState) => { instanceState = {...instanceState, ...newState}; updateDisplay(); } });
                     countersGrid.appendChild(counterElement);
                     updateDisplay();
                     counterElement.classList.add('animate-fade-in');
@@ -2304,80 +2371,464 @@
 
                 finalizarDiaBtn.addEventListener('click', () => {
                     const totalDoDia = counters.filter(c=>c.getState().isStarred&&!c.getState().isTimer).reduce((s,c)=>s+c.getState().value,0);
-                    if(totalDoDia<=0){finalizarDiaFeedback.textContent="Nenhuma contagem (com estrela) para salvar.";finalizarDiaFeedback.className="text-center p-4 content-card font-semibold animate-fade-in text-yellow-500";setTimeout(()=>finalizarDiaFeedback.classList.add('hidden'),3e3);return}
+                    if(totalDoDia<=0){ showFeedback("Nenhuma contagem (com estrela) para salvar.", 'warning'); return; }
                     const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
                     const today = new Date().toISOString().slice(0, 10);
                     const todayEntryIndex = history.findIndex(e => e.date === today);
                     if (todayEntryIndex > -1) history[todayEntryIndex].count += totalDoDia; else history.push({ date: today, count: totalDoDia });
                     localStorage.setItem(DAILY_HISTORY_KEY, JSON.stringify(history));
+                    
+                    // Resetar contadores do dia
                     localStorage.removeItem(INCREMENT_HISTORY_KEY);
-                    finalizarDiaFeedback.textContent=`Total de ${totalDoDia} salvo! Contadores resetados.`;
-                    finalizarDiaFeedback.className="text-center p-4 content-card font-semibold animate-fade-in text-green-500";
-                    setTimeout(()=>finalizarDiaFeedback.classList.add('hidden'),4e3);
-                    loadCountersState();
+                    counters.forEach(c => {
+                        const state = c.getState();
+                        if (state.isStarred && !state.isTimer) {
+                            c.setState({ value: 0 });
+                        }
+                    });
+                    saveCountersState();
                     updateCounterChart();
+                    showFeedback(`Total de ${totalDoDia} salvo! Contadores do dia reiniciados.`);
                 });
 
-                resetAllBtn.addEventListener('click', () => {
-                    if (confirm("Resetar tudo? ISSO APAGARÁ TODOS OS CONTADORES E O HISTÓRICO PERMANENTEMENTE.")) {
-                        countersGrid.innerHTML = ''; counters.forEach(c => c.destroy()); counters = [];
-                        [DAILY_HISTORY_KEY, COUNTERS_STATE_KEY, INCREMENT_HISTORY_KEY].forEach(k => localStorage.removeItem(k));
-                        if (counterChart) { counterChart.destroy(); counterChart = null; }
-                        if (historyChart) { historyChart.destroy(); historyChart = null; }
-                        loadCountersState();
-                        updateCounterChart();
-                    }
+                limparContadorBtn.addEventListener('click', () => {
+                    localStorage.removeItem(INCREMENT_HISTORY_KEY);
+                    counters.forEach(c => {
+                       const state = c.getState();
+                        if (state.isStarred && !state.isTimer) {
+                            c.setState({ value: 0 });
+                        }
+                    });
+                    saveCountersState();
+                    updateCounterChart();
+                    showFeedback("Contadores do dia (com estrela) foram limpos.", 'success');
                 });
                 
-                function getHistoryChartData(period) {
-                    const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
-                    const now = new Date();
-                    if (period === 'week') {
-                        const labels = []; const data = Array(7).fill(0); const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-                        for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(now.getDate() - i); labels.push(dayNames[d.getDay()]); const dateString = d.toISOString().slice(0, 10); const dayEntry = history.find(entry => entry.date === dateString); if (dayEntry) data[6 - i] = dayEntry.count; }
-                        return { labels, data, title: 'Contagem Finalizada na Última Semana' };
-                    }
-                    if (period === 'month') {
-                        const labels = []; const data = Array(12).fill(0); const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-                        for (let i = 11; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); labels.push(`${monthNames[d.getMonth()]}/${d.getFullYear().toString().slice(-2)}`); const monthEntries = history.filter(e => e.date.startsWith(`${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}`)); data[11-i] = monthEntries.reduce((s,e)=>s+e.count,0); }
-                        return { labels, data, title: 'Contagem Finalizada nos Últimos 12 Meses' };
-                    }
-                    if (period === 'year') {
-                        const labels = []; const data = Array(10).fill(0); const currentYear = now.getFullYear();
-                        for (let i = 9; i >= 0; i--) { const year = currentYear - i; labels.push(year.toString()); const yearEntries = history.filter(e => e.date.startsWith(year.toString())); data[9-i] = yearEntries.reduce((s,e)=>s+e.count,0); }
-                        return { labels, data, title: 'Contagem Finalizada nos Últimos 10 Anos' };
-                    }
-                    return { labels: [], data: [], title: '' };
+                // Função auxiliar para formatar datas de forma consistente
+                function parseHistoryDate(dateString) {
+                    // Garante que a data seja interpretada como UTC para evitar problemas de timezone
+                    const [year, month, day] = dateString.split('-').map(Number);
+                    return new Date(year, month - 1, day);
                 }
 
-                function renderHistoryChart(period) {
+                // Função melhorada para obter dados do histórico
+                function getHistoryData(period) {
+                    const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
+                    
+                    if (!history.length) {
+                        return { 
+                            periodEntries: [], 
+                            chartData: { 
+                                labels: [], 
+                                data: [], 
+                                title: 'Nenhum dado no histórico' 
+                            }
+                        };
+                    }
+                    
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Normaliza para início do dia
+                    
+                    let periodEntries = [];
+                    let chartData = { labels: [], data: [], title: '' };
+
+                    switch(period) {
+                        case 'week': {
+                            chartData.title = 'Contagem na Última Semana';
+                            const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+                            
+                            // Cria array com os últimos 7 dias
+                            for (let i = 6; i >= 0; i--) {
+                                const date = new Date(now);
+                                date.setDate(date.getDate() - i);
+                                const dateString = date.toISOString().slice(0, 10);
+                                
+                                chartData.labels.push(dayNames[date.getDay()]);
+                                
+                                const dayEntry = history.find(entry => entry.date === dateString);
+                                chartData.data.push(dayEntry ? dayEntry.count : 0);
+                                
+                                if (dayEntry) {
+                                    periodEntries.push(dayEntry);
+                                }
+                            }
+                            break;
+                        }
+                        
+                        case 'weeks-in-month': {
+                            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                                              'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                            chartData.title = `Contagem por Semana em ${monthNames[now.getMonth()]}`;
+                            
+                            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                            const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                            
+                            // Calcula número de semanas no mês
+                            const firstDayOfWeek = monthStart.getDay();
+                            const daysInMonth = monthEnd.getDate();
+                            const weeksInMonth = Math.ceil((daysInMonth + firstDayOfWeek) / 7);
+                            
+                            // Inicializa arrays
+                            chartData.labels = Array.from({ length: weeksInMonth }, (_, i) => `Semana ${i + 1}`);
+                            chartData.data = Array(weeksInMonth).fill(0);
+                            
+                            // Agrupa entradas por semana
+                            history.forEach(entry => {
+                                const entryDate = parseHistoryDate(entry.date);
+                                
+                                // Verifica se está no mês atual
+                                if (entryDate.getMonth() === now.getMonth() && 
+                                    entryDate.getFullYear() === now.getFullYear()) {
+                                    
+                                    // Calcula qual semana do mês
+                                    const dayOfMonth = entryDate.getDate();
+                                    const weekIndex = Math.floor((dayOfMonth + firstDayOfWeek - 1) / 7);
+                                    
+                                    if (weekIndex >= 0 && weekIndex < weeksInMonth) {
+                                        chartData.data[weekIndex] += entry.count;
+                                        periodEntries.push(entry);
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        
+                        case 'month': {
+                            chartData.title = 'Contagem nos Últimos 12 Meses';
+                            const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+                                              'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                            
+                            // Cria array com os últimos 12 meses
+                            for (let i = 11; i >= 0; i--) {
+                                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                                const monthLabel = `${monthNames[date.getMonth()]}/${date.getFullYear().toString().slice(-2)}`;
+                                chartData.labels.push(monthLabel);
+                                
+                                // Soma todas as entradas deste mês
+                                let monthTotal = 0;
+                                history.forEach(entry => {
+                                    const entryDate = parseHistoryDate(entry.date);
+                                    if (entryDate.getMonth() === date.getMonth() && 
+                                        entryDate.getFullYear() === date.getFullYear()) {
+                                        monthTotal += entry.count;
+                                        if (!periodEntries.find(e => e.date === entry.date)) {
+                                            periodEntries.push(entry);
+                                        }
+                                    }
+                                });
+                                
+                                chartData.data.push(monthTotal);
+                            }
+                            break;
+                        }
+                        
+                        case 'year': {
+                            chartData.title = 'Contagem nos Últimos 10 Anos';
+                            const currentYear = now.getFullYear();
+                            
+                            // Cria array com os últimos 10 anos
+                            for (let i = 9; i >= 0; i--) {
+                                const year = currentYear - i;
+                                chartData.labels.push(year.toString());
+                                
+                                // Soma todas as entradas deste ano
+                                let yearTotal = 0;
+                                history.forEach(entry => {
+                                    const entryDate = parseHistoryDate(entry.date);
+                                    if (entryDate.getFullYear() === year) {
+                                        yearTotal += entry.count;
+                                        if (!periodEntries.find(e => e.date === entry.date)) {
+                                            periodEntries.push(entry);
+                                        }
+                                    }
+                                });
+                                
+                                chartData.data.push(yearTotal);
+                            }
+                            break;
+                        }
+                    }
+                    
+                    return { periodEntries, chartData };
+                }
+
+                function renderHistoryChart(chartData) {
                     const chartCanvas = container.querySelector('#history-chart');
-                    if (!chartCanvas) return;
+                    if (!chartCanvas) {
+                        console.log('[v0] Canvas do gráfico de histórico não encontrado');
+                        return;
+                    }
+                    
                     const ctx = chartCanvas.getContext('2d');
-                    const chartData = getHistoryChartData(period);
-                    if (!chartData) return;
-                    const { labels, data, title } = chartData;
-                    historyChartTitle.textContent = title;
+                    const historyChartTitle = container.querySelector('#history-chart-title');
+                    if (historyChartTitle) {
+                        historyChartTitle.textContent = chartData.title;
+                    }
+
+                    // Obtém cores do tema atual
                     const isDarkMode = document.documentElement.classList.contains('dark');
                     const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
                     const textColor = isDarkMode ? '#d1d9e6' : '#5a6474';
                     const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+
+                    // Destrói gráfico anterior se existir
                     if (historyChart) {
-                        historyChart.data.labels = labels; historyChart.data.datasets[0].data = data;
-                        Object.assign(historyChart.options.scales.x.ticks, { color: textColor });
-                        Object.assign(historyChart.options.scales.y.ticks, { color: textColor });
-                        Object.assign(historyChart.options.scales.x.grid, { color: gridColor });
-                        Object.assign(historyChart.options.scales.y.grid, { color: gridColor });
-                        historyChart.update();
-                    } else {
-                        historyChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Adições', data, backgroundColor: accentColor, borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: textColor, stepSize: 1, callback: v => (Number.isInteger(v) ? v : null) }, grid: { color: gridColor } }, x: { ticks: { color: textColor }, grid: { display: false } } } } });
+                        historyChart.destroy();
+                        historyChart = null;
                     }
+
+                    // Cria novo gráfico
+                    historyChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: chartData.labels,
+                            datasets: [{
+                                label: 'Contagem',
+                                data: chartData.data,
+                                backgroundColor: accentColor,
+                                borderRadius: 8,
+                                borderSkipped: false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                                    titleColor: textColor,
+                                    bodyColor: textColor,
+                                    borderColor: gridColor,
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `Total: ${context.parsed.y}`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: textColor,
+                                        stepSize: 1,
+                                        callback: function(value) {
+                                            return Number.isInteger(value) ? value : null;
+                                        }
+                                    },
+                                    grid: {
+                                        color: gridColor,
+                                        drawBorder: false
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: textColor,
+                                        maxRotation: 45,
+                                        minRotation: 0
+                                    },
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    console.log('[v0] Gráfico de histórico renderizado com sucesso');
+                }
+                
+                function renderHistoryStats(entries) {
+                    const statsContainer = container.querySelector('#history-stats-container');
+                    if (!statsContainer) {
+                        console.log('[v0] Container de estatísticas não encontrado');
+                        return;
+                    }
+                    
+                    if (entries.length === 0) {
+                        statsContainer.innerHTML = `
+                            <div class="col-span-full p-4 content-card text-center">
+                                <p class="text-[var(--text-secondary)]">Nenhum dado disponível para este período</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    // Calcula estatísticas
+                    const totalCount = entries.reduce((sum, entry) => sum + entry.count, 0);
+                    const averageCount = (totalCount / entries.length).toFixed(1);
+                    const bestDay = entries.reduce((max, entry) => entry.count > max.count ? entry : max, entries[0]);
+                    const worstDay = entries.reduce((min, entry) => entry.count < min.count ? entry : min, entries[0]);
+
+                    statsContainer.innerHTML = `
+                        <div class="p-4 content-card text-center">
+                            <p class="text-xs text-[var(--text-secondary)] uppercase tracking-wide mb-2">Total no Período</p>
+                            <p class="text-3xl font-bold text-[var(--accent-color)]">${totalCount}</p>
+                        </div>
+                        <div class="p-4 content-card text-center">
+                            <p class="text-xs text-[var(--text-secondary)] uppercase tracking-wide mb-2">Média por Registro</p>
+                            <p class="text-3xl font-bold text-[var(--accent-color)]">${averageCount}</p>
+                        </div>
+                        <div class="p-4 content-card text-center">
+                            <p class="text-xs text-[var(--text-secondary)] uppercase tracking-wide mb-2">Melhor Dia</p>
+                            <p class="text-3xl font-bold text-[var(--accent-color)]">${bestDay.count}</p>
+                            <p class="text-xs text-[var(--text-secondary)] mt-1">${formatDate(bestDay.date)}</p>
+                        </div>
+                        <div class="p-4 content-card text-center">
+                            <p class="text-xs text-[var(--text-secondary)] uppercase tracking-wide mb-2">Total de Registros</p>
+                            <p class="text-3xl font-bold text-[var(--accent-color)]">${entries.length}</p>
+                        </div>
+                    `;
+                    
+                    console.log('[v0] Estatísticas renderizadas:', { totalCount, averageCount, entries: entries.length });
+                }
+                
+                function renderHistoryTable(entries) {
+                    const tableContainer = container.querySelector('#history-table-container');
+                    if (!tableContainer) {
+                        console.log('[v0] Container da tabela não encontrado');
+                        return;
+                    }
+                    
+                    if (entries.length === 0) {
+                        tableContainer.innerHTML = `
+                            <p class="text-center text-[var(--text-secondary)] p-8">
+                                Nenhum registro encontrado para este período.
+                            </p>
+                        `;
+                        return;
+                    }
+                    
+                    // Ordena do mais recente para o mais antigo
+                    const sortedEntries = [...entries].sort((a, b) => {
+                        return new Date(b.date) - new Date(a.date);
+                    });
+                    
+                    tableContainer.innerHTML = `
+                        <table class="w-full text-sm">
+                            <thead class="sticky top-0 bg-[var(--card-bg-color)] border-b-2 border-[var(--border-color)]">
+                                <tr>
+                                    <th class="p-3 text-left font-semibold text-[var(--text-secondary)] uppercase tracking-wide text-xs">Data</th>
+                                    <th class="p-3 text-center font-semibold text-[var(--text-secondary)] uppercase tracking-wide text-xs">Contagem</th>
+                                    <th class="p-3 text-right font-semibold text-[var(--text-secondary)] uppercase tracking-wide text-xs">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sortedEntries.map((entry, index) => `
+                                    <tr class="border-b border-[var(--border-color)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                        <td class="p-3">${formatDate(entry.date)}</td>
+                                        <td class="p-3 text-center">
+                                            <span class="font-bold text-lg text-[var(--accent-color)]">${entry.count}</span>
+                                        </td>
+                                        <td class="p-3 text-right">
+                                            <button class="edit-history-btn p-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors" 
+                                                    data-date="${entry.date}" 
+                                                    title="Editar registro">
+                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    // Reinicializa os ícones do Lucide
+                    safeCreateIcons();
+                    
+                    console.log('[v0] Tabela renderizada com', sortedEntries.length, 'registros');
                 }
 
+                function updateHistoryDashboard(period) {
+                    console.log('[v0] Atualizando dashboard para período:', period);
+                    
+                    const { periodEntries, chartData } = getHistoryData(period);
+                    
+                    console.log('[v0] Dados obtidos:', {
+                        entries: periodEntries.length,
+                        labels: chartData.labels.length,
+                        dataPoints: chartData.data.length
+                    });
+                    
+                    renderHistoryChart(chartData);
+                    renderHistoryStats(periodEntries);
+                    renderHistoryTable(periodEntries);
+                }
+                
                 loadCountersState();
                 updateCounterChart();
             }
             
+             function setupHistoryEditModal() {
+                const modal = document.getElementById('edit-history-modal');
+                const overlay = document.getElementById('edit-history-modal-overlay');
+                const cancelBtn = document.getElementById('edit-history-cancel');
+                const saveBtn = document.getElementById('edit-history-save');
+                
+                const closeModal = () => modal.classList.add('hidden');
+
+                overlay.addEventListener('click', closeModal);
+                cancelBtn.addEventListener('click', closeModal);
+                
+                // --- CORREÇÃO APLICADA AQUI ---
+                // Lógica de salvar o histórico ajustada para ser mais robusta e intuitiva.
+                saveBtn.addEventListener('click', () => {
+                    const date = document.getElementById('edit-history-original-date').value;
+                    const newCountInput = document.getElementById('edit-history-count');
+
+                    // Usa o helper parseLocalFloat (trata milhar e vírgula decimal) e arredonda
+                    const raw = newCountInput.value;
+                    const newCount = Math.max(0, Math.round(parseLocalFloat(raw)));
+
+                    if (isNaN(newCount) || newCount < 0) {
+                        newCountInput.classList.add('border-red-500', 'ring', 'ring-red-500/50');
+                        setTimeout(() => {
+                        newCountInput.classList.remove('border-red-500', 'ring', 'ring-red-500/50');
+                        }, 2000);
+                        return;
+                    }
+
+                    let history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
+                    const entryIndex = history.findIndex(item => item.date === date);
+
+                    if (entryIndex > -1) {
+                        if (newCount === 0) {
+                            history.splice(entryIndex, 1);
+                        } else {
+                            history[entryIndex].count = newCount;
+                        }
+                        localStorage.setItem(DAILY_HISTORY_KEY, JSON.stringify(history));
+
+                        // Atualiza UI: dispara click no filtro ativo (ou no filtro week como fallback)
+                        const activeFilter = document.querySelector('.history-filter-btn.active');
+                        if (activeFilter) {
+                            activeFilter.click();
+                        } else {
+                            const defaultFilter = document.querySelector('.history-filter-btn[data-period="week"]');
+                            if (defaultFilter) defaultFilter.click();
+                        }
+                    }
+
+                    // Fecha o modal mesmo que não exista o filtro (assim não fica preso)
+                    closeModal();
+                });
+            }
+
+            function openHistoryEditModal(entry) {
+                const modal = document.getElementById('edit-history-modal');
+                document.getElementById('edit-history-date').textContent = formatDate(entry.date);
+                document.getElementById('edit-history-count').value = entry.count;
+                document.getElementById('edit-history-original-date').value = entry.date;
+                modal.classList.remove('hidden');
+            }
+
+
             function initChecklistModule(container) {
                 container.innerHTML = `
                     <div id="checklist-flows-view"></div>
