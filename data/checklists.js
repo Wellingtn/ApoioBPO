@@ -285,11 +285,35 @@ const checklistData = {
             }
         },
         "produtividade": { "icon": "📊", "name": "Produtividade", "documents": {} },
-        "produtor": { "icon": "🌾", "name": "Produtor", "documents": {} },
+        "produtor": { 
+            "icon": "🌾",
+            "name": "Produtor",
+            "documents": {
+                "checklist_produtor":{
+                    "name": "Checklist Produtor",
+                    "icon": "✅",
+                    "imageUrls": [
+                        "./documents/produtor/inscricao_estadual/inscricao_estadual.jpg",
+                        "./documents/produtor/portal_atendimento/portal_atendimento_rendas.png",
+                        "./documents/produtor/portal_atendimento/portal_atendimento_certidoes.png",
+                        "./documents/produtor/caf_pronaf/caf_pronaf.jpg"
+                    ],
+                    "checklist": {
+                        "O documento anexado é valido?": "DOCUMENTO INVÁLIDO",
+                        "Os documentos estão anexados nas chaves corretas?": "CHAVES INCORRETAS",
+                        "A inscrição estadual está correta?": "INSCRIÇÃO ESTADUAL",
+                        "A situação cadastral está ativa?": "SITUAÇÃO CADASTRAL",
+                        "A categoria do produtor está correta?": "CATEGORIA DO PRODUTOR",
+                        "Possui CAF Pronaf cadastrado na plataforma de atendimento?": "CATEGORIA DO PRODUTOR INCORRETA (CAF PRONAF)"
+
+                    } 
+                }
+            }
+        },
         "relacionamento": { 
             "icon": "🤝",
-             "name": "Relacionamento",
-              "documents": {
+            "name": "Relacionamento",
+            "documents": {
                 "alteracao_sociedade" : {
                     "name": "Alteração de Sociedade",
                     "icon": "📄",
