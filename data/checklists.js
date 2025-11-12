@@ -13,6 +13,64 @@ const checklistData = {
                         "O nome do associado está correto?": "VÍNCULO NÃO ENCONTRADO",
                         "O quantidade de rebanhos está correta?": "QUANTIDADE DE REBANHOS",
                     }
+                }, 
+                "CCIR": {
+                    "name": "CCIR",
+                    "icon": "🌳",
+                    "imageUrl": "./documents/bem/ccir/ccir.jpg",
+                    "checklist": {
+                        "O bem não se encontra em garantia?": "BEM EM GARANTIA",
+                        "O bem não se encontra em aquisição?": "BEM EM PROCESSO DE AQUISIÇÃO",
+                        "O documento anexado está correto?": "DOCUMENTO INVÁLIDO",
+                        "O ano de exercício do CCIR está dentro do prazo aceito?": "PRAZO DE VALIDADE",
+                        "A matrícula no fluxo está condizente com a matrícula do documento?": "MATRICULA",
+                        "O percentual de divisão está correto?": "PERCENTUAL DE PROPRIEDADE INCORRETO"
+                    }
+                },
+                "ITR": {
+                    "name": "ITR",
+                    "icon": "🏞️",
+                    "imageUrls": [
+                        "./documents/bem/itr/itr_1.png",
+                        "./documents/bem/itr/itr_2.png",
+                        "./documents/bem/itr/itr_3.png"
+                    ],
+                    "checklist": {
+                        "O bem não se encontra em garantia?": "BEM EM GARANTIA",
+                        "O bem não se encontra em aquisição?": "BEM EM PROCESSO DE AQUISIÇÃO",
+                        "O documento anexado está correto?": "DOCUMENTO INVÁLIDO",
+                        "O documento está dentro do prazo de emissão válido?": "PRAZO DE VALIDADE",
+                        "O recibo de pagamento está anexado ao ITR?": "FALTA DE DOCUMENTO COMPROBATÓRIO",
+                        "O documento apresenta o cálculo detalhado do imposto?": "FALTA DE CALCULO DETALHADO DO IMÓVEL",
+                        "O documento especifica a área do terreno?": "ÁREA DO TERRENO NÃO ENCONTRADA",
+                        "O documento especifica a área construída do imóvel?": "ÁREA CONSTRUÍDA NÃO ENCONTRADA",
+                        "O documento informa o valor venal (seja o valor do terreno sozinho ou o valor somado)?": "VALOR VENAL NÃO ENCONTRADO"
+                    }
+                },
+                "Laudo de Avaliação": {
+                    "name": "Laudo de Avaliação",
+                    "icon": "📄",
+                    "imageUrls": [
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_1.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_2.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_3.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_4.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_5.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_6.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_7.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_8.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_9.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_10.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_11.jpg",
+                        "./documents/bem/laudo_avaliacao/laudo_avaliacao_12.jpg"
+                    ],
+                    "checklist": {
+                        "O bem não se encontra em garantia?": "BEM EM GARANTIA",
+                        "O bem não se encontra em aquisição?": "BEM EM PROCESSO DE AQUISIÇÃO",
+                        "O documento anexado está correto?": "DOCUMENTO INVÁLIDO",
+                        "O valor do bem no documento está compatível com o valor cadastrado": "VALOR INCORRETO DO BEM IMÓVEL",
+                        "O laudo está devidamente assinado por uma imobiliária ou por um contador habilitado?": "ASSINATURAS FALTANTES",
+                    }
                 }
             }
         },
