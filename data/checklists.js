@@ -11,7 +11,7 @@ const checklistData = {
                     "checklist": {
                         "O documento é valido?": "DOCUMENTO INVÁLIDO",
                         "O nome do associado está correto?": "VÍNCULO NÃO ENCONTRADO",
-                        "O quantidade de rebanhos está correta?": "QUANTIDADE DE REBANHOS",
+                        "O quantidade de rebanhos está correta?": "QUANTIDADE DE SEMOVENTES DIVERGENTE",
                     }
                 }, 
                 "CCIR": {
@@ -182,7 +182,7 @@ const checklistData = {
                         "A data de emissão está dentro do prazo?": "PRAZO DE VALIDADE",
                         "O calculo está correto no sisbr?":"CÁLCULO DO SIMPLES",
                         "Foi anexado o comprovante do simples":"CONSULTA DE OPÇÃO DO SIMPLES",
-                        "A opção do simples está correta?":"CAMPO 'OPTANTE DO SIMPLES'"
+                        "A opção do simples está correta?":"OPÇÃO DO OPTANTE DO SIMPLES"
                     }
                 },
                 "extrato_simples": {
