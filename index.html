@@ -23,6 +23,7 @@
     <script src="data/pareceres.js" defer></script>
     <script src="data/regras.js" defer></script>
     <script src="data/checklists.js" defer></script>
+    <script src="data/links.js" defer></script>
 
     <link rel="stylesheet" href="style.css">
     
@@ -1766,34 +1767,99 @@
             }
 
             function initLinksModule(container) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center min-h-[50vh] p-8 space-y-6 text-center animate-fade-in">
-                        <div class="p-6 rounded-full bg-red-100 dark:bg-red-900/20 text-red-500 mb-2 neumorphic-outset-sm">
-                            <i data-lucide="file-warning" class="w-12 h-12"></i>
-                        </div>
+                // Verifica se o arquivo de dados foi carregado
+                if (typeof linksData === 'undefined') {
+                    container.innerHTML = `
+                        <div class="flex flex-col items-center justify-center min-h-[50vh] text-center animate-fade-in">
+                            <div class="p-6 rounded-full bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 mb-4">
+                                <i data-lucide="alert-triangle" class="w-10 h-10"></i>
+                            </div>
+                            <h2 class="text-xl font-bold">Arquivo de links não encontrado</h2>
+                            <p class="text-[var(--text-secondary)]">Verifique se o arquivo data/links.js está importado corretamente.</p>
+                        </div>`;
+                    safeCreateIcons();
+                    return;
+                }
 
-                        <div class="space-y-2 max-w-lg">
-                            <h2 class="text-2xl font-bold text-[var(--text-primary)]">Consulta Interna Encerrada</h2>
-                            <p class="text-[var(--text-secondary)]">
-                                A funcionalidade de consulta automática de CNPJ foi descontinuada nesta versão do sistema. No lugar será feito um módulo com vários links úteis.
-                            </p>
+                // Renderização do cabeçalho do módulo
+                let htmlContent = `
+                    <div class="animate-fade-in space-y-8 max-w-6xl mx-auto pb-8">
+                        <div class="text-center mb-8">
+                            <h2 class="text-2xl font-bold text-[var(--accent-color)]">Central de Links Úteis</h2>
+                            <p class="text-[var(--text-secondary)]">Acesso rápido às ferramentas do dia a dia</p>
                         </div>
-
-                        <div class="p-6 content-card w-full max-w-md space-y-4">
-                            <p class="text-sm font-medium text-[var(--text-secondary)]">Sugestão: Utilize a base oficial</p>
-                            
-                            <a href="https://solucoes.receita.fazenda.gov.br/Servicos/cnpjreva/cnpjreva_Solicitacao.asp" 
-                               target="_blank" 
-                               rel="noopener noreferrer"
-                               class="w-full p-4 primary-btn rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:scale-[1.02]">
-                                <i data-lucide="external-link" class="w-5 h-5"></i>
-                                Acessar Receita Federal
-                            </a>
-                        </div>
-                    </div>
                 `;
+
+                // Loop pelas categorias
+                linksData.forEach(category => {
+                    htmlContent += `
+                        <div class="content-card p-6 rounded-2xl relative overflow-hidden group hover:border-[var(--accent-color)] transition-colors duration-300">
+                            <div class="flex items-center gap-4 mb-6 border-b border-[var(--border-color)] pb-4">
+                                <div class="p-3 rounded-xl bg-[var(--bg-color)] text-[var(--accent-color)] shadow-sm">
+                                    <i data-lucide="${category.icon || 'folder'}" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">${category.category}</h3>
+                                    ${category.description ? `<p class="text-xs text-[var(--text-secondary)]">${category.description}</p>` : ''}
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${category.items.map(link => {
+                                    // Define se é um link clicável (a) ou apenas informativo (div)
+                                    const Tag = link.url ? 'a' : 'div';
+                                    const hrefAttr = link.url ? `href="${link.url}" target="_blank" rel="noopener noreferrer"` : '';
+                                    
+                                    // Classes de interação apenas se tiver URL
+                                    const interactionClasses = link.url 
+                                        ? 'hover:scale-[1.02] active:scale-95 cursor-pointer hover:shadow-lg' 
+                                        : 'cursor-default opacity-100';
+                                        
+                                    // Borda de aviso
+                                    const borderClasses = link.warning ? 'border-yellow-400 dark:border-yellow-600' : '';
+
+                                    return `
+                                    <${Tag} ${hrefAttr}
+                                    class="flex flex-col p-4 rounded-xl neumorphic-outset-sm transition-all duration-200 group/link h-full relative overflow-hidden ${interactionClasses} ${borderClasses}">
+                                        
+                                        <div class="flex items-start gap-3 mb-2">
+                                            <div class="p-2 rounded-lg bg-[var(--bg-color)] text-[var(--text-secondary)] ${link.url ? 'group-hover/link:text-[var(--accent-color)]' : ''} transition-colors flex-shrink-0 mt-1">
+                                                <i data-lucide="${link.icon || 'external-link'}" class="w-5 h-5"></i>
+                                            </div>
+                                            
+                                            <div class="flex-1 min-w-0">
+                                                <p class="font-semibold text-sm leading-tight mt-1.5">${link.name}</p>
+                                                
+                                                ${link.description && !link.warning ? `<p class="text-[10px] text-[var(--text-secondary)] mt-1 opacity-80">${link.description}</p>` : ''}
+                                                
+                                                ${link.customHtml ? link.customHtml : ''}
+                                            </div>
+                                            
+                                            ${link.url ? `<i data-lucide="arrow-up-right" class="w-4 h-4 text-[var(--text-secondary)] opacity-0 group-hover/link:opacity-100 transition-opacity absolute top-4 right-4"></i>` : ''}
+                                        </div>
+
+                                        ${link.warning ? `
+                                            <div class="mt-2 p-2 rounded bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700/50">
+                                                <div class="flex gap-2">
+                                                    <i data-lucide="alert-circle" class="w-4 h-4 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5"></i>
+                                                    <p class="text-[10px] font-medium text-yellow-800 dark:text-yellow-200 leading-snug">
+                                                        ${link.warning}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </${Tag}>
+                                `}).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                htmlContent += `</div>`;
+                
+                container.innerHTML = htmlContent;
                 safeCreateIcons();
-            }
+            }   
             
             function initParecerModule(container) {
                 container.innerHTML = `
