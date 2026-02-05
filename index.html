@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <script src="https://unpkg.com/lucide@0.390.0"></script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/date-fns.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.30.0/locale/pt-BR/index.min.js"></script>
 
@@ -26,17 +28,21 @@
     <script src="data/links.js" defer></script>
 
     <link rel="stylesheet" href="style.css">
-    
+
     <style>
-        .star-btn .star-icon { transition: all 0.2s ease-in-out; }
+        .star-btn .star-icon {
+            transition: all 0.2s ease-in-out;
+        }
+
         .star-btn.active .star-icon {
-            fill: #facc15; /* Amarelo para a estrela preenchida */
+            fill: #facc15;
+            /* Amarelo para a estrela preenchida */
             color: #facc15;
         }
 
         .history-filter-btn.active {
-             box-shadow: inset 3px 3px 6px var(--shadow-color-dark), inset -3px -3px 6px var(--shadow-color-light);
-             color: var(--accent-color);
+            box-shadow: inset 3px 3px 6px var(--shadow-color-dark), inset -3px -3px 6px var(--shadow-color-light);
+            color: var(--accent-color);
         }
 
         /* Estilos para o toggle switch do timer, adaptados do index.html */
@@ -45,6 +51,7 @@
             width: 3.5rem;
             height: 1.75rem;
         }
+
         .toggle-label {
             display: block;
             width: 100%;
@@ -54,6 +61,7 @@
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
+
         .toggle-checkbox {
             appearance: none;
             position: absolute;
@@ -67,47 +75,72 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
+
         .toggle-checkbox:checked {
             transform: translateX(1.75rem);
             background-color: var(--accent-color);
         }
-        .toggle-checkbox:checked + .toggle-label {
+
+        .toggle-checkbox:checked+.toggle-label {
             background-color: rgba(56, 189, 248, 0.1);
         }
-        
+
         /* Estilos Padrão (Substituindo Neumórfico) e Animação */
-        .neumorphic-outset { 
+        .neumorphic-outset {
             background-color: var(--card-bg-color);
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
-        .neumorphic-outset-sm { 
+
+        .neumorphic-outset-sm {
             background-color: var(--card-bg-color);
             border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
             transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
         }
+
         .neumorphic-outset-sm:hover {
-             border-color: var(--accent-color);
+            border-color: var(--accent-color);
         }
-        @keyframes fade-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
-        .animate-fade-out { animation: fade-out 0.3s ease-in forwards; }
-        #accept-terms-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @keyframes fade-out {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+
+        .animate-fade-out {
+            animation: fade-out 0.3s ease-in forwards;
+        }
+
+        #accept-terms-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
         /* Estilo Liquid Glass para o Dock */
         .bottom-dock-container {
-            background-color: rgba(255, 255, 255, 0.3); /* Fundo claro semi-transparente */
+            background-color: rgba(255, 255, 255, 0.3);
+            /* Fundo claro semi-transparente */
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* Suporte para Safari */
+            -webkit-backdrop-filter: blur(10px);
+            /* Suporte para Safari */
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
         }
 
         html.dark .bottom-dock-container {
-            background-color: rgba(31, 41, 55, 0.3); /* Fundo escuro semi-transparente (#1f2937 com alpha) */
+            background-color: rgba(31, 41, 55, 0.3);
+            /* Fundo escuro semi-transparente (#1f2937 com alpha) */
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
-        
+
         /* Ajuste para o item ativo para combinar com o novo estilo */
         .dock-item.active {
             background-color: rgba(255, 255, 255, 0.3);
@@ -118,54 +151,84 @@
         }
 
         /* Estilos para o visualizador de imagem e zoom */
-        .cursor-zoom-in { cursor: zoom-in; }
+        .cursor-zoom-in {
+            cursor: zoom-in;
+        }
+
         #image-viewer-content {
             transition: transform 0.2s ease-out;
             will-change: transform;
-            cursor: inherit; /* Herda o cursor do wrapper (grab/grabbing) */
+            cursor: inherit;
+            /* Herda o cursor do wrapper (grab/grabbing) */
         }
 
         /* NOVOS ESTILOS PARA O POSICIONAMENTO DO DOCK */
-        #main-dock, #dock-inner-container {
+        #main-dock,
+        #dock-inner-container {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         #main-content {
             transition: padding-left 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         /* DOCK INFERIOR (PADRÃO) */
         #main-dock.dock-bottom {
-            bottom: 0; left: 0; right: 0; padding: 1rem; display: flex; justify-content: center;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
         }
+
         #dock-inner-container.dock-bottom {
-            flex-direction: row; gap: 0.5rem; padding: 0.75rem; border-radius: 1.5rem;
+            flex-direction: row;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 1.5rem;
         }
+
         #main-content.dock-bottom {
-            padding-bottom: 8rem; /* Espaço para o dock inferior */
+            padding-bottom: 8rem;
+            /* Espaço para o dock inferior */
         }
-        .dock-item .label { display: inline; }
+
+        .dock-item .label {
+            display: inline;
+        }
 
         /* DOCK LATERAL */
         #main-dock.dock-side {
             /* A propriedade 'left' será definida via JavaScript para posicionamento dinâmico */
-            top: 64px; /* Altura do header */ 
-            bottom: 0; 
+            top: 64px;
+            /* Altura do header */
+            bottom: 0;
             width: auto;
-            display: flex; 
-            align-items: center;   /* Centraliza o container interno na vertical */
+            display: flex;
+            align-items: center;
+            /* Centraliza o container interno na vertical */
         }
+
         #dock-inner-container.dock-side {
-            flex-direction: column; 
-            width: fit-content; 
+            flex-direction: column;
+            width: fit-content;
             height: fit-content;
-            gap: 0.75rem; 
-            padding: 1rem; /* Ajuste no padding para estética */
-            border-radius: 1.5rem; /* Garante o formato retangular arredondado */
+            gap: 0.75rem;
+            padding: 1rem;
+            /* Ajuste no padding para estética */
+            border-radius: 1.5rem;
+            /* Garante o formato retangular arredondado */
         }
+
         #main-content.dock-side {
-            padding-left: 0; 
+            padding-left: 0;
             padding-bottom: 2rem;
         }
-        #dock-inner-container.dock-side .label { display: none; }
+
+        #dock-inner-container.dock-side .label {
+            display: none;
+        }
     </style>
 
 </head>
@@ -178,24 +241,30 @@
             <h2 class="text-2xl font-bold mb-2 text-[var(--accent-color)]">Termos e Condições de Uso — ApoioBPO</h2>
             <p class="text-xs text-[var(--text-secondary)] mb-4">Versão 1.7.0 — Setembro de 2025</p>
 
-            <div class="max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 text-sm space-y-4 text-[var(--text-secondary)]">
-                <p>Bem-vindo ao ApoioBPO. Antes de utilizar o sistema, leia atentamente estes termos. Ao clicar em “Aceitar e Continuar”, você declara estar de acordo com as condições estabelecidas.</p>
+            <div
+                class="max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 text-sm space-y-4 text-[var(--text-secondary)]">
+                <p>Bem-vindo ao ApoioBPO. Antes de utilizar o sistema, leia atentamente estes termos. Ao clicar em
+                    “Aceitar e Continuar”, você declara estar de acordo com as condições estabelecidas.</p>
 
                 <div>
-                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">1. Propriedade Intelectual</h3>
-                    <p>Este sistema foi desenvolvido por <strong>Wellington Juan Dutra Oliveira</strong>, com colaboração de:</p>
+                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">1. Propriedade Intelectual
+                    </h3>
+                    <p>Este sistema foi desenvolvido por <strong>Wellington Juan Dutra Oliveira</strong>, com
+                        colaboração de:</p>
                     <ul class="list-disc list-inside pl-4">
                         <li>Gabriel Artur Lopes Feltes</li>
                         <li>Mauricio Gabriel Freiberger Konig</li>
                         <li>Erika Mendonça Figueira</li>
                         <li>Bruno Corrêa Alves</li>
                     </ul>
-                    <p class="mt-2">Todos os direitos sobre o sistema, incluindo código-fonte, design, funcionalidades e lógica, são reservados ao autor.</p>
+                    <p class="mt-2">Todos os direitos sobre o sistema, incluindo código-fonte, design, funcionalidades e
+                        lógica, são reservados ao autor.</p>
                 </div>
 
                 <div>
                     <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">2. Finalidade de Uso</h3>
-                    <p>O ApoioBPO destina-se exclusivamente ao uso interno e profissional da equipe da Meta Serviços em Informática S.A., no âmbito dos serviços de BPO prestados ao Banco Cooperativo Sicoob S.A.</p>
+                    <p>O ApoioBPO destina-se exclusivamente ao uso interno e profissional da equipe da Meta Serviços em
+                        Informática S.A., no âmbito dos serviços de BPO prestados ao Banco Cooperativo Sicoob S.A.</p>
                     <p class="mt-2">Principais funcionalidades:</p>
                     <ul class="list-disc list-inside pl-4">
                         <li>Cálculo de renda para pessoas físicas (PF) e jurídicas (PJ);</li>
@@ -213,36 +282,52 @@
                     <ul class="list-disc list-inside pl-4">
                         <li>Utilizar o sistema fora do ambiente corporativo e horário comercial;</li>
                         <li>Compartilhar acesso com pessoas não autorizadas;</li>
-                        <li>Copiar, modificar, distribuir, vender ou sublicenciar o sistema sem autorização expressa;</li>
+                        <li>Copiar, modificar, distribuir, vender ou sublicenciar o sistema sem autorização expressa;
+                        </li>
                         <li>Realizar engenharia reversa, descompilar ou tentar acessar o código-fonte;</li>
                         <li>Utilizar documentos, regras ou pareceres sem permissão formal;</li>
-                        <li>Armazenar ou transmitir dados do sistema fora da rede corporativa sem autorização prévia.</li>
+                        <li>Armazenar ou transmitir dados do sistema fora da rede corporativa sem autorização prévia.
+                        </li>
                     </ul>
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">5. Responsabilidade Limitada</h3>
-                    <p>O sistema é fornecido “como está” e pode apresentar limitações técnicas decorrentes de atualizações, integrações externas ou uso indevido. Os desenvolvedores se responsabilizam apenas pelo funcionamento correto das funcionalidades especificadas.</p>
-                    <p class="mt-2">Decisões operacionais, financeiras ou jurídicas baseadas no sistema devem ser validadas pelo usuário. Falhas devem ser comunicadas imediatamente pelos canais oficiais.</p>
+                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">5. Responsabilidade
+                        Limitada</h3>
+                    <p>O sistema é fornecido “como está” e pode apresentar limitações técnicas decorrentes de
+                        atualizações, integrações externas ou uso indevido. Os desenvolvedores se responsabilizam apenas
+                        pelo funcionamento correto das funcionalidades especificadas.</p>
+                    <p class="mt-2">Decisões operacionais, financeiras ou jurídicas baseadas no sistema devem ser
+                        validadas pelo usuário. Falhas devem ser comunicadas imediatamente pelos canais oficiais.</p>
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">6. Suporte e Comunicação de Incidentes</h3>
-                    <p>Dúvidas, falhas ou incidentes devem ser reportados imediatamente pelo canal oficial da Meta Serviços em Informática S.A. (Microsoft Teams, e-mail corporativo ou ferramenta designada). O não reporte pode limitar a responsabilidade dos autores.</p>
+                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">6. Suporte e Comunicação de
+                        Incidentes</h3>
+                    <p>Dúvidas, falhas ou incidentes devem ser reportados imediatamente pelo canal oficial da Meta
+                        Serviços em Informática S.A. (Microsoft Teams, e-mail corporativo ou ferramenta designada). O
+                        não reporte pode limitar a responsabilidade dos autores.</p>
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">7. Vigência e Atualizações</h3>
-                    <p>Estes termos entram em vigor na data da versão indicada e podem ser atualizados a qualquer momento por motivos técnicos, legais ou operacionais. O usuário deve manter-se informado sobre a versão vigente.</p>
+                    <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">7. Vigência e Atualizações
+                    </h3>
+                    <p>Estes termos entram em vigor na data da versão indicada e podem ser atualizados a qualquer
+                        momento por motivos técnicos, legais ou operacionais. O usuário deve manter-se informado sobre a
+                        versão vigente.</p>
                 </div>
             </div>
 
             <div class="mt-6 space-y-4">
-                <label for="terms-checkbox" class="flex items-center justify-center gap-2 text-sm cursor-pointer text-[var(--text-primary)]">
-                    <input type="checkbox" id="terms-checkbox" class="h-4 w-4 rounded border-gray-300 text-[var(--accent-color)] focus:ring-[var(--accent-color)]">
+                <label for="terms-checkbox"
+                    class="flex items-center justify-center gap-2 text-sm cursor-pointer text-[var(--text-primary)]">
+                    <input type="checkbox" id="terms-checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-[var(--accent-color)] focus:ring-[var(--accent-color)]">
                     <span>Declaro que li, compreendi e aceito todos os termos e condições de uso descritos acima</span>
                 </label>
-                <button id="accept-terms-btn" class="w-full px-8 py-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 text-[var(--accent-color)]" disabled>
+                <button id="accept-terms-btn"
+                    class="w-full px-8 py-3 rounded-2xl neumorphic-outset-sm font-semibold tracking-wider uppercase transition-all duration-200 active:scale-95 text-[var(--accent-color)]"
+                    disabled>
                     Aceitar e Continuar
                 </button>
             </div>
@@ -250,15 +335,18 @@
     </div>
 
     <!-- BARRA SUPERIOR FIXA -->
-    <header class="w-full bg-[var(--card-bg-color)] border-b border-[var(--border-color)] transition-colors duration-300 sticky top-0 z-30 h-[64px]">
+    <header
+        class="w-full bg-[var(--card-bg-color)] border-b border-[var(--border-color)] transition-colors duration-300 sticky top-0 z-30 h-[64px]">
         <div class="flex justify-between items-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex items-center gap-3">
-                <img src="./images/logo/logo_apoiobpo_solo_semfundo.png" alt="ApoioBPO Logo" class="w-8 h-8 sm:w-10 sm:h-10 ">
+                <img src="./images/logo/logo_apoiobpo_solo_semfundo.png" alt="ApoioBPO Logo"
+                    class="w-8 h-8 sm:w-10 sm:h-10 ">
                 <span class="font-bold text-xl hidden sm:block">ApoioBPO</span>
             </div>
             <div class="flex items-center gap-3">
                 <!-- BOTÃO PARA ALTERNAR POSIÇÃO DO DOCK -->
-                <button id="dock-toggle-btn" title="Mudar Posição do Dock" class="p-3 rounded-full secondary-btn hidden sm:flex">
+                <button id="dock-toggle-btn" title="Mudar Posição do Dock"
+                    class="p-3 rounded-full secondary-btn hidden sm:flex">
                     <i data-lucide="layout-sidebar-left" class="w-5 h-5"></i>
                 </button>
                 <button id="info-button" class="p-3 rounded-full secondary-btn">
@@ -268,10 +356,12 @@
                     <i data-lucide="sun" id="sun-icon" class="w-5 h-5"></i>
                     <i data-lucide="moon" id="moon-icon" class="hidden w-5 h-5"></i>
                 </button>
-                <label for="profile-pic-input" 
+                <label for="profile-pic-input"
                     class="w-11 h-11 rounded-full flex items-center justify-center bg-[var(--bg-color)] border border-[var(--border-color)] cursor-pointer overflow-hidden">
-                    <img id="profile-pic" src="/placeholder.svg" alt="Foto do Perfil" class="w-full h-full object-cover hidden">
-                    <i data-lucide="user-circle-2" id="profile-pic-icon" class="w-5 h-5 text-[var(--text-secondary)]"></i>
+                    <img id="profile-pic" src="/placeholder.svg" alt="Foto do Perfil"
+                        class="w-full h-full object-cover hidden">
+                    <i data-lucide="user-circle-2" id="profile-pic-icon"
+                        class="w-5 h-5 text-[var(--text-secondary)]"></i>
                 </label>
                 <input type="file" id="profile-pic-input" class="hidden" accept="image/*">
             </div>
@@ -279,11 +369,12 @@
     </header>
 
     <!-- Conteúdo Principal -->
-    <div id="main-content" class="min-h-screen w-full flex flex-col items-center p-4 sm:p-8 transition-all duration-300">
+    <div id="main-content"
+        class="min-h-screen w-full flex flex-col items-center p-4 sm:p-8 transition-all duration-300">
         <main class="w-full max-w-7xl mx-auto flex flex-col gap-4">
             <div id="module-container" class="w-full p-6 md:p-8 main-module-card min-h-[60vh]">
                 <h1 id="module-title" class="text-3xl font-bold mb-8 text-center"></h1>
-                
+
                 <div id="faturamento-module" class="module-content hidden"></div>
                 <div id="renda-pf-module" class="module-content hidden"></div>
                 <div id="renda-agro-module" class="module-content hidden"></div>
@@ -310,7 +401,7 @@
                     </div>
                     <span class="label">Renda PF</span>
                 </button>
-                 <button class="dock-item" data-target="renda-agro-module" data-title="Cálculo Renda Agro">
+                <button class="dock-item" data-target="renda-agro-module" data-title="Cálculo Renda Agro">
                     <div class="icon-bg" style="background: linear-gradient(135deg, #76b852, #8dc26f);">
                         <i data-lucide="tractor" class="icon"></i>
                     </div>
@@ -322,7 +413,7 @@
                     </div>
                     <span class="label">Links</span>
                 </button>
-                 <button class="dock-item" data-target="contador-module" data-title="Contador">
+                <button class="dock-item" data-target="contador-module" data-title="Contador">
                     <div class="icon-bg" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
                         <i data-lucide="plus-circle" class="icon"></i>
                     </div>
@@ -351,11 +442,14 @@
     </div>
 
     <!-- MODAIS E TEMPLATES -->
-    <div id="image-viewer-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden bg-black/80 backdrop-blur-sm overflow-hidden">
-        <button id="image-viewer-close" class="absolute top-4 right-4 text-white p-2 rounded-full transition-colors z-20 hover:bg-white/20">
+    <div id="image-viewer-modal"
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden bg-black/80 backdrop-blur-sm overflow-hidden">
+        <button id="image-viewer-close"
+            class="absolute top-4 right-4 text-white p-2 rounded-full transition-colors z-20 hover:bg-white/20">
             <i data-lucide="x" class="w-8 h-8"></i>
         </button>
-        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/20 p-2 rounded-full">
+        <div
+            class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/20 p-2 rounded-full">
             <button id="zoom-out-btn" class="text-white p-2 rounded-full transition-colors hover:bg-white/20">
                 <i data-lucide="zoom-out" class="w-6 h-6"></i>
             </button>
@@ -364,7 +458,8 @@
             </button>
         </div>
         <div id="image-viewer-wrapper" class="relative w-full h-full flex items-center justify-center">
-            <img id="image-viewer-content" src="/placeholder.svg" alt="Imagem Ampliada" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+            <img id="image-viewer-content" src="/placeholder.svg" alt="Imagem Ampliada"
+                class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
         </div>
     </div>
 
@@ -385,12 +480,16 @@
                     <li>Bruno Corrêa Alves (Assistente de BPO)</li>
                 </ul>
                 <p><strong>Lembrete de Uso:</strong></p>
-                <p class="text-[var(--text-secondary)]">Esta ferramenta é de uso exclusivo para colaboradores da Meta Serviços em Informática S.A. a serviço do Sicoob. É proibida a cópia, distribuição ou uso fora do âmbito profissional designado.</p>
-                <p class="text-xs text-center text-[var(--text-secondary)] pt-4 mt-4 border-t border-[var(--border-color)]">© 2025 Wellington Juan Dutra Oliveira e colaboradores. Todos os direitos reservados.</p>
+                <p class="text-[var(--text-secondary)]">Esta ferramenta é de uso exclusivo para colaboradores da Meta
+                    Serviços em Informática S.A. a serviço do Sicoob. É proibida a cópia, distribuição ou uso fora do
+                    âmbito profissional designado.</p>
+                <p
+                    class="text-xs text-center text-[var(--text-secondary)] pt-4 mt-4 border-t border-[var(--border-color)]">
+                    © 2025 Wellington Juan Dutra Oliveira e colaboradores. Todos os direitos reservados.</p>
             </div>
         </div>
     </div>
-    
+
     <!-- MODAL DE EDIÇÃO DO HISTÓRICO DO CONTADOR -->
     <div id="edit-history-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="edit-history-modal-overlay"></div>
@@ -398,7 +497,8 @@
             <h2 class="text-xl font-bold mb-4">Editar Registro</h2>
             <p class="mb-2 text-sm">Data: <strong id="edit-history-date"></strong></p>
             <div class="flex flex-col gap-2">
-                <label for="edit-history-count" class="text-sm font-medium text-[var(--text-secondary)]">Nova contagem</label>
+                <label for="edit-history-count" class="text-sm font-medium text-[var(--text-secondary)]">Nova
+                    contagem</label>
                 <input type="number" id="edit-history-count" class="w-full p-3 form-input">
                 <input type="hidden" id="edit-history-original-date">
             </div>
@@ -411,21 +511,31 @@
 
 
     <template id="counter-template">
-        <div class="counter-card p-3 rounded-2xl content-card flex flex-col items-center justify-center gap-2 relative h-full">
+        <div
+            class="counter-card p-3 rounded-2xl content-card flex flex-col items-center justify-center gap-2 relative h-full">
             <button class="star-btn absolute top-2 left-2 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
                 <i data-lucide="star" class="star-icon w-4 h-4"></i>
             </button>
-            <button class="remove-counter-btn absolute top-2 right-2 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
+            <button
+                class="remove-counter-btn absolute top-2 right-2 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
-            <h4 class="counter-title font-semibold text-center w-full px-8 truncate" contenteditable="true">Contador</h4>
-            <span class="counter-display font-bold text-6xl text-[var(--accent-color)] cursor-pointer" contenteditable="false">0</span>
+            <h4 class="counter-title font-semibold text-center w-full px-8 truncate" contenteditable="true">Contador
+            </h4>
+            <span class="counter-display font-bold text-6xl text-[var(--accent-color)] cursor-pointer"
+                contenteditable="false">0</span>
             <div class="flex items-center gap-3">
-                <button class="counter-minus w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center">-</button>
-                <button class="counter-plus w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center">+</button>
-                
-                <button class="timer-play-pause w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hidden"><i data-lucide="play" class="w-6 h-6"></i></button>
-                <button class="timer-reset w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hidden"><i data-lucide="rotate-cw" class="w-6 h-6"></i></button>
+                <button
+                    class="counter-minus w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center">-</button>
+                <button
+                    class="counter-plus w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center">+</button>
+
+                <button
+                    class="timer-play-pause w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hidden"><i
+                        data-lucide="play" class="w-6 h-6"></i></button>
+                <button
+                    class="timer-reset w-16 h-16 rounded-2xl secondary-btn text-4xl font-bold active:scale-95 transition-transform flex items-center justify-center hidden"><i
+                        data-lucide="rotate-cw" class="w-6 h-6"></i></button>
             </div>
         </div>
     </template>
@@ -452,7 +562,7 @@
             const moduleTitle = document.getElementById('module-title');
             const modules = document.querySelectorAll('.module-content');
             const dockButtons = document.querySelectorAll('.dock-item');
-            
+
             // --- FUNÇÕES AUXILIARES GLOBAIS ---
             const formatCurrency = (value) => (isNaN(value) || !isFinite(value)) ? "R$ 0,00" : value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const parseLocalFloat = (value) => parseFloat(String(value).replace(/\./g, '').replace(',', '.')) || 0;
@@ -478,15 +588,15 @@
                 const savedDockPosition = localStorage.getItem("apoioBpoDockPosition") || "bottom";
                 if (dockToggleIcon) {
                     if (savedDockPosition === "side") {
-                    dockToggleIcon.setAttribute("data-lucide", "layout-panel-left");
+                        dockToggleIcon.setAttribute("data-lucide", "layout-panel-left");
                     } else {
-                    dockToggleIcon.setAttribute("data-lucide", "layout-sidebar-left");
+                        dockToggleIcon.setAttribute("data-lucide", "layout-sidebar-left");
                     }
-                if (typeof lucide !== "undefined") {
-                lucide.createIcons();
-                }   
+                    if (typeof lucide !== "undefined") {
+                        lucide.createIcons();
+                    }
+                }
             }
-}
 
             // --- GERENCIAMENTO DA POSIÇÃO DO DOCK ---
             function setupDockToggling() {
@@ -498,7 +608,7 @@
 
                 if (!dockToggleBtn || !mainDock || !dockInnerContainer || !mainContentEl || !dockToggleIcon) {
                     console.error("Um ou mais elementos do dock não foram encontrados. A funcionalidade de troca de posição não funcionará.");
-                    if(dockToggleBtn) dockToggleBtn.style.display = 'none'; // Esconde o botão se algo der errado
+                    if (dockToggleBtn) dockToggleBtn.style.display = 'none'; // Esconde o botão se algo der errado
                     return;
                 }
 
@@ -573,7 +683,7 @@
                         buttonElement.disabled = true; // Previne múltiplos cliques
                         buttonElement.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copiado`;
                         safeCreateIcons();
-                        
+
                         setTimeout(() => {
                             buttonElement.innerHTML = originalHTML;
                             buttonElement.disabled = false;
@@ -602,7 +712,7 @@
                 }
                 return null;
             }
-            
+
             // --- INICIALIZAÇÃO DA APLICAÇÃO ---
             function initializeApp() {
                 setupEventListeners();
@@ -614,7 +724,7 @@
                     requestAnimationFrame(() => dockButtons[0].click());
                 }
             }
-            
+
             // --- GERENCIAMENTO DO VISUALIZADOR DE IMAGEM (MODAL) ---
             function setupImageViewerModal() {
                 const modal = document.getElementById('image-viewer-modal');
@@ -630,9 +740,9 @@
 
                 const updateTransform = () => {
                     content.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                     wrapper.style.cursor = scale > 1 ? 'grab' : 'default';
+                    wrapper.style.cursor = scale > 1 ? 'grab' : 'default';
                 };
-                
+
                 const resetTransform = () => {
                     scale = 1;
                     translateX = 0;
@@ -652,7 +762,7 @@
                     modal.classList.add('hidden');
                     document.body.style.overflow = '';
                 };
-                
+
                 // Delegação de evento para abrir o modal
                 const checklistModule = document.getElementById('checklist-module'); // Seleciona o módulo correto
                 if (checklistModule) {
@@ -660,14 +770,14 @@
                         const image = e.target;
                         // Verifica se o elemento clicado é uma imagem dentro do layout do checklist
                         if (image.tagName === 'IMG' && image.closest('#checklist-main-layout')) {
-                             openModal(image.src);
+                            openModal(image.src);
                         }
                     });
                 }
 
                 closeBtn.addEventListener('click', closeModal);
                 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-                
+
                 zoomInBtn.addEventListener('click', () => { scale = Math.min(scale + 0.2, 5); updateTransform(); });
                 zoomOutBtn.addEventListener('click', () => { scale = Math.max(scale - 0.2, 1); updateTransform(); });
 
@@ -680,7 +790,7 @@
                     content.style.transition = 'none'; // Permite arrastar suavemente
                     wrapper.style.cursor = 'grabbing';
                 });
-                
+
                 window.addEventListener('mousemove', e => {
                     if (!isDragging) return;
                     e.preventDefault();
@@ -688,25 +798,25 @@
                     translateY = e.clientY - startY;
                     updateTransform();
                 });
-                
+
                 window.addEventListener('mouseup', () => {
                     if (isDragging) {
                         isDragging = false;
                         wrapper.style.cursor = 'grab';
                     }
                 });
-                
+
                 wrapper.addEventListener('wheel', e => {
                     e.preventDefault();
                     const zoomIntensity = 0.1;
                     const delta = e.deltaY > 0 ? -1 : 1;
                     const newScale = Math.max(1, Math.min(scale + delta * zoomIntensity, 5));
-                    
+
                     // Calcula a posição do mouse relativo ao wrapper
                     const rect = wrapper.getBoundingClientRect();
                     const mouseX = e.clientX - rect.left;
                     const mouseY = e.clientY - rect.top;
-                    
+
                     // Calcula a nova posição de translateX/translateY para centralizar o zoom no mouse
                     const newTranslateX = translateX - (mouseX - translateX) * (newScale / scale - 1);
                     const newTranslateY = translateY - (mouseY - translateY) * (newScale / scale - 1);
@@ -714,7 +824,7 @@
                     scale = newScale;
                     translateX = newTranslateX;
                     translateY = newTranslateY;
-                    
+
                     updateTransform();
                 });
             }
@@ -773,18 +883,30 @@
                 if (targetModuleId === currentModuleId) return;
                 currentModuleId = targetModuleId;
                 moduleTitle.textContent = targetTitle;
+
+                // Hides all modules without clearing content (Persists State)
                 modules.forEach(module => {
-                    module.innerHTML = ''; 
                     module.classList.add('hidden');
                 });
+
                 const activeModule = document.getElementById(targetModuleId);
                 if (activeModule) {
                     activeModule.classList.remove('hidden');
-                    activeModule.classList.add('animate-fade-in');
-                    loadModuleContent(targetModuleId);
+
+                    // Only loads content if it hasn't been loaded yet
+                    if (activeModule.innerHTML.trim() === '') {
+                        activeModule.classList.add('animate-fade-in');
+                        loadModuleContent(targetModuleId);
+                    } else {
+                        // Re-trigger fade-in animation for better UX
+                        activeModule.classList.remove('animate-fade-in');
+                        void activeModule.offsetWidth; // Force reflow
+                        activeModule.classList.add('animate-fade-in');
+                        safeCreateIcons();
+                    }
                 }
             }
-            
+
             // --- CARREGADOR DE CONTEÚDO DINÂMICO DOS MÓDULOS ---
             function loadModuleContent(moduleId) {
                 const container = document.getElementById(moduleId);
@@ -903,20 +1025,20 @@
                         <div id="calc-datas-tab" class="faturamento-tab-content hidden"></div>
                     </div>
                 `;
-            
+
                 const tabButtons = container.querySelectorAll('.tab-button');
                 const tabContents = container.querySelectorAll('.faturamento-tab-content');
-            
+
                 tabButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         tabButtons.forEach(btn => btn.classList.remove('active'));
                         button.classList.add('active');
-                        
+
                         const targetTabId = `${button.dataset.tab}-tab`;
                         tabContents.forEach(content => {
                             content.classList.toggle('hidden', content.id !== targetTabId);
                         });
-            
+
                         if (targetTabId === 'rel-faturamento-tab' && !container.querySelector('#rel-faturamento-tab').innerHTML) {
                             initRelFaturamentoTab(container.querySelector('#rel-faturamento-tab'));
                         } else if (targetTabId === 'porcentagem-tab' && !container.querySelector('#porcentagem-tab').innerHTML) {
@@ -927,24 +1049,24 @@
                         safeCreateIcons();
                     });
                 });
-                
+
                 const faturamentoForm = container.querySelector('#faturamento-form');
                 container.querySelector('#calcular-faturamento').addEventListener('click', () => {
-                     const rbt12_m1 = parseLocalFloat(container.querySelector('#rbt12_metodo1').value);
-                     const meses_m1 = parseInt(container.querySelector('#meses_metodo1').value) || 12;
-                     container.querySelector('#resultado1').textContent = formatCurrency(meses_m1 > 0 ? rbt12_m1 / meses_m1 : 0);
-            
-                     const rpa_m2 = parseLocalFloat(container.querySelector('#rpa_metodo2').value);
-                     const rbt12_m2 = parseLocalFloat(container.querySelector('#rbt12_metodo2').value);
-                     const mesAnterior_m2 = parseLocalFloat(container.querySelector('#mes_anterior_metodo2').value);
-                     container.querySelector('#resultado2').textContent = formatCurrency(((rbt12_m2 + rpa_m2) - mesAnterior_m2) / 12);
-            
-                     const rpa_m3 = parseLocalFloat(container.querySelector('#rpa_metodo3').value);
-                     const rbt12_m3 = parseLocalFloat(container.querySelector('#rbt12_metodo3').value);
-                     const numMeses_m3 = parseInt(container.querySelector('#num_meses_metodo3').value) || 0;
-                     container.querySelector('#resultado3').textContent = formatCurrency(numMeses_m3 > 0 ? (rpa_m3 + rbt12_m3) / numMeses_m3 : 0);
+                    const rbt12_m1 = parseLocalFloat(container.querySelector('#rbt12_metodo1').value);
+                    const meses_m1 = parseInt(container.querySelector('#meses_metodo1').value) || 12;
+                    container.querySelector('#resultado1').textContent = formatCurrency(meses_m1 > 0 ? rbt12_m1 / meses_m1 : 0);
+
+                    const rpa_m2 = parseLocalFloat(container.querySelector('#rpa_metodo2').value);
+                    const rbt12_m2 = parseLocalFloat(container.querySelector('#rbt12_metodo2').value);
+                    const mesAnterior_m2 = parseLocalFloat(container.querySelector('#mes_anterior_metodo2').value);
+                    container.querySelector('#resultado2').textContent = formatCurrency(((rbt12_m2 + rpa_m2) - mesAnterior_m2) / 12);
+
+                    const rpa_m3 = parseLocalFloat(container.querySelector('#rpa_metodo3').value);
+                    const rbt12_m3 = parseLocalFloat(container.querySelector('#rbt12_metodo3').value);
+                    const numMeses_m3 = parseInt(container.querySelector('#num_meses_metodo3').value) || 0;
+                    container.querySelector('#resultado3').textContent = formatCurrency(numMeses_m3 > 0 ? (rpa_m3 + rbt12_m3) / numMeses_m3 : 0);
                 });
-            
+
                 container.querySelector('#limpar-faturamento').addEventListener('click', () => {
                     faturamentoForm.reset();
                     container.querySelector('#meses_metodo1').value = '12';
@@ -1008,7 +1130,7 @@
             }
 
             function initPorcentagemTab(container) {
-                 container.innerHTML = `
+                container.innerHTML = `
                     <div class="space-y-6">
                         <h3 class="text-xl font-bold text-center text-[var(--accent-color)]">Calculadora de Quotas</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1108,9 +1230,9 @@
                     }
                     const start = new Date(dataInicio + 'T00:00:00'), end = new Date(dataFim + 'T00:00:00');
                     if (start > end) {
-                         resultadoDatasDiv.innerHTML = `<p class="text-red-500 font-semibold">A data de início não pode ser posterior à data final.</p>`;
-                         resultadoDatasDiv.classList.remove('hidden');
-                         return;
+                        resultadoDatasDiv.innerHTML = `<p class="text-red-500 font-semibold">A data de início não pode ser posterior à data final.</p>`;
+                        resultadoDatasDiv.classList.remove('hidden');
+                        return;
                     }
 
                     let anos = end.getFullYear() - start.getFullYear(), meses = end.getMonth() - start.getMonth(), dias = end.getDate() - start.getDate();
@@ -1122,7 +1244,7 @@
                         anos--;
                         meses += 12;
                     }
-                    
+
                     const totalDias = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
                     let resultadoTexto = [];
                     if (anos > 0) resultadoTexto.push(`${anos} ano${anos > 1 ? 's' : ''}`);
@@ -1138,7 +1260,7 @@
                         </div>`;
                     resultadoDatasDiv.classList.remove('hidden');
                 });
-                
+
                 container.querySelector('#limpar-datas').addEventListener('click', () => {
                     dataInicioInput.value = '';
                     dataFimInput.value = '';
@@ -1250,10 +1372,10 @@
                     delete() { this.currentOperand = String(this.currentOperand).slice(0, -1); if (this.currentOperand === '') { this.currentOperand = '0'; } }
                     appendNumber(number) { if (this.historyElement.innerText.includes('=')) { this.clear(); } if (number === '.' && this.currentOperand.includes('.')) return; if (this.currentOperand.length > 15) return; if (this.currentOperand === '0' && number !== '.') { this.currentOperand = number; } else { this.currentOperand = this.currentOperand.toString() + number.toString(); } }
                     chooseOperation(operation) { if (this.currentOperand === '' && this.previousOperand === '') return; if (this.currentOperand === '' && this.previousOperand !== '') { this.operation = operation; this.updateDisplay(); return; } if (this.previousOperand !== '') { this.compute(); } this.operation = operation; this.previousOperand = this.currentOperand; this.currentOperand = ''; }
-                    compute() { let computation; const prev = parseFloat(this.previousOperand); const current = parseFloat(this.currentOperand); if (isNaN(prev) || isNaN(current)) return; const historyText = `${this.formatDisplay(this.previousOperand)} ${this.operation.replace('*','×').replace('/','÷')} ${this.formatDisplay(this.currentOperand)} =`; switch (this.operation) { case '+': computation = prev + current; break; case '-': computation = prev - current; break; case '*': computation = prev * current; break; case '/': computation = prev / current; break; default: return; } this.currentOperand = computation.toString(); this.operation = undefined; this.previousOperand = ''; this.historyElement.innerText = historyText; }
+                    compute() { let computation; const prev = parseFloat(this.previousOperand); const current = parseFloat(this.currentOperand); if (isNaN(prev) || isNaN(current)) return; const historyText = `${this.formatDisplay(this.previousOperand)} ${this.operation.replace('*', '×').replace('/', '÷')} ${this.formatDisplay(this.currentOperand)} =`; switch (this.operation) { case '+': computation = prev + current; break; case '-': computation = prev - current; break; case '*': computation = prev * current; break; case '/': computation = prev / current; break; default: return; } this.currentOperand = computation.toString(); this.operation = undefined; this.previousOperand = ''; this.historyElement.innerText = historyText; }
                     handleSpecial(op) { if (this.currentOperand === '') return; const current = parseFloat(this.currentOperand); if (isNaN(current)) return; let computation; let historyText; if (op === '*12') { computation = current * 12; historyText = `${this.formatDisplay(this.currentOperand)} × 12 =`; } else if (op === '/12') { computation = current / 12; historyText = `${this.formatDisplay(this.currentOperand)} ÷ 12 =`; } else { return; } this.currentOperand = computation.toString(); this.operation = undefined; this.previousOperand = ''; this.historyElement.innerText = historyText; this.updateDisplay(); }
                     formatDisplay(numberStr) { if (numberStr === '' || numberStr === null || numberStr === undefined) return ''; const stringNumber = numberStr.toString(); const [integerPart, decimalPart] = stringNumber.split('.'); let integerDisplay; if (integerPart === '' || isNaN(parseFloat(integerPart))) { integerDisplay = '0'; } else { integerDisplay = parseFloat(integerPart).toLocaleString('pt-BR'); } if (decimalPart != null) { return `${integerDisplay},${decimalPart}`; } else { if (stringNumber.endsWith('.')) { return `${integerDisplay},`; } return integerDisplay; } }
-                    updateDisplay() { this.displayElement.value = this.formatDisplay(this.currentOperand); if (this.operation != null) { this.historyElement.innerText = `${this.formatDisplay(this.previousOperand)} ${this.operation.replace('*','×').replace('/','÷')}`; } }
+                    updateDisplay() { this.displayElement.value = this.formatDisplay(this.currentOperand); if (this.operation != null) { this.historyElement.innerText = `${this.formatDisplay(this.previousOperand)} ${this.operation.replace('*', '×').replace('/', '÷')}`; } }
                 }
                 const calculator = new Calculator(displayElement, historyElement);
                 calculatorButtonsContainer.addEventListener('click', (e) => { const button = e.target.closest('.calculator-btn'); if (!button) return; if (button.dataset.number !== undefined) { calculator.appendNumber(button.dataset.number); calculator.updateDisplay(); } if (button.dataset.operator !== undefined) { calculator.chooseOperation(button.dataset.operator); calculator.updateDisplay(); } if (button.dataset.action === 'equals') { calculator.compute(); calculator.updateDisplay(); } if (button.dataset.action === 'clear') { calculator.clear(); } if (button.dataset.action === 'special') { calculator.handleSpecial(button.dataset.value); } });
@@ -1272,11 +1394,11 @@
                 const limparSomaBtn = container.querySelector('#limpar_soma');
                 const NUM_SOMA_INPUTS = 12;
                 function calcularSomaTotal() { let totalSoma = 0; const items = container.querySelectorAll('#soma-valores-container .soma-valor-item'); items.forEach(item => { const checkbox = item.querySelector('.soma-valor-checkbox'); const input = item.querySelector('.soma-valor-input'); if (checkbox && input && checkbox.checked) { totalSoma += parseLocalFloat(input.value); } }); container.querySelector('#soma_total_resultado').textContent = formatCurrency(totalSoma); container.querySelector('#soma_div12_resultado').textContent = formatCurrency(totalSoma / 12); }
-                if (somaValoresContainer) { 
-                    somaValoresContainer.innerHTML = ''; 
-                    for (let i = 0; i < NUM_SOMA_INPUTS; i++) { 
-                        const itemDiv = document.createElement('div'); 
-                        itemDiv.className = 'soma-valor-item'; 
+                if (somaValoresContainer) {
+                    somaValoresContainer.innerHTML = '';
+                    for (let i = 0; i < NUM_SOMA_INPUTS; i++) {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'soma-valor-item';
                         itemDiv.innerHTML = `
                             <label class="flex items-center gap-3 cursor-pointer p-1 rounded-lg"> 
                                 <input type="checkbox" id="soma-check-${i}" class="soma-valor-checkbox hidden"> 
@@ -1284,31 +1406,33 @@
                                     <i data-lucide="check" class="check-icon w-4 h-4 opacity-0 transition-opacity"></i>
                                 </span> 
                                 <input type="text" inputmode="decimal" placeholder="R$ 0,00" class="soma-valor-input w-full p-2 form-input">
-                            </label>`; 
-                        somaValoresContainer.appendChild(itemDiv); 
-                    } 
-                    safeCreateIcons(); 
-                    somaValoresContainer.addEventListener('input', (e) => { if (e.target.classList.contains('soma-valor-input')) { calcularSomaTotal(); } }); 
-                    somaValoresContainer.addEventListener('change', (e) => { if (e.target.classList.contains('soma-valor-checkbox')) { 
-                        const label = e.target.closest('label');
-                        const checkIcon = label.querySelector('.check-icon');
-                        checkIcon.style.opacity = e.target.checked ? '1' : '0';
-                        calcularSomaTotal(); 
-                    } }); 
+                            </label>`;
+                        somaValoresContainer.appendChild(itemDiv);
+                    }
+                    safeCreateIcons();
+                    somaValoresContainer.addEventListener('input', (e) => { if (e.target.classList.contains('soma-valor-input')) { calcularSomaTotal(); } });
+                    somaValoresContainer.addEventListener('change', (e) => {
+                        if (e.target.classList.contains('soma-valor-checkbox')) {
+                            const label = e.target.closest('label');
+                            const checkIcon = label.querySelector('.check-icon');
+                            checkIcon.style.opacity = e.target.checked ? '1' : '0';
+                            calcularSomaTotal();
+                        }
+                    });
                 }
-                if (limparSomaBtn) { 
-                    limparSomaBtn.addEventListener('click', () => { 
-                        container.querySelectorAll('#soma-valores-container .soma-valor-input').forEach(input => input.value = ''); 
+                if (limparSomaBtn) {
+                    limparSomaBtn.addEventListener('click', () => {
+                        container.querySelectorAll('#soma-valores-container .soma-valor-input').forEach(input => input.value = '');
                         container.querySelectorAll('#soma-valores-container .soma-valor-checkbox').forEach(checkbox => {
                             checkbox.checked = false;
                             const icon = checkbox.closest('label').querySelector('.check-icon');
-                            if(icon) icon.style.opacity = '0';
-                        }); 
-                        calcularSomaTotal(); 
-                    }); 
+                            if (icon) icon.style.opacity = '0';
+                        });
+                        calcularSomaTotal();
+                    });
                 }
             }
-            
+
             function initRendaAgroModule(container) {
                 container.innerHTML = `
                     <div class="flex mb-6 border-b border-[var(--border-color)] flex-shrink-0 overflow-x-auto">
@@ -1340,9 +1464,9 @@
                         safeCreateIcons();
                     });
                 });
-                
+
                 // --- INICIALIZAÇÃO DOS CONTEÚDOS DAS ABAS ---
-                
+
                 // Aba Semoventes
                 const semoventesTab = container.querySelector('#semoventes-tab');
                 semoventesTab.innerHTML = `
@@ -1420,7 +1544,7 @@
                     </div>`;
 
                 const semoventesTbody = semoventesTab.querySelector('#semoventes-tbody');
-                const semoventesData = [ 'Matrizes (+ 36 meses)', 'Touros', 'Bois (+ 36 meses)', 'Novilhas (25 a 36 meses)', 'Novilhos (25 a 36 meses)', 'Novilhas (13 a 24 meses)', 'Novilhos (13 a 24 meses)', 'Bezerras/terneiras até 12 meses', 'Bezerros/terneiros até 12 meses' ];
+                const semoventesData = ['Matrizes (+ 36 meses)', 'Touros', 'Bois (+ 36 meses)', 'Novilhas (25 a 36 meses)', 'Novilhos (25 a 36 meses)', 'Novilhas (13 a 24 meses)', 'Novilhos (13 a 24 meses)', 'Bezerras/terneiras até 12 meses', 'Bezerros/terneiros até 12 meses'];
                 semoventesTbody.innerHTML = semoventesData.map((desc, index) => `
                     <tr class="border-b border-[var(--border-color)] last:border-b-0">
                         <td class="p-2">${desc}</td>
@@ -1428,7 +1552,7 @@
                         <td class="p-2"><input type="text" inputmode="decimal" id="semovente-valor-${index}" class="semovente-input w-32 p-2 form-input" placeholder="R$ 0,00"></td>
                         <td class="p-2 font-semibold" id="semovente-total-${index}">R$ 0,00</td>
                     </tr>`).join('');
-                
+
                 const calcularSemoventes = () => {
                     let grandTotalAnual = 0, grandTotalQtd = 0;
                     semoventesData.forEach((_, index) => {
@@ -1445,7 +1569,7 @@
                     semoventesTab.querySelector('#semoventes-renda-anual').textContent = formatCurrency(totalComPropriedade);
                     semoventesTab.querySelector('#semoventes-renda-mensal').textContent = formatCurrency(totalComPropriedade / 12);
                 };
-                
+
                 const calcularIrpfSemoventes = () => {
                     const receitaBruta = parseLocalFloat(semoventesTab.querySelector('#irpf-receita-bruta').value);
                     const vendas = parseInt(semoventesTab.querySelector('#irpf-vendas').value) || 0;
@@ -1461,7 +1585,7 @@
                         calcularIrpfSemoventes();
                     }
                 });
-                
+
                 semoventesTab.querySelector('#semoventes-limpar').addEventListener('click', () => {
                     semoventesTab.querySelectorAll('.semovente-input').forEach(input => input.value = '');
                     semoventesTab.querySelector('#semoventes-propriedade').value = '100';
@@ -1492,7 +1616,7 @@
                                 <tbody id="mov-economica-tbody">
                                     ${Array.from({ length: 10 }, (_, i) => `
                                         <tr class="border-b border-[var(--border-color)] last:border-b-0">
-                                            <td class="p-2">Produto ${i+1}</td>
+                                            <td class="p-2">Produto ${i + 1}</td>
                                             <td class="p-2"><input type="number" id="mov-cb-${i}" class="mov-input w-24 p-2 form-input" placeholder="0"></td>
                                             <td class="p-2"><input type="text" inputmode="decimal" id="mov-valor-${i}" class="mov-input w-32 p-2 form-input" placeholder="0,00"></td>
                                             <td class="p-2 font-semibold" id="mov-total-${i}">R$ 0,00</td>
@@ -1510,27 +1634,27 @@
                             </button>
                         </div>
                     </div>`;
-                    const calcularMovEconomica = () => {
-                        let totalGeral = 0;
-                        for (let i = 0; i < 10; i++) {
-                            const cb = parseInt(movEconomicaTab.querySelector(`#mov-cb-${i}`).value) || 0;
-                            const valor = parseLocalFloat(movEconomicaTab.querySelector(`#mov-valor-${i}`).value);
-                            const total = cb * valor;
-                            movEconomicaTab.querySelector(`#mov-total-${i}`).textContent = formatCurrency(total);
-                            totalGeral += total;
-                        }
-                        movEconomicaTab.querySelector('#mov-total-geral').textContent = formatCurrency(totalGeral);
-                    };
+                const calcularMovEconomica = () => {
+                    let totalGeral = 0;
+                    for (let i = 0; i < 10; i++) {
+                        const cb = parseInt(movEconomicaTab.querySelector(`#mov-cb-${i}`).value) || 0;
+                        const valor = parseLocalFloat(movEconomicaTab.querySelector(`#mov-valor-${i}`).value);
+                        const total = cb * valor;
+                        movEconomicaTab.querySelector(`#mov-total-${i}`).textContent = formatCurrency(total);
+                        totalGeral += total;
+                    }
+                    movEconomicaTab.querySelector('#mov-total-geral').textContent = formatCurrency(totalGeral);
+                };
 
-                    movEconomicaTab.addEventListener('input', (e) => {
-                        if (e.target.classList.contains('mov-input')) {
-                            calcularMovEconomica();
-                        }
-                    });
-                    movEconomicaTab.querySelector('#mov-limpar').addEventListener('click', () => {
-                        movEconomicaTab.querySelectorAll('.mov-input').forEach(input => input.value = '');
+                movEconomicaTab.addEventListener('input', (e) => {
+                    if (e.target.classList.contains('mov-input')) {
                         calcularMovEconomica();
-                    });
+                    }
+                });
+                movEconomicaTab.querySelector('#mov-limpar').addEventListener('click', () => {
+                    movEconomicaTab.querySelectorAll('.mov-input').forEach(input => input.value = '');
+                    calcularMovEconomica();
+                });
 
                 // --- Aba NFs ---
                 const nfsTab = container.querySelector('#nfs-tab');
@@ -1565,8 +1689,8 @@
                 const nfsGrid = nfsTab.querySelector('#nfs-grid');
                 nfsGrid.innerHTML = Array.from({ length: 50 }, (_, i) => `
                     <div class="flex items-center gap-2">
-                        <label for="nf-${i+1}" class="text-sm font-medium w-12">${i+1}</label>
-                        <input type="text" inputmode="decimal" id="nf-${i+1}" class="nf-input w-full p-2 form-input" placeholder="0,00">
+                        <label for="nf-${i + 1}" class="text-sm font-medium w-12">${i + 1}</label>
+                        <input type="text" inputmode="decimal" id="nf-${i + 1}" class="nf-input w-full p-2 form-input" placeholder="0,00">
                     </div>`).join('');
 
                 const calcularNFs = () => {
@@ -1650,7 +1774,7 @@
                 });
 
 
-                 // --- Aba FCPR ---
+                // --- Aba FCPR ---
                 const fcprTab = container.querySelector('#fcpr-tab');
                 fcprTab.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -1687,10 +1811,10 @@
                 const fcprInputsContainer = fcprTab.querySelector('#fcpr-inputs');
                 fcprInputsContainer.innerHTML = Array.from({ length: 10 }, (_, i) => `
                     <div class="flex items-center gap-2">
-                        <label for="fcpr-renda-${i+1}" class="w-24 text-sm font-medium">Renda ${i+1}</label>
-                        <input type="text" inputmode="decimal" id="fcpr-renda-${i+1}" placeholder="R$ 0,00" class="fcpr-input w-full p-2 form-input">
+                        <label for="fcpr-renda-${i + 1}" class="w-24 text-sm font-medium">Renda ${i + 1}</label>
+                        <input type="text" inputmode="decimal" id="fcpr-renda-${i + 1}" placeholder="R$ 0,00" class="fcpr-input w-full p-2 form-input">
                     </div>`).join('');
-                
+
                 const calcularFCPR = () => {
                     let totalRendas = 0;
                     fcprTab.querySelectorAll('.fcpr-input').forEach(input => totalRendas += parseLocalFloat(input.value));
@@ -1710,7 +1834,7 @@
             }
 
             function initRegrasModule(container) {
-               container.innerHTML = `
+                container.innerHTML = `
                     <div class="flex flex-col sm:flex-row gap-4 mb-6">
                         <div class="relative flex-grow">
                              <input type="text" id="regras-search-input" placeholder="Pesquisar por item, ref ou tipo..." class="w-full p-3 pr-10 form-input">
@@ -1732,19 +1856,19 @@
 
                 const tbody = container.querySelector('#regras-irpf-tbody');
                 const searchInput = container.querySelector('#regras-search-input');
-                
+
                 const renderTable = (filter = '') => {
-                    if(typeof regrasData === 'undefined' || !tbody) return;
-                    
+                    if (typeof regrasData === 'undefined' || !tbody) return;
+
                     tbody.innerHTML = '';
                     const lowerCaseFilter = removeAccents(filter.toLowerCase());
 
                     const filteredData = regrasData.filter(regra => {
                         return removeAccents(regra.item.toLowerCase()).includes(lowerCaseFilter) ||
-                               removeAccents(regra.ref.toLowerCase()).includes(lowerCaseFilter) ||
-                               regra.type.some(t => removeAccents(t.toLowerCase()).includes(lowerCaseFilter));
+                            removeAccents(regra.ref.toLowerCase()).includes(lowerCaseFilter) ||
+                            regra.type.some(t => removeAccents(t.toLowerCase()).includes(lowerCaseFilter));
                     });
-                    
+
                     if (filteredData.length === 0) {
                         tbody.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-[var(--text-secondary)]">Nenhum resultado encontrado.</td></tr>`;
                         return;
@@ -1761,7 +1885,7 @@
                         tbody.appendChild(row);
                     });
                 };
-                
+
                 searchInput.addEventListener('input', () => renderTable(searchInput.value));
                 renderTable(); // Render inicial
             }
@@ -1806,19 +1930,19 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 ${category.items.map(link => {
-                                    // Define se é um link clicável (a) ou apenas informativo (div)
-                                    const Tag = link.url ? 'a' : 'div';
-                                    const hrefAttr = link.url ? `href="${link.url}" target="_blank" rel="noopener noreferrer"` : '';
-                                    
-                                    // Classes de interação apenas se tiver URL
-                                    const interactionClasses = link.url 
-                                        ? 'hover:scale-[1.02] active:scale-95 cursor-pointer hover:shadow-lg' 
-                                        : 'cursor-default opacity-100';
-                                        
-                                    // Borda de aviso
-                                    const borderClasses = link.warning ? 'border-yellow-400 dark:border-yellow-600' : '';
+                        // Define se é um link clicável (a) ou apenas informativo (div)
+                        const Tag = link.url ? 'a' : 'div';
+                        const hrefAttr = link.url ? `href="${link.url}" target="_blank" rel="noopener noreferrer"` : '';
 
-                                    return `
+                        // Classes de interação apenas se tiver URL
+                        const interactionClasses = link.url
+                            ? 'hover:scale-[1.02] active:scale-95 cursor-pointer hover:shadow-lg'
+                            : 'cursor-default opacity-100';
+
+                        // Borda de aviso
+                        const borderClasses = link.warning ? 'border-yellow-400 dark:border-yellow-600' : '';
+
+                        return `
                                     <${Tag} ${hrefAttr}
                                     class="flex flex-col p-4 rounded-xl neumorphic-outset-sm transition-all duration-200 group/link h-full relative overflow-hidden ${interactionClasses} ${borderClasses}">
                                         
@@ -1856,11 +1980,11 @@
                 });
 
                 htmlContent += `</div>`;
-                
+
                 container.innerHTML = htmlContent;
                 safeCreateIcons();
-            }   
-            
+            }
+
             function initParecerModule(container) {
                 container.innerHTML = `
                     <div class="flex flex-col sm:flex-row items-center mb-6 gap-4 flex-shrink-0">
@@ -1922,7 +2046,7 @@
                                 for (const key in items) {
                                     subCategoryContent += createParecerHTML(key, items[key]);
                                 }
-                                if(subCategoryContent) {
+                                if (subCategoryContent) {
                                     contentHtml += `<h4 class="text-lg font-semibold mb-3 mt-4">${subCategoryTitle}</h4>` + subCategoryContent;
                                 }
                             } else {
@@ -1946,61 +2070,108 @@
                     });
                     safeCreateIcons();
                 }
-                
+
                 function filterPareceres() {
-                    if(typeof pareceresDataCorrigido === 'undefined') {
-                         resultsContainer.innerHTML = `<div class="text-center text-lg py-8 text-[var(--text-secondary)]">Dados de pareceres não carregados.</div>`;
-                         return;
+                    if (typeof pareceresDataCorrigido === 'undefined') {
+                        resultsContainer.innerHTML = `<div class="text-center text-lg py-8 text-[var(--text-secondary)]">Dados de pareceres não carregados.</div>`;
+                        return;
                     };
-                    
+
                     const searchTerm = removeAccents(searchInput.value.toLowerCase());
                     const selectedCategory = categoryFilter.value;
-                    
-                    const sourceData = selectedCategory === 'all' ? pareceresDataCorrigido : { [selectedCategory]: pareceresDataCorrigido[selectedCategory] };
 
-                    const filteredData = {};
-                    for (const mainCategory in sourceData) {
-                        const subCategories = sourceData[mainCategory];
-                        const filteredSubCategories = {};
-                        let hasMatch = false;
-                        for (const subCategoryTitle in subCategories) {
-                            const items = subCategories[subCategoryTitle];
-                            if (typeof items === 'object' && items !== null) {
-                                const filteredItems = {};
-                                for(const key in items) {
-                                    const normalizedKey = removeAccents(key.toLowerCase());
-                                    const normalizedValue = removeAccents(String(items[key]).toLowerCase());
-                                    if (normalizedKey.includes(searchTerm) || normalizedValue.includes(searchTerm)) {
-                                        filteredItems[key] = items[key];
+                    // Helper function to filter data
+                    const performSearch = (data, term) => {
+                        const result = {};
+                        let hasAnyMatch = false;
+
+                        for (const mainCategory in data) {
+                            const subCategories = data[mainCategory];
+                            const filteredSubCategories = {};
+                            let hasMatch = false;
+
+                            for (const subCategoryTitle in subCategories) {
+                                const items = subCategories[subCategoryTitle];
+
+                                if (typeof items === 'object' && items !== null) {
+                                    const filteredItems = {};
+                                    for (const key in items) {
+                                        const normalizedKey = removeAccents(key.toLowerCase());
+                                        const normalizedValue = removeAccents(String(items[key]).toLowerCase());
+                                        if (normalizedKey.includes(term) || normalizedValue.includes(term)) {
+                                            filteredItems[key] = items[key];
+                                            hasMatch = true;
+                                            hasAnyMatch = true;
+                                        }
+                                    }
+                                    if (Object.keys(filteredItems).length > 0) {
+                                        filteredSubCategories[subCategoryTitle] = filteredItems;
+                                    }
+                                } else {
+                                    const normalizedSubCategoryTitle = removeAccents(subCategoryTitle.toLowerCase());
+                                    const normalizedItems = removeAccents(String(items).toLowerCase());
+                                    if (normalizedSubCategoryTitle.includes(term) || normalizedItems.includes(term)) {
+                                        filteredSubCategories[subCategoryTitle] = items;
                                         hasMatch = true;
+                                        hasAnyMatch = true;
                                     }
                                 }
-                                if(Object.keys(filteredItems).length > 0) {
-                                    filteredSubCategories[subCategoryTitle] = filteredItems;
-                                }
-                            } else {
-                                const normalizedSubCategoryTitle = removeAccents(subCategoryTitle.toLowerCase());
-                                const normalizedItems = removeAccents(String(items).toLowerCase());
-                                if (normalizedSubCategoryTitle.includes(searchTerm) || normalizedItems.includes(searchTerm)) {
-                                    filteredSubCategories[subCategoryTitle] = items;
-                                    hasMatch = true;
-                                }
+                            }
+
+                            if (hasMatch) {
+                                result[mainCategory] = filteredSubCategories;
                             }
                         }
-                        if (hasMatch) {
-                            filteredData[mainCategory] = filteredSubCategories;
+                        return hasAnyMatch ? result : null;
+                    };
+
+                    let finalData = {};
+
+                    if (selectedCategory === 'all') {
+                        // Standard behavior for 'all'
+                        const result = performSearch(pareceresDataCorrigido, searchTerm);
+                        if (result) finalData = result;
+                    } else {
+                        // If specific category selected
+                        if (!searchTerm) {
+                            // No search term: show only selected category
+                            finalData = { [selectedCategory]: pareceresDataCorrigido[selectedCategory] };
+                        } else {
+                            // Search term present: Prioritize selected category
+
+                            // 1. Search in Selected Category
+                            const primaryData = { [selectedCategory]: pareceresDataCorrigido[selectedCategory] };
+                            const primaryResult = performSearch(primaryData, searchTerm);
+
+                            // 2. Search in details of Other Categories
+                            const otherData = {};
+                            for (const cat in pareceresDataCorrigido) {
+                                if (cat !== selectedCategory) {
+                                    otherData[cat] = pareceresDataCorrigido[cat];
+                                }
+                            }
+                            const secondaryResult = performSearch(otherData, searchTerm);
+
+                            // 3. Merge results (Primary up top)
+                            if (primaryResult) {
+                                Object.assign(finalData, primaryResult);
+                            }
+                            if (secondaryResult) {
+                                Object.assign(finalData, secondaryResult);
+                            }
                         }
                     }
-                    renderPareceres(filteredData);
+
+                    renderPareceres(finalData);
                 }
 
                 searchInput.addEventListener('input', filterPareceres);
                 categoryFilter.addEventListener('change', filterPareceres);
-                
+
                 populateParecerFilter();
                 filterPareceres();
             }
-            
+
             function initContadorModule(container) {
                 // Destrói instâncias de gráficos anteriores para evitar erros de renderização
                 if (counterChart) {
@@ -2012,7 +2183,7 @@
                     historyChart = null;
                 }
 
-                 container.innerHTML = `
+                container.innerHTML = `
                     <div class="flex mb-4 border-b border-[var(--border-color)] flex-shrink-0">
                         <button class="tab-button py-2 px-4 font-semibold active" data-tab="contador-main">Contador</button>
                         <button class="tab-button py-2 px-4 font-semibold" data-tab="contador-history">Dashboard</button>
@@ -2092,7 +2263,7 @@
                 const counterTemplate = document.getElementById('counter-template');
                 const tabButtons = container.querySelectorAll('.tab-button');
                 const tabContents = container.querySelectorAll('.contador-tab-content');
-                
+
                 let activePeriod = 'week';
 
                 function showFeedback(message, type = 'success') {
@@ -2117,14 +2288,14 @@
                             content.classList.toggle('hidden', content.id !== targetTabId);
                         });
                         if (targetTabId === 'contador-history-tab') {
-                             setTimeout(() => {
+                            setTimeout(() => {
                                 const activeFilter = container.querySelector('.history-filter-btn.active') || container.querySelector('.history-filter-btn[data-period="week"]');
                                 if (activeFilter) activeFilter.click();
                             }, 50);
                         }
                     });
                 });
-                
+
                 const historyTab = container.querySelector('#contador-history-tab');
                 historyTab.addEventListener('click', (e) => {
                     const filterBtn = e.target.closest('.history-filter-btn');
@@ -2135,13 +2306,13 @@
                         updateHistoryDashboard(activePeriod);
                         return;
                     }
-                    
+
                     const editBtn = e.target.closest('.edit-history-btn');
                     if (editBtn) {
                         const date = editBtn.dataset.date;
                         const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
                         const entry = history.find(item => item.date === date);
-                        if(entry) {
+                        if (entry) {
                             openHistoryEditModal(entry);
                         }
                     }
@@ -2188,14 +2359,14 @@
                     today.setHours(0, 0, 0, 0);
                     const activityHistory = JSON.parse(localStorage.getItem(INCREMENT_HISTORY_KEY) || '[]');
                     const todaysActivities = activityHistory.map(item => ({ ...item, timestamp: new Date(item.timestamp) })).filter(item => item.timestamp >= today);
-                    
+
                     const fixedLabels = Array.from({ length: 14 }, (_, i) => `${(i + 6).toString().padStart(2, '0')}:00`);
                     let data = Array(fixedLabels.length).fill(0);
 
                     todaysActivities.forEach(activity => {
                         const index = activity.timestamp.getHours() - 6;
                         if (index >= 0 && index < data.length) {
-                             if (activity.type === 'add') {
+                            if (activity.type === 'add') {
                                 data[index] += activity.count;
                             }
                         }
@@ -2265,16 +2436,16 @@
                         display.contentEditable = true;
                         playPauseBtn.addEventListener('click', () => instanceState.isRunning ? stopTimer() : startTimer());
                         resetBtn.addEventListener('click', () => { stopTimer(); instanceState.value = instanceState.initialValue; updateDisplay(); saveCountersState(); });
-                        display.addEventListener('blur', () => { const parts = display.textContent.split(':'); let s=0; if(parts.length===2){s=(parseInt(parts[0],10)||0)*60+(parseInt(parts[1],10)||0)}else if(parts.length===1){s=(parseInt(parts[0],10)||0)*60} instanceState.value=s; instanceState.initialValue=s; stopTimer(); updateDisplay(); saveCountersState(); });
+                        display.addEventListener('blur', () => { const parts = display.textContent.split(':'); let s = 0; if (parts.length === 2) { s = (parseInt(parts[0], 10) || 0) * 60 + (parseInt(parts[1], 10) || 0) } else if (parts.length === 1) { s = (parseInt(parts[0], 10) || 0) * 60 } instanceState.value = s; instanceState.initialValue = s; stopTimer(); updateDisplay(); saveCountersState(); });
                         if (instanceState.isRunning) { instanceState.isRunning = false; startTimer(); }
                     } else {
-                        plusBtn.addEventListener('click', () => { const c = parseInt(incrementInput.value) || 1; instanceState.value += c; updateDisplay(); if(instanceState.isStarred){ saveActivityToHistory('add', c); updateCounterChart(); } saveCountersState(); });
-                        minusBtn.addEventListener('click', () => { const c = parseInt(incrementInput.value) || 1; const o=instanceState.value; const n=Math.max(0,o-c); const a=o-n; instanceState.value=n; updateDisplay(); if(instanceState.isStarred&&a>0){ saveActivityToHistory('subtract',a); updateCounterChart(); } saveCountersState(); });
+                        plusBtn.addEventListener('click', () => { const c = parseInt(incrementInput.value) || 1; instanceState.value += c; updateDisplay(); if (instanceState.isStarred) { saveActivityToHistory('add', c); updateCounterChart(); } saveCountersState(); });
+                        minusBtn.addEventListener('click', () => { const c = parseInt(incrementInput.value) || 1; const o = instanceState.value; const n = Math.max(0, o - c); const a = o - n; instanceState.value = n; updateDisplay(); if (instanceState.isStarred && a > 0) { saveActivityToHistory('subtract', a); updateCounterChart(); } saveCountersState(); });
                     }
                     starBtn.addEventListener('click', () => { instanceState.isStarred = !instanceState.isStarred; starBtn.classList.toggle('active', instanceState.isStarred); saveCountersState(); });
                     titleElement.addEventListener('blur', () => { instanceState.title = titleElement.textContent; saveCountersState(); });
                     removeBtn.addEventListener('click', removeInstance);
-                    counters.push({ id, element: counterElement, destroy: stopTimer, getState: () => instanceState, setState: (newState) => { instanceState = {...instanceState, ...newState}; updateDisplay(); } });
+                    counters.push({ id, element: counterElement, destroy: stopTimer, getState: () => instanceState, setState: (newState) => { instanceState = { ...instanceState, ...newState }; updateDisplay(); } });
                     countersGrid.appendChild(counterElement);
                     updateDisplay();
                     counterElement.classList.add('animate-fade-in');
@@ -2291,14 +2462,14 @@
                 });
 
                 finalizarDiaBtn.addEventListener('click', () => {
-                    const totalDoDia = counters.filter(c=>c.getState().isStarred&&!c.getState().isTimer).reduce((s,c)=>s+c.getState().value,0);
-                    if(totalDoDia<=0){ showFeedback("Nenhuma contagem (com estrela) para salvar.", 'warning'); return; }
+                    const totalDoDia = counters.filter(c => c.getState().isStarred && !c.getState().isTimer).reduce((s, c) => s + c.getState().value, 0);
+                    if (totalDoDia <= 0) { showFeedback("Nenhuma contagem (com estrela) para salvar.", 'warning'); return; }
                     const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
                     const today = new Date().toISOString().slice(0, 10);
                     const todayEntryIndex = history.findIndex(e => e.date === today);
                     if (todayEntryIndex > -1) history[todayEntryIndex].count += totalDoDia; else history.push({ date: today, count: totalDoDia });
                     localStorage.setItem(DAILY_HISTORY_KEY, JSON.stringify(history));
-                    
+
                     // Resetar contadores do dia
                     localStorage.removeItem(INCREMENT_HISTORY_KEY);
                     counters.forEach(c => {
@@ -2315,7 +2486,7 @@
                 limparContadorBtn.addEventListener('click', () => {
                     localStorage.removeItem(INCREMENT_HISTORY_KEY);
                     counters.forEach(c => {
-                       const state = c.getState();
+                        const state = c.getState();
                         if (state.isStarred && !state.isTimer) {
                             c.setState({ value: 0 });
                         }
@@ -2324,7 +2495,7 @@
                     updateCounterChart();
                     showFeedback("Contadores do dia (com estrela) foram limpos.", 'success');
                 });
-                
+
                 // Função auxiliar para formatar datas de forma consistente
                 function parseHistoryDate(dateString) {
                     // Garante que a data seja interpretada como UTC para evitar problemas de timezone
@@ -2335,76 +2506,76 @@
                 // Função melhorada para obter dados do histórico
                 function getHistoryData(period) {
                     const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
-                    
+
                     if (!history.length) {
-                        return { 
-                            periodEntries: [], 
-                            chartData: { 
-                                labels: [], 
-                                data: [], 
-                                title: 'Nenhum dado no histórico' 
+                        return {
+                            periodEntries: [],
+                            chartData: {
+                                labels: [],
+                                data: [],
+                                title: 'Nenhum dado no histórico'
                             }
                         };
                     }
-                    
+
                     const now = new Date();
                     now.setHours(0, 0, 0, 0); // Normaliza para início do dia
-                    
+
                     let periodEntries = [];
                     let chartData = { labels: [], data: [], title: '' };
 
-                    switch(period) {
+                    switch (period) {
                         case 'week': {
                             chartData.title = 'Contagem na Última Semana';
                             const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-                            
+
                             // Cria array com os últimos 7 dias
                             for (let i = 6; i >= 0; i--) {
                                 const date = new Date(now);
                                 date.setDate(date.getDate() - i);
                                 const dateString = date.toISOString().slice(0, 10);
-                                
+
                                 chartData.labels.push(dayNames[date.getDay()]);
-                                
+
                                 const dayEntry = history.find(entry => entry.date === dateString);
                                 chartData.data.push(dayEntry ? dayEntry.count : 0);
-                                
+
                                 if (dayEntry) {
                                     periodEntries.push(dayEntry);
                                 }
                             }
                             break;
                         }
-                        
+
                         case 'weeks-in-month': {
-                            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                                              'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
                             chartData.title = `Contagem por Semana em ${monthNames[now.getMonth()]}`;
-                            
+
                             const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
                             const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                            
+
                             // Calcula número de semanas no mês
                             const firstDayOfWeek = monthStart.getDay();
                             const daysInMonth = monthEnd.getDate();
                             const weeksInMonth = Math.ceil((daysInMonth + firstDayOfWeek) / 7);
-                            
+
                             // Inicializa arrays
                             chartData.labels = Array.from({ length: weeksInMonth }, (_, i) => `Semana ${i + 1}`);
                             chartData.data = Array(weeksInMonth).fill(0);
-                            
+
                             // Agrupa entradas por semana
                             history.forEach(entry => {
                                 const entryDate = parseHistoryDate(entry.date);
-                                
+
                                 // Verifica se está no mês atual
-                                if (entryDate.getMonth() === now.getMonth() && 
+                                if (entryDate.getMonth() === now.getMonth() &&
                                     entryDate.getFullYear() === now.getFullYear()) {
-                                    
+
                                     // Calcula qual semana do mês
                                     const dayOfMonth = entryDate.getDate();
                                     const weekIndex = Math.floor((dayOfMonth + firstDayOfWeek - 1) / 7);
-                                    
+
                                     if (weekIndex >= 0 && weekIndex < weeksInMonth) {
                                         chartData.data[weekIndex] += entry.count;
                                         periodEntries.push(entry);
@@ -2413,23 +2584,23 @@
                             });
                             break;
                         }
-                        
+
                         case 'month': {
                             chartData.title = 'Contagem nos Últimos 12 Meses';
-                            const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
-                                              'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-                            
+                            const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
                             // Cria array com os últimos 12 meses
                             for (let i = 11; i >= 0; i--) {
                                 const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
                                 const monthLabel = `${monthNames[date.getMonth()]}/${date.getFullYear().toString().slice(-2)}`;
                                 chartData.labels.push(monthLabel);
-                                
+
                                 // Soma todas as entradas deste mês
                                 let monthTotal = 0;
                                 history.forEach(entry => {
                                     const entryDate = parseHistoryDate(entry.date);
-                                    if (entryDate.getMonth() === date.getMonth() && 
+                                    if (entryDate.getMonth() === date.getMonth() &&
                                         entryDate.getFullYear() === date.getFullYear()) {
                                         monthTotal += entry.count;
                                         if (!periodEntries.find(e => e.date === entry.date)) {
@@ -2437,21 +2608,21 @@
                                         }
                                     }
                                 });
-                                
+
                                 chartData.data.push(monthTotal);
                             }
                             break;
                         }
-                        
+
                         case 'year': {
                             chartData.title = 'Contagem nos Últimos 10 Anos';
                             const currentYear = now.getFullYear();
-                            
+
                             // Cria array com os últimos 10 anos
                             for (let i = 9; i >= 0; i--) {
                                 const year = currentYear - i;
                                 chartData.labels.push(year.toString());
-                                
+
                                 // Soma todas as entradas deste ano
                                 let yearTotal = 0;
                                 history.forEach(entry => {
@@ -2463,13 +2634,13 @@
                                         }
                                     }
                                 });
-                                
+
                                 chartData.data.push(yearTotal);
                             }
                             break;
                         }
                     }
-                    
+
                     return { periodEntries, chartData };
                 }
 
@@ -2479,7 +2650,7 @@
                         console.log('[v0] Canvas do gráfico de histórico não encontrado');
                         return;
                     }
-                    
+
                     const ctx = chartCanvas.getContext('2d');
                     const historyChartTitle = container.querySelector('#history-chart-title');
                     if (historyChartTitle) {
@@ -2527,7 +2698,7 @@
                                     padding: 12,
                                     displayColors: false,
                                     callbacks: {
-                                        label: function(context) {
+                                        label: function (context) {
                                             return `Total: ${context.parsed.y}`;
                                         }
                                     }
@@ -2539,7 +2710,7 @@
                                     ticks: {
                                         color: textColor,
                                         stepSize: 1,
-                                        callback: function(value) {
+                                        callback: function (value) {
                                             return Number.isInteger(value) ? value : null;
                                         }
                                     },
@@ -2561,17 +2732,17 @@
                             }
                         }
                     });
-                    
+
                     console.log('[v0] Gráfico de histórico renderizado com sucesso');
                 }
-                
+
                 function renderHistoryStats(entries) {
                     const statsContainer = container.querySelector('#history-stats-container');
                     if (!statsContainer) {
                         console.log('[v0] Container de estatísticas não encontrado');
                         return;
                     }
-                    
+
                     if (entries.length === 0) {
                         statsContainer.innerHTML = `
                             <div class="col-span-full p-4 content-card text-center">
@@ -2580,7 +2751,7 @@
                         `;
                         return;
                     }
-                    
+
                     // Calcula estatísticas
                     const totalCount = entries.reduce((sum, entry) => sum + entry.count, 0);
                     const averageCount = (totalCount / entries.length).toFixed(1);
@@ -2606,17 +2777,17 @@
                             <p class="text-3xl font-bold text-[var(--accent-color)]">${entries.length}</p>
                         </div>
                     `;
-                    
+
                     console.log('[v0] Estatísticas renderizadas:', { totalCount, averageCount, entries: entries.length });
                 }
-                
+
                 function renderHistoryTable(entries) {
                     const tableContainer = container.querySelector('#history-table-container');
                     if (!tableContainer) {
                         console.log('[v0] Container da tabela não encontrado');
                         return;
                     }
-                    
+
                     if (entries.length === 0) {
                         tableContainer.innerHTML = `
                             <p class="text-center text-[var(--text-secondary)] p-8">
@@ -2625,12 +2796,12 @@
                         `;
                         return;
                     }
-                    
+
                     // Ordena do mais recente para o mais antigo
                     const sortedEntries = [...entries].sort((a, b) => {
                         return new Date(b.date) - new Date(a.date);
                     });
-                    
+
                     tableContainer.innerHTML = `
                         <table class="w-full text-sm">
                             <thead class="sticky top-0 bg-[var(--card-bg-color)] border-b-2 border-[var(--border-color)]">
@@ -2659,44 +2830,44 @@
                             </tbody>
                         </table>
                     `;
-                    
+
                     // Reinicializa os ícones do Lucide
                     safeCreateIcons();
-                    
+
                     console.log('[v0] Tabela renderizada com', sortedEntries.length, 'registros');
                 }
 
                 function updateHistoryDashboard(period) {
                     console.log('[v0] Atualizando dashboard para período:', period);
-                    
+
                     const { periodEntries, chartData } = getHistoryData(period);
-                    
+
                     console.log('[v0] Dados obtidos:', {
                         entries: periodEntries.length,
                         labels: chartData.labels.length,
                         dataPoints: chartData.data.length
                     });
-                    
+
                     renderHistoryChart(chartData);
                     renderHistoryStats(periodEntries);
                     renderHistoryTable(periodEntries);
                 }
-                
+
                 loadCountersState();
                 updateCounterChart();
             }
-            
-             function setupHistoryEditModal() {
+
+            function setupHistoryEditModal() {
                 const modal = document.getElementById('edit-history-modal');
                 const overlay = document.getElementById('edit-history-modal-overlay');
                 const cancelBtn = document.getElementById('edit-history-cancel');
                 const saveBtn = document.getElementById('edit-history-save');
-                
+
                 const closeModal = () => modal.classList.add('hidden');
 
                 overlay.addEventListener('click', closeModal);
                 cancelBtn.addEventListener('click', closeModal);
-                
+
                 // --- CORREÇÃO APLICADA AQUI ---
                 // Lógica de salvar o histórico ajustada para ser mais robusta e intuitiva.
                 saveBtn.addEventListener('click', () => {
@@ -2710,7 +2881,7 @@
                     if (isNaN(newCount) || newCount < 0) {
                         newCountInput.classList.add('border-red-500', 'ring', 'ring-red-500/50');
                         setTimeout(() => {
-                        newCountInput.classList.remove('border-red-500', 'ring', 'ring-red-500/50');
+                            newCountInput.classList.remove('border-red-500', 'ring', 'ring-red-500/50');
                         }, 2000);
                         return;
                     }
@@ -2774,7 +2945,7 @@
                         icon.style.opacity = '0';
                     }
                 }
-                
+
                 function handleChecklistChange(e) {
                     const checkbox = e.target.closest('.checklist-item-checkbox');
                     if (checkbox) {
@@ -2831,16 +3002,16 @@
                                     </button>
                                 </div>
                             </div>`;
-                        
+
                         container.querySelector('#checklist-items-container').innerHTML = resultHTML;
                         safeCreateIcons();
                         return;
                     }
-                    
+
                     const copyResultBtn = target.closest('.checklist-copy-result-btn');
-                    if(copyResultBtn) {
-                         copyText(decodeURIComponent(copyResultBtn.dataset.textToCopy), copyResultBtn);
-                         return;
+                    if (copyResultBtn) {
+                        copyText(decodeURIComponent(copyResultBtn.dataset.textToCopy), copyResultBtn);
+                        return;
                     }
 
                     const backToItemsBtn = target.closest('.checklist-back-to-items');
@@ -2849,7 +3020,7 @@
                         return;
                     }
                 }
-                
+
                 let currentFlow, currentDoc;
 
                 function showFlowsView() {
@@ -2876,24 +3047,24 @@
                     container.querySelector('#checklist-flows-view').classList.add('hidden');
                     container.querySelector('#checklist-documents-view').classList.remove('hidden');
                     container.querySelector('#checklist-items-view').classList.add('hidden');
-                    
+
                     const documentsView = container.querySelector('#checklist-documents-view');
                     const flow = checklistData.flows[flowKey];
                     moduleTitle.textContent = flow.name;
-                    
+
                     documentsView.innerHTML = `
                         <div class="flex items-center justify-start gap-4 mb-4">
                             <button class="checklist-back-btn p-3 secondary-btn rounded-full" data-target="flows"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar" style="max-height: 60vh;">
                             ${Object.keys(flow.documents).map(docKey => {
-                                const doc = flow.documents[docKey];
-                                return `
+                        const doc = flow.documents[docKey];
+                        return `
                                     <button class="checklist-doc-btn flex flex-col items-center justify-center text-center gap-2 p-3 secondary-btn aspect-square" data-flow="${flowKey}" data-doc="${docKey}">
                                         <span class="text-3xl">${doc.icon}</span>
                                         <span class="text-xs font-medium">${doc.name}</span>
                                     </button>`;
-                            }).join('')}
+                    }).join('')}
                         </div>`;
                     safeCreateIcons();
                 }
@@ -2960,9 +3131,9 @@
                                 <div id="checklist-items-container" class="bg-[#1e293b] dark:bg-[#1e293b] text-white rounded-2xl p-6 sm:p-8 flex flex-col min-h-[75vh]">
                                     <ul class="space-y-5 flex-grow overflow-y-auto custom-scrollbar pr-2">
                                     ${checklistItems.map(([itemKey, parecerKey]) => {
-                                        const isChecked = checklistState[flowKey]?.[docKey]?.[itemKey] || false;
-                                        const uniqueId = `check-${flowKey}-${docKey}-${itemKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
-                                        return `
+                        const isChecked = checklistState[flowKey]?.[docKey]?.[itemKey] || false;
+                        const uniqueId = `check-${flowKey}-${docKey}-${itemKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                        return `
                                             <li>
                                                 <label for="${uniqueId}" class="flex items-center gap-4 cursor-pointer group">
                                                     <input type="checkbox" id="${uniqueId}" class="checklist-item-checkbox hidden" data-item-key="${itemKey}" data-flow="${flowKey}" data-doc="${docKey}" ${isChecked ? 'checked' : ''}>
@@ -2972,7 +3143,7 @@
                                                     <span class="font-medium text-slate-300 group-hover:text-white transition-colors">${itemKey}</span>
                                                 </label>
                                             </li>`;
-                                    }).join('')}
+                    }).join('')}
                                     </ul>
                                     <div class="mt-auto pt-6">
                                         <button class="checklist-finish-btn w-full p-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold tracking-wide transition-all active:scale-95">Finalizar</button>
@@ -2980,7 +3151,7 @@
                                 </div>
                             </div>
                         </div>`;
-                    
+
                     itemsView.querySelectorAll('.checklist-item-checkbox').forEach(checkbox => {
                         updateCheckboxVisual(checkbox);
                     });
@@ -3017,7 +3188,7 @@
                                 showSlide(newIndex);
                             });
                         }
-                        
+
                         dots.forEach(dot => {
                             dot.addEventListener('click', () => {
                                 showSlide(parseInt(dot.dataset.index));
@@ -3031,21 +3202,21 @@
 
                     safeCreateIcons();
                 }
-                
+
                 if (typeof checklistData === 'undefined') {
                     flowsView.innerHTML = `<div class="text-center text-lg py-8 text-[var(--text-secondary)]">Dados de checklist não carregados.</div>`;
                     return;
                 }
-                
+
                 container.addEventListener('click', handleChecklistNavigation);
                 container.addEventListener('change', (e) => {
                     handleChecklistChange(e);
                     const checkbox = e.target.closest('.checklist-item-checkbox');
-                    if(checkbox) {
-                       updateCheckboxVisual(checkbox);
+                    if (checkbox) {
+                        updateCheckboxVisual(checkbox);
                     }
                 });
-                
+
                 showFlowsView();
             }
 
@@ -3102,17 +3273,17 @@
                 termsModal.classList.remove('hidden');
                 mainContent.classList.add('blurred');
                 safeCreateIcons();
-                
+
                 termsCheckbox.addEventListener('change', () => { acceptTermsBtn.disabled = !termsCheckbox.checked; });
-                
+
                 acceptTermsBtn.addEventListener('click', () => {
                     if (!termsCheckbox.checked) return;
                     localStorage.setItem(TERMS_KEY, 'true');
-                    
+
                     termsModal.classList.add('animate-fade-out');
                     termsModal.addEventListener('animationend', () => {
-                         termsModal.classList.add('hidden');
-                         mainContent.classList.remove('blurred');
+                        termsModal.classList.add('hidden');
+                        mainContent.classList.remove('blurred');
                     }, { once: true });
 
                     initializeApp();
@@ -3122,4 +3293,5 @@
         };
     </script>
 </body>
+
 </html>
