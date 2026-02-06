@@ -229,6 +229,106 @@
         #dock-inner-container.dock-side .label {
             display: none;
         }
+
+        /* CALENDAR STYLES */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding-bottom: 0.5rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 0.75rem;
+            /* rounded-xl */
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .picker-popup {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            /* shadow-lg */
+            border-radius: 0.75rem;
+            /* rounded-xl */
+            z-index: 50;
+        }
+
+        .picker-option {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .picker-option:hover {
+            background-color: rgba(var(--accent-rgb), 0.1);
+            /* fallback needed? usually standard bg-hover is fine */
+            background-color: var(--border-color);
+            /* Safe fallback */
+        }
+
+        .picker-option.selected {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .calendar-day:hover {
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .calendar-day.empty {
+            background-color: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .calendar-day.empty:hover {
+            transform: none;
+        }
+
+        .calendar-day .day-number {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .calendar-day .day-count {
+            font-size: 1rem;
+            color: var(--accent-color);
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        .calendar-day.today {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        .calendar-day.has-data {
+            background-color: rgba(var(--accent-rgb), 0.1);
+            /* Fallback or specific color logic needed if variable not set, using hardcoded for now or rely on existing */
+        }
     </style>
 
 </head>
@@ -2173,6 +2273,14 @@
             }
 
             function initContadorModule(container) {
+                let historyChart = null; // Prevent ReferenceError
+                // Destrói instâncias de gráficos anteriores para evitar erros de renderização
+                if (window.counterChartInstance) { // Rename or manage global correctly if needed, or rely on local closure if valid
+                    // Note: counterChart seems to be global or higher scope based on previous code usage
+                }
+                // Checking previous code: counterChart was widely used.
+                // But historyChart causing crash.
+
                 // Destrói instâncias de gráficos anteriores para evitar erros de renderização
                 if (counterChart) {
                     counterChart.destroy();
@@ -2231,23 +2339,69 @@
                     </div>
                     <div id="contador-history-tab" class="contador-tab-content hidden h-full">
                         <div class="flex flex-col h-full gap-4">
-                            <div class="flex items-center justify-center gap-2 flex-wrap">
-                                <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="week">Última Semana</button>
-                                <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="weeks-in-month">Semanas do Mês</button>
-                                <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="month">Últimos 12 Meses</button>
-                                <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="year">Últimos 10 Anos</button>
-                            </div>
-                            <div class="p-4 content-card flex-1 flex flex-col min-h-[300px]">
-                                <h3 id="history-chart-title" class="text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-4 flex-shrink-0 text-center"></h3>
-                                <div class="relative flex-grow">
-                                    <canvas id="history-chart"></canvas>
+                            <!-- Header: Filters (Left) & Toggle (Right) -->
+                            <div class="flex items-center justify-between flex-wrap gap-4 mb-2">
+                                <div id="history-filters-group" class="flex items-center gap-2 flex-wrap">
+                                    <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold active" data-period="week">Última Semana</button>
+                                    <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="weeks-in-month">Semanas do Mês</button>
+                                    <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="month">Últimos 12 Meses</button>
+                                    <button class="history-filter-btn p-2 px-4 rounded-xl secondary-btn text-sm font-semibold" data-period="year">Últimos 10 Anos</button>
                                 </div>
+                                <button id="toggle-history-view-btn" class="p-2 px-4 rounded-xl secondary-btn text-sm font-semibold flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    <span>Editar Histórico</span>
+                                </button>
                             </div>
-                             <div id="history-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-                             <div class="p-4 content-card">
-                                 <h3 class="text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-4">Registros Detalhados</h3>
-                                 <div id="history-table-container" class="max-h-64 overflow-y-auto custom-scrollbar"></div>
-                             </div>
+
+                            <!-- VIEW 1: Chart & Stats (Default) -->
+                            <div id="history-chart-view" class="flex flex-col gap-4 flex-1 animate-fade-in">
+                                <div class="p-4 content-card flex-1 flex flex-col min-h-[300px]">
+                                    <h3 id="history-chart-title" class="text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-4 flex-shrink-0 text-center"></h3>
+                                    <div class="relative flex-grow">
+                                        <canvas id="history-chart"></canvas>
+                                    </div>
+                                </div>
+                                <div id="history-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                            </div>
+
+                            <!-- VIEW 2: Calendar (Edit Mode) (Hidden Default) -->
+                            <div id="history-calendar-view" class="hidden flex-col gap-4 flex-1 animate-fade-in h-full">
+                                 <div class="p-4 content-card h-full flex flex-col">
+                                     <div class="flex items-center justify-center gap-2 flex-wrap mb-4 z-20 relative">
+                                         <button id="calendar-prev-month" class="p-2 px-4 rounded-xl secondary-btn text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                             <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                                         </button>
+                                         
+                                         <div class="relative flex items-center gap-2 p-2 px-4 rounded-xl secondary-btn text-sm font-semibold group cursor-default">
+                                             <button id="calendar-month-display" class="hover:text-[var(--accent-color)] transition-colors cursor-pointer uppercase tracking-wide"></button>
+                                             <button id="calendar-year-display" class="hover:text-[var(--accent-color)] transition-colors cursor-pointer"></button>
+                                             
+                                             <!-- Month Picker -->
+                                             <div id="calendar-month-picker" class="picker-popup hidden absolute top-full left-1/2 mt-2 p-2 grid grid-cols-3 gap-2 w-64 transform -translate-x-1/2"></div>
+                                             
+                                             <!-- Year Picker -->
+                                             <div id="calendar-year-picker" class="picker-popup hidden absolute top-full left-1/2 mt-2 p-2 max-h-64 overflow-y-auto w-24 custom-scrollbar text-center transform -translate-x-1/2"></div>
+                                         </div>
+
+                                         <button id="calendar-next-month" class="p-2 px-4 rounded-xl secondary-btn text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                             <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                                         </button>
+                                         <button id="calendar-today-btn" class="ml-2 p-2 px-4 rounded-xl secondary-btn text-sm font-semibold hover:opacity-90 transition-opacity">Hoje</button>
+                                     </div>
+                                     <div id="calendar-current-month" class="text-center text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wide mb-2 sm:hidden"></div>
+                                     
+                                     <div class="calendar-grid mb-2">
+                                         <div class="calendar-day-header">D</div>
+                                         <div class="calendar-day-header">S</div>
+                                         <div class="calendar-day-header">T</div>
+                                         <div class="calendar-day-header">Q</div>
+                                         <div class="calendar-day-header">Q</div>
+                                         <div class="calendar-day-header">S</div>
+                                         <div class="calendar-day-header">S</div>
+                                     </div>
+                                     <div id="calendar-days-container" class="calendar-grid"></div>
+                                 </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2368,6 +2522,8 @@
                         if (index >= 0 && index < data.length) {
                             if (activity.type === 'add') {
                                 data[index] += activity.count;
+                            } else if (activity.type === 'subtract') {
+                                data[index] -= activity.count;
                             }
                         }
                     });
@@ -2495,6 +2651,8 @@
                     updateCounterChart();
                     showFeedback("Contadores do dia (com estrela) foram limpos.", 'success');
                 });
+
+
 
                 // Função auxiliar para formatar datas de forma consistente
                 function parseHistoryDate(dateString) {
@@ -2756,7 +2914,6 @@
                     const totalCount = entries.reduce((sum, entry) => sum + entry.count, 0);
                     const averageCount = (totalCount / entries.length).toFixed(1);
                     const bestDay = entries.reduce((max, entry) => entry.count > max.count ? entry : max, entries[0]);
-                    const worstDay = entries.reduce((min, entry) => entry.count < min.count ? entry : min, entries[0]);
 
                     statsContainer.innerHTML = `
                         <div class="p-4 content-card text-center">
@@ -2781,80 +2938,258 @@
                     console.log('[v0] Estatísticas renderizadas:', { totalCount, averageCount, entries: entries.length });
                 }
 
-                function renderHistoryTable(entries) {
-                    const tableContainer = container.querySelector('#history-table-container');
-                    if (!tableContainer) {
-                        console.log('[v0] Container da tabela não encontrado');
-                        return;
+                let currentCalendarDate = new Date();
+
+                function initCalendarDashboard() {
+                    const prevMonthBtn = container.querySelector('#calendar-prev-month');
+                    const nextMonthBtn = container.querySelector('#calendar-next-month');
+                    const todayBtn = container.querySelector('#calendar-today-btn');
+
+                    const monthDisplay = container.querySelector('#calendar-month-display');
+                    const yearDisplay = container.querySelector('#calendar-year-display');
+                    const monthPicker = container.querySelector('#calendar-month-picker');
+                    const yearPicker = container.querySelector('#calendar-year-picker');
+
+                    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+                    // Initialize Pickers
+                    function renderPickers() {
+                        // Month Picker
+                        monthPicker.innerHTML = '';
+                        monthNames.forEach((name, index) => {
+                            const option = document.createElement('div');
+                            option.className = 'picker-option';
+                            option.textContent = name.substring(0, 3); // Jan, Fev...
+                            option.addEventListener('click', () => {
+                                currentCalendarDate.setMonth(index);
+                                renderCalendar();
+                                monthPicker.classList.add('hidden');
+                            });
+                            monthPicker.appendChild(option);
+                        });
+
+                        // Year Picker
+                        yearPicker.innerHTML = '';
+                        const currentYear = new Date().getFullYear();
+                        // Range: 10 years back, 5 years forward from current (or large range)
+                        for (let y = currentYear - 50; y <= currentYear + 10; y++) {
+                            const option = document.createElement('div');
+                            option.className = 'picker-option';
+                            option.textContent = y;
+                            option.dataset.year = y; // helper for scrolling
+                            option.addEventListener('click', () => {
+                                currentCalendarDate.setFullYear(y);
+                                renderCalendar();
+                                yearPicker.classList.add('hidden');
+                            });
+                            yearPicker.appendChild(option);
+                        }
                     }
 
-                    if (entries.length === 0) {
-                        tableContainer.innerHTML = `
-                            <p class="text-center text-[var(--text-secondary)] p-8">
-                                Nenhum registro encontrado para este período.
-                            </p>
-                        `;
-                        return;
+                    renderPickers();
+
+                    function updateControls() {
+                        const m = currentCalendarDate.getMonth();
+                        const y = currentCalendarDate.getFullYear();
+
+                        if (monthDisplay) monthDisplay.textContent = monthNames[m];
+                        if (yearDisplay) yearDisplay.textContent = y;
+
+                        // Highlight selected in pickers
+                        monthPicker.querySelectorAll('.picker-option').forEach((opt, idx) => {
+                            opt.classList.toggle('selected', idx === m);
+                        });
+                        yearPicker.querySelectorAll('.picker-option').forEach(opt => {
+                            opt.classList.toggle('selected', parseInt(opt.textContent) === y);
+                        });
                     }
 
-                    // Ordena do mais recente para o mais antigo
-                    const sortedEntries = [...entries].sort((a, b) => {
-                        return new Date(b.date) - new Date(a.date);
+                    function renderCalendar() {
+                        const year = currentCalendarDate.getFullYear();
+                        const month = currentCalendarDate.getMonth();
+
+                        const daysContainer = container.querySelector('#calendar-days-container');
+                        if (!daysContainer) return;
+
+                        daysContainer.innerHTML = '';
+
+                        const firstDay = new Date(year, month, 1);
+                        const lastDay = new Date(year, month + 1, 0);
+                        const daysInMonth = lastDay.getDate();
+                        const startingDayInfo = firstDay.getDay(); // 0 (Sun) to 6 (Sat)
+
+                        const history = JSON.parse(localStorage.getItem(DAILY_HISTORY_KEY) || '[]');
+                        const monthEntries = [];
+
+                        // Blank spaces for previous month days
+                        for (let i = 0; i < startingDayInfo; i++) {
+                            const emptyCell = document.createElement('div');
+                            emptyCell.className = 'calendar-day empty';
+                            daysContainer.appendChild(emptyCell);
+                        }
+
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+
+                        for (let i = 1; i <= daysInMonth; i++) {
+                            const date = new Date(year, month, i);
+                            const dateString = date.toISOString().slice(0, 10); // YYYY-MM-DD
+
+                            const dayEntry = history.find(e => e.date === dateString);
+                            if (dayEntry) monthEntries.push(dayEntry);
+
+                            const cell = document.createElement('div');
+                            cell.className = 'calendar-day';
+
+                            if (date.getTime() === today.getTime()) {
+                                cell.classList.add('today');
+                            }
+
+                            let countHTML = '';
+                            if (dayEntry && dayEntry.count > 0) {
+                                cell.classList.add('has-data');
+                                countHTML = `<span class="day-count">${dayEntry.count}</span>`;
+                            }
+
+                            cell.innerHTML = `<span class="day-number">${i}</span>${countHTML}`;
+
+                            cell.addEventListener('click', () => {
+                                openHistoryEditModal({ date: dateString, count: dayEntry ? dayEntry.count : 0 });
+                            });
+
+                            daysContainer.appendChild(cell);
+                        }
+
+                        updateControls();
+                    }
+
+                    // Toggles
+                    monthDisplay.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        monthPicker.classList.toggle('hidden');
+                        yearPicker.classList.add('hidden');
                     });
 
-                    tableContainer.innerHTML = `
-                        <table class="w-full text-sm">
-                            <thead class="sticky top-0 bg-[var(--card-bg-color)] border-b-2 border-[var(--border-color)]">
-                                <tr>
-                                    <th class="p-3 text-left font-semibold text-[var(--text-secondary)] uppercase tracking-wide text-xs">Data</th>
-                                    <th class="p-3 text-center font-semibold text-[var(--text-secondary)] uppercase tracking-wide text-xs">Contagem</th>
-                                    <th class="p-3 text-right font-semibold text-[var(--text-secondary)] uppercase tracking-wide text-xs">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${sortedEntries.map((entry, index) => `
-                                    <tr class="border-b border-[var(--border-color)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                                        <td class="p-3">${formatDate(entry.date)}</td>
-                                        <td class="p-3 text-center">
-                                            <span class="font-bold text-lg text-[var(--accent-color)]">${entry.count}</span>
-                                        </td>
-                                        <td class="p-3 text-right">
-                                            <button class="edit-history-btn p-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors" 
-                                                    data-date="${entry.date}" 
-                                                    title="Editar registro">
-                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                    yearDisplay.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        yearPicker.classList.toggle('hidden');
+                        monthPicker.classList.add('hidden');
 
-                    // Reinicializa os ícones do Lucide
-                    safeCreateIcons();
+                        // Scroll to current year
+                        if (!yearPicker.classList.contains('hidden')) {
+                            const selected = yearPicker.querySelector('.picker-option.selected');
+                            if (selected) {
+                                setTimeout(() => selected.scrollIntoView({ block: 'center' }), 0);
+                            }
+                        }
+                    });
 
-                    console.log('[v0] Tabela renderizada com', sortedEntries.length, 'registros');
+                    // Close on outside click
+                    document.addEventListener('click', (e) => {
+                        if (!monthPicker.contains(e.target) && !monthDisplay.contains(e.target)) monthPicker.classList.add('hidden');
+                        if (!yearPicker.contains(e.target) && !yearDisplay.contains(e.target)) yearPicker.classList.add('hidden');
+                    });
+
+                    prevMonthBtn.addEventListener('click', () => {
+                        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                        renderCalendar();
+                    });
+
+                    nextMonthBtn.addEventListener('click', () => {
+                        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                        renderCalendar();
+                    });
+
+                    todayBtn.addEventListener('click', () => {
+                        currentCalendarDate = new Date();
+                        renderCalendar();
+                    });
+
+                    // Initial Render
+                    renderCalendar();
+                    return renderCalendar;
                 }
 
                 function updateHistoryDashboard(period) {
-                    console.log('[v0] Atualizando dashboard para período:', period);
-
+                    // console.log('[v0] Atualizando dashboard (chart/stats) para período:', period);
                     const { periodEntries, chartData } = getHistoryData(period);
-
-                    console.log('[v0] Dados obtidos:', {
-                        entries: periodEntries.length,
-                        labels: chartData.labels.length,
-                        dataPoints: chartData.data.length
-                    });
-
                     renderHistoryChart(chartData);
                     renderHistoryStats(periodEntries);
-                    renderHistoryTable(periodEntries);
                 }
+
+                let updateCalendarView = initCalendarDashboard();
 
                 loadCountersState();
                 updateCounterChart();
+
+                // --- VIEW TOGGLE LOGIC ---
+                const toggleBtn = container.querySelector('#toggle-history-view-btn');
+                const chartView = container.querySelector('#history-chart-view');
+                const calendarView = container.querySelector('#history-calendar-view');
+                const filtersGroup = container.querySelector('#history-filters-group');
+
+                let isEditMode = false;
+
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', () => {
+                        isEditMode = !isEditMode;
+                        updateViewMode();
+                    });
+                }
+
+                function updateViewMode() {
+                    const toggleIcon = toggleBtn.querySelector('i');
+                    const toggleText = toggleBtn.querySelector('span');
+
+                    if (isEditMode) {
+                        // Show Calendar, Hide Chart
+                        chartView.classList.add('hidden');
+                        calendarView.classList.remove('hidden');
+
+                        // Edit Mode Style
+                        toggleBtn.classList.add('bg-[var(--accent-color)]', 'text-white');
+                        toggleBtn.classList.remove('secondary-btn');
+                        if (toggleIcon) toggleIcon.dataset.lucide = 'arrow-left';
+                        if (toggleText) toggleText.textContent = 'Voltar para Gráfico';
+
+                        // Hide Filters (optional, user didn't specify but usually better to hide unrelated filters)
+                        filtersGroup.classList.add('opacity-50', 'pointer-events-none');
+
+                        // Ensure calendar renders
+                        if (updateCalendarView) updateCalendarView();
+                    } else {
+                        // Show Chart, Hide Calendar
+                        chartView.classList.remove('hidden');
+                        calendarView.classList.add('hidden');
+
+                        // Default Style
+                        toggleBtn.classList.remove('bg-[var(--accent-color)]', 'text-white');
+                        toggleBtn.classList.add('secondary-btn');
+                        if (toggleIcon) toggleIcon.dataset.lucide = 'edit-3';
+                        if (toggleText) toggleText.textContent = 'Editar Histórico';
+
+                        filtersGroup.classList.remove('opacity-50', 'pointer-events-none');
+
+                        // Refresh chart just in case
+                        const activeFilter = container.querySelector('.history-filter-btn.active');
+                        if (activeFilter) updateHistoryDashboard(activeFilter.dataset.period);
+                    }
+                    safeCreateIcons();
+                }
+
+                // Override save to update BOTH and respect view
+                window.refreshDashboard = () => {
+                    // 1. Update Chart and Stats
+                    const activeFilter = container.querySelector('.history-filter-btn.active');
+                    if (activeFilter) {
+                        updateHistoryDashboard(activeFilter.dataset.period);
+                    } else {
+                        updateHistoryDashboard('week'); // fallback
+                    }
+
+                    // 2. Update Calendar
+                    if (updateCalendarView) updateCalendarView();
+                };
             }
 
             function setupHistoryEditModal() {
