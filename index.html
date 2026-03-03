@@ -34,7 +34,7 @@
     <!-- Carregando os arquivos de dados externos -->
     <script src="data/pareceres.js" defer></script>
     <script src="data/regras.js" defer></script>
-    <script src="data/checklists.js" defer></script>
+    <script src="data/juntas.js" defer></script>
     <script src="data/links.js" defer></script>
 
     <link rel="stylesheet" href="style.css">
@@ -175,6 +175,9 @@
         /* NOVOS ESTILOS PARA O POSICIONAMENTO DO DOCK */
         #main-dock,
         #dock-inner-container {
+            top: auto;
+            bottom: auto;
+            z-index: 40;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -184,7 +187,8 @@
 
         /* DOCK INFERIOR (PADRÃO) */
         #main-dock.dock-bottom {
-            bottom: 0;
+            bottom: 0 !important;
+            top: auto !important;
             left: 0;
             right: 0;
             padding: 1rem;
@@ -200,7 +204,7 @@
         }
 
         #main-content.dock-bottom {
-            padding-bottom: 8rem;
+            padding-bottom: 140px;
             /* Espaço para o dock inferior */
         }
 
@@ -210,8 +214,9 @@
 
         /* DOCK LATERAL */
         #main-dock.dock-side {
+            z-index: 100;
             /* A propriedade 'left' será definida via JavaScript para posicionamento dinâmico */
-            top: 64px;
+            top: 64px !important;
             /* Altura do header */
             bottom: 0;
             width: auto;
@@ -232,8 +237,19 @@
         }
 
         #main-content.dock-side {
-            padding-left: 0;
-            padding-bottom: 2rem;
+            padding-left: 140px;
+            padding-bottom: 20px;
+        }
+
+        #main-content.dock-bottom {
+            padding-bottom: 140px; 
+        }
+
+        /* Ajuste específico para o Card de Módulos */
+        .main-module-card {
+            position: relative;
+            z-index: 10; /* Mantém o conteúdo em uma camada abaixo do Dock */
+            margin-top: 1rem;
         }
 
         #dock-inner-container.dock-side .label {
@@ -492,12 +508,12 @@
                 <div id="links-module" class="module-content hidden"></div>
                 <div id="parecer-module" class="module-content hidden"></div>
                 <div id="contador-module" class="module-content hidden"></div>
-                <div id="checklist-module" class="module-content hidden"></div>
+                <div id="juntas-module" class="module-content hidden"></div>
             </div>
         </main>
 
         <!-- DOCK DE NAVEGAÇÃO -->
-        <nav id="main-dock" class="fixed z-40">
+        <nav id="main-dock" class="fixed bottom-0 left-0 right-0 z-40 dock-bottom">
             <div id="dock-inner-container" class="bottom-dock-container">
                 <button class="dock-item" data-target="faturamento-module" data-title="Cálculo Renda PJ">
                     <div class="icon-bg" style="background: linear-gradient(135deg, #6dd5ed, #2193b0);">
@@ -541,11 +557,11 @@
                     </div>
                     <span class="label">Pareceres</span>
                 </button>
-                <button class="dock-item" data-target="checklist-module" data-title="Checklist">
+                <button class="dock-item" data-target="juntas-module" data-title="Juntas Comerciais">
                     <div class="icon-bg" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);">
-                        <i data-lucide="check-square" class="icon"></i>
+                        <i data-lucide="globe" class="icon"></i>
                     </div>
-                    <span class="label">Checklist</span>
+                    <span class="label">Juntas C.</span>
                 </button>
             </div>
         </nav>
@@ -827,7 +843,6 @@
             function initializeApp() {
                 setupEventListeners();
                 setupProfilePic();
-                setupImageViewerModal(); // Configura o modal de imagem
                 setupHistoryEditModal(); // Configura o novo modal de edição
                 updateTheme(localStorage.getItem('apoioBpoTheme') === 'dark');
                 if (dockButtons.length > 0) {
@@ -1029,7 +1044,7 @@
                     'links-module': initLinksModule,
                     'parecer-module': initParecerModule,
                     'contador-module': initContadorModule,
-                    'checklist-module': initChecklistModule,
+                    'juntas-module': initJuntasModule,
                 };
                 if (modules[moduleId]) {
                     modules[moduleId](container);
@@ -2282,6 +2297,64 @@
                 filterPareceres();
             }
 
+            function initJuntasModule(container) {
+                container.innerHTML = `
+                    <div class="flex flex-col gap-4 mb-6">
+                        <div class="relative flex-grow">
+                            <input type="text" id="juntas-search-input" placeholder="Pesquisar por Estado (UF)..." class="w-full p-3 pr-10 form-input">
+                            <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"></i>
+                        </div>
+                    </div>
+                    <div class="overflow-auto custom-scrollbar border border-[var(--border-color)] rounded-lg">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-[var(--bg-color)] sticky top-0">
+                                <tr class="border-b border-[var(--border-color)]">
+                                    <th class="p-3 font-semibold">Estado</th>
+                                    <th class="p-3 font-semibold">Link / Informação</th>
+                                    <th class="p-3 font-semibold text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="juntas-tbody"></tbody>
+                        </table>
+                    </div>`;
+
+                const tbody = container.querySelector('#juntas-tbody');
+                const searchInput = container.querySelector('#juntas-search-input');
+
+                const renderTable = (filter = '') => {
+                    if (typeof juntasData === 'undefined') return;
+                    tbody.innerHTML = '';
+                    const lowerCaseFilter = filter.toLowerCase();
+
+                    const filteredData = juntasData.filter(item => 
+                        item.estado.toLowerCase().includes(lowerCaseFilter)
+                    );
+
+                    filteredData.forEach(item => {
+                        const isLink = item.link.startsWith('http');
+                        const row = document.createElement('tr');
+                        row.className = 'border-b border-[var(--border-color)] last:border-b-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors';
+                        
+                        row.innerHTML = `
+                            <td class="p-3 font-bold text-lg">${item.estado}</td>
+                            <td class="p-3 text-xs max-w-xs truncate">${item.link}</td>
+                            <td class="p-3 text-center">
+                                ${item.link.startsWith('http') ? `
+                                    <a href="${item.link}" target="_blank" class="p-2 secondary-btn inline-flex items-center gap-2 text-xs">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i> Abrir
+                                    </a>
+                                ` : `<span class="text-[var(--text-secondary)] text-xs">Acesso Restrito</span>`}
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                };
+
+                searchInput.addEventListener('input', () => renderTable(searchInput.value));
+                renderTable();
+            }
+
             function initContadorModule(container) {
                 let historyChart = null; // Prevent ReferenceError
                 // Destrói instâncias de gráficos anteriores para evitar erros de renderização
@@ -3266,305 +3339,7 @@
             }
 
 
-            function initChecklistModule(container) {
-                container.innerHTML = `
-                    <div id="checklist-flows-view"></div>
-                    <div id="checklist-documents-view" class="hidden"></div>
-                    <div id="checklist-items-view" class="hidden"></div>
-                `;
-
-                const flowsView = container.querySelector('#checklist-flows-view');
-
-                function updateCheckboxVisual(checkbox) {
-                    if (!checkbox) return;
-                    const label = checkbox.closest('label');
-                    if (!label) return;
-                    const customCheckbox = label.querySelector('.custom-checkbox');
-                    const icon = label.querySelector('.check-icon');
-
-                    if (checkbox.checked) {
-                        customCheckbox.classList.add('bg-sky-500', 'border-sky-500');
-                        icon.style.opacity = '1';
-                    } else {
-                        customCheckbox.classList.remove('bg-sky-500', 'border-sky-500');
-                        icon.style.opacity = '0';
-                    }
-                }
-
-                function handleChecklistChange(e) {
-                    const checkbox = e.target.closest('.checklist-item-checkbox');
-                    if (checkbox) {
-                        const { flow, doc, itemKey } = checkbox.dataset;
-                        if (flow && doc && itemKey) {
-                            checklistState[flow] = checklistState[flow] || {};
-                            checklistState[flow][doc] = checklistState[flow][doc] || {};
-                            checklistState[flow][doc][itemKey] = checkbox.checked;
-                            localStorage.setItem('apoioBpoChecklistState', JSON.stringify(checklistState));
-                        }
-                    }
-                }
-
-                function handleChecklistNavigation(e) {
-                    const target = e.target;
-                    const flowBtn = target.closest('.checklist-flow-btn');
-                    if (flowBtn) { showDocumentsView(flowBtn.dataset.flow); return; }
-
-                    const docBtn = target.closest('.checklist-doc-btn');
-                    if (docBtn) { showChecklistItemsView(docBtn.dataset.flow, docBtn.dataset.doc); return; }
-
-                    const backBtn = target.closest('.checklist-back-btn');
-                    if (backBtn) {
-                        if (backBtn.dataset.target === 'flows') showFlowsView();
-                        else if (backBtn.dataset.target === 'documents') showDocumentsView(backBtn.dataset.flow);
-                        return;
-                    }
-
-                    const finishBtn = target.closest('.checklist-finish-btn');
-                    if (finishBtn) {
-                        const allChecklistItems = Object.entries(checklistData.flows[currentFlow].documents[currentDoc].checklist || {});
-                        const devolucoes = [];
-
-                        allChecklistItems.forEach(([itemKey, parecerKey]) => {
-                            if (!checklistState[currentFlow]?.[currentDoc]?.[itemKey]) {
-                                const parecerText = findParecerText(parecerKey);
-                                devolucoes.push(`${parecerKey}: ${parecerText || 'Parecer não encontrado.'}`);
-                            }
-                        });
-
-                        let parecerTextForCopy = devolucoes.length === 0 ? "APROVAR" : devolucoes.join(' ');
-                        let resultHTML = `
-                            <div class="flex flex-col h-full text-white">
-                                <h4 class="text-lg font-semibold mb-4 text-slate-300">Resultado do Checklist</h4>
-                                <div class="flex-grow p-4 bg-slate-900 rounded-lg overflow-y-auto custom-scrollbar">
-                                    <p class="whitespace-pre-wrap break-words ${devolucoes.length === 0 ? 'text-green-400' : 'text-red-400'} font-medium">${parecerTextForCopy}</p>
-                                </div>
-                                <div class="mt-auto pt-6 flex flex-col gap-4">
-                                    <button class="checklist-copy-result-btn w-full p-3 bg-sky-600 hover:bg-sky-500 rounded-lg flex items-center justify-center gap-2" data-text-to-copy="${encodeURIComponent(parecerTextForCopy)}">
-                                        <i data-lucide="copy" class="w-5 h-5"></i> Copiar Parecer
-                                    </button>
-                                    <button class="checklist-back-to-items w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-2" data-flow="${currentFlow}" data-doc="${currentDoc}">
-                                        <i data-lucide="arrow-left-circle" class="w-5 h-5"></i> Voltar
-                                    </button>
-                                </div>
-                            </div>`;
-
-                        container.querySelector('#checklist-items-container').innerHTML = resultHTML;
-                        safeCreateIcons();
-                        return;
-                    }
-
-                    const copyResultBtn = target.closest('.checklist-copy-result-btn');
-                    if (copyResultBtn) {
-                        copyText(decodeURIComponent(copyResultBtn.dataset.textToCopy), copyResultBtn);
-                        return;
-                    }
-
-                    const backToItemsBtn = target.closest('.checklist-back-to-items');
-                    if (backToItemsBtn) {
-                        showChecklistItemsView(backToItemsBtn.dataset.flow, backToItemsBtn.dataset.doc);
-                        return;
-                    }
-                }
-
-                let currentFlow, currentDoc;
-
-                function showFlowsView() {
-                    container.querySelector('#checklist-flows-view').classList.remove('hidden');
-                    container.querySelector('#checklist-documents-view').classList.add('hidden');
-                    container.querySelector('#checklist-items-view').classList.add('hidden');
-                    moduleTitle.textContent = "Checklist";
-
-                    let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">';
-                    for (const flowKey in checklistData.flows) {
-                        const flow = checklistData.flows[flowKey];
-                        html += `
-                            <button class="checklist-flow-btn flex flex-col items-center justify-center text-center gap-2 p-3 secondary-btn aspect-square" data-flow="${flowKey}">
-                                <span class="text-4xl">${flow.icon}</span>
-                                <span class="font-semibold">${flow.name}</span>
-                            </button>`;
-                    }
-                    html += '</div>';
-                    flowsView.innerHTML = html;
-                }
-
-                function showDocumentsView(flowKey) {
-                    currentFlow = flowKey;
-                    container.querySelector('#checklist-flows-view').classList.add('hidden');
-                    container.querySelector('#checklist-documents-view').classList.remove('hidden');
-                    container.querySelector('#checklist-items-view').classList.add('hidden');
-
-                    const documentsView = container.querySelector('#checklist-documents-view');
-                    const flow = checklistData.flows[flowKey];
-                    moduleTitle.textContent = flow.name;
-
-                    documentsView.innerHTML = `
-                        <div class="flex items-center justify-start gap-4 mb-4">
-                            <button class="checklist-back-btn p-3 secondary-btn rounded-full" data-target="flows"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                        </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar" style="max-height: 60vh;">
-                            ${Object.keys(flow.documents).map(docKey => {
-                        const doc = flow.documents[docKey];
-                        return `
-                                    <button class="checklist-doc-btn flex flex-col items-center justify-center text-center gap-2 p-3 secondary-btn aspect-square" data-flow="${flowKey}" data-doc="${docKey}">
-                                        <span class="text-3xl">${doc.icon}</span>
-                                        <span class="text-xs font-medium">${doc.name}</span>
-                                    </button>`;
-                    }).join('')}
-                        </div>`;
-                    safeCreateIcons();
-                }
-
-                function showChecklistItemsView(flowKey, docKey) {
-                    currentFlow = flowKey;
-                    currentDoc = docKey;
-                    container.querySelector('#checklist-flows-view').classList.add('hidden');
-                    container.querySelector('#checklist-documents-view').classList.add('hidden');
-                    const itemsView = container.querySelector('#checklist-items-view');
-                    itemsView.classList.remove('hidden');
-
-                    const doc = checklistData.flows[flowKey].documents[docKey];
-                    const checklistItems = Object.entries(doc.checklist || {});
-                    moduleTitle.textContent = doc.name;
-
-                    let imageViewerHtml = '';
-
-                    if (doc.imageUrls && Array.isArray(doc.imageUrls) && doc.imageUrls.length > 0) {
-                        imageViewerHtml = `
-                            <div id="image-carousel" class="relative w-full h-full overflow-hidden rounded-lg">
-                                <div id="carousel-inner" class="flex transition-transform duration-300 ease-in-out h-full bg-white">
-                                    ${doc.imageUrls.map(url => `
-                                        <img src="${url}" alt="${doc.name}" class="w-full h-full object-contain flex-shrink-0 cursor-zoom-in">
-                                    `).join('')}
-                                </div>
-                                ${doc.imageUrls.length > 1 ? `
-                                <button id="prev-btn" class="absolute top-1/2 left-2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
-                                <button id="next-btn" class="absolute top-1/2 right-2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
-                                <div id="carousel-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                                    ${doc.imageUrls.map((_, i) => `<div class="carousel-dot h-2 w-2 rounded-full bg-white/50 transition-colors" data-index="${i}"></div>`).join('')}
-                                </div>
-                                ` : ''}
-                            </div>
-                        `;
-                    } else if (doc.imageUrl) {
-                        imageViewerHtml = `
-                            <div class="bg-white rounded-lg shadow-2xl w-full h-full p-2 overflow-y-auto custom-scrollbar">
-                                <img src="${doc.imageUrl}" alt="${doc.name}" class="w-full h-auto rounded-md cursor-zoom-in">
-                            </div>
-                        `;
-                    } else {
-                        imageViewerHtml = `
-                            <div class="flex items-center justify-center h-full text-center text-[var(--text-secondary)]">
-                                <p>Nenhuma imagem de exemplo<br>disponível para este documento.</p>
-                            </div>
-                        `;
-                    }
-
-
-                    itemsView.innerHTML = `
-                        <div class="animate-fade-in">
-                            <div class="flex items-center flex-shrink-0 mb-6">
-                                <button class="checklist-back-btn p-3 secondary-btn rounded-full" data-target="documents" data-flow="${flowKey}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                            </div>
-                            
-                            <div id="checklist-main-layout" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <!-- Coluna Esquerda: Visualizador de Documento -->
-                                <div class="bg-gray-200 dark:bg-gray-900/50 p-4 sm:p-6 rounded-2xl flex items-center justify-center aspect-[3/4] lg:aspect-auto">
-                                    ${imageViewerHtml}
-                                </div>
-
-                                <!-- Coluna Direita: Painel do Checklist -->
-                                <div id="checklist-items-container" class="bg-[#1e293b] dark:bg-[#1e293b] text-white rounded-2xl p-6 sm:p-8 flex flex-col min-h-[75vh]">
-                                    <ul class="space-y-5 flex-grow overflow-y-auto custom-scrollbar pr-2">
-                                    ${checklistItems.map(([itemKey, parecerKey]) => {
-                        const isChecked = checklistState[flowKey]?.[docKey]?.[itemKey] || false;
-                        const uniqueId = `check-${flowKey}-${docKey}-${itemKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
-                        return `
-                                            <li>
-                                                <label for="${uniqueId}" class="flex items-center gap-4 cursor-pointer group">
-                                                    <input type="checkbox" id="${uniqueId}" class="checklist-item-checkbox hidden" data-item-key="${itemKey}" data-flow="${flowKey}" data-doc="${docKey}" ${isChecked ? 'checked' : ''}>
-                                                    <span class="custom-checkbox w-5 h-5 rounded border-2 border-slate-500 group-hover:border-slate-400 flex items-center justify-center flex-shrink-0 transition-colors">
-                                                        <i data-lucide="check" class="check-icon w-3 h-3 text-white opacity-0 transition-opacity"></i>
-                                                    </span>
-                                                    <span class="font-medium text-slate-300 group-hover:text-white transition-colors">${itemKey}</span>
-                                                </label>
-                                            </li>`;
-                    }).join('')}
-                                    </ul>
-                                    <div class="mt-auto pt-6">
-                                        <button class="checklist-finish-btn w-full p-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold tracking-wide transition-all active:scale-95">Finalizar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-
-                    itemsView.querySelectorAll('.checklist-item-checkbox').forEach(checkbox => {
-                        updateCheckboxVisual(checkbox);
-                    });
-
-                    // Lógica do Carrossel
-                    const carouselInner = itemsView.querySelector('#carousel-inner');
-                    if (carouselInner) {
-                        const prevBtn = itemsView.querySelector('#prev-btn');
-                        const nextBtn = itemsView.querySelector('#next-btn');
-                        const dots = itemsView.querySelectorAll('.carousel-dot');
-                        const totalSlides = doc.imageUrls.length;
-                        let currentIndex = 0;
-
-                        const showSlide = (index) => {
-                            if (!carouselInner) return;
-                            carouselInner.style.transform = `translateX(-${index * 100}%)`;
-                            dots.forEach((dot, i) => {
-                                dot.classList.toggle('bg-white', i === index);
-                                dot.classList.toggle('bg-white/50', i !== index);
-                            });
-                            currentIndex = index;
-                        };
-
-                        if (prevBtn) {
-                            prevBtn.addEventListener('click', () => {
-                                const newIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-                                showSlide(newIndex);
-                            });
-                        }
-
-                        if (nextBtn) {
-                            nextBtn.addEventListener('click', () => {
-                                const newIndex = (currentIndex + 1) % totalSlides;
-                                showSlide(newIndex);
-                            });
-                        }
-
-                        dots.forEach(dot => {
-                            dot.addEventListener('click', () => {
-                                showSlide(parseInt(dot.dataset.index));
-                            });
-                        });
-
-                        if (totalSlides > 0) {
-                            showSlide(0);
-                        }
-                    }
-
-                    safeCreateIcons();
-                }
-
-                if (typeof checklistData === 'undefined') {
-                    flowsView.innerHTML = `<div class="text-center text-lg py-8 text-[var(--text-secondary)]">Dados de checklist não carregados.</div>`;
-                    return;
-                }
-
-                container.addEventListener('click', handleChecklistNavigation);
-                container.addEventListener('change', (e) => {
-                    handleChecklistChange(e);
-                    const checkbox = e.target.closest('.checklist-item-checkbox');
-                    if (checkbox) {
-                        updateCheckboxVisual(checkbox);
-                    }
-                });
-
-                showFlowsView();
-            }
-
+            
             // --- GERENCIAMENTO DE MODAIS ---
             function setupModals() {
                 const infoButton = document.getElementById('info-button');
@@ -3636,6 +3411,8 @@
                 }, { once: true });
             }
         };
+
+        
     </script>
 </body>
 
