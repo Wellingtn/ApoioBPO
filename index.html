@@ -252,6 +252,29 @@
             margin-top: 1rem;
         }
 
+        #dock-toggle-btn {
+            display: flex !important;
+            visibility: visible !important;
+            width: 44px !important;
+            height: 44px !important;
+            align-items: center;
+            justify-content: center;
+            margin-right: 4px;
+        }
+
+        header span.font-bold {
+            flex-shrink: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+                
+        header .flex.items-center.gap-3 {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            min-width: fit-content;
+        }
+
         #dock-inner-container.dock-side .label {
             display: none;
         }
@@ -285,7 +308,7 @@
             transition: all 0.2s ease;
             position: relative;
         }
-
+        
         .picker-popup {
             background-color: var(--card-bg-color);
             border: 1px solid var(--border-color);
@@ -472,7 +495,7 @@
             <div class="flex items-center gap-3">
                 <!-- BOTÃO PARA ALTERNAR POSIÇÃO DO DOCK -->
                 <button id="dock-toggle-btn" title="Mudar Posição do Dock"
-                    class="p-3 rounded-full secondary-btn hidden sm:flex">
+                    class="p-3 rounded-full secondary-btn flex flex-shrink-0">
                     <i data-lucide="layout-sidebar-left" class="w-5 h-5"></i>
                 </button>
                 <button id="info-button" class="p-3 rounded-full secondary-btn">
@@ -734,8 +757,11 @@
 
                 if (!dockToggleBtn || !mainDock || !dockInnerContainer || !mainContentEl || !dockToggleIcon) {
                     console.error("Um ou mais elementos do dock não foram encontrados. A funcionalidade de troca de posição não funcionará.");
-                    if (dockToggleBtn) dockToggleBtn.style.display = 'none'; // Esconde o botão se algo der errado
-                    return;
+                    if (dockToggleBtn) {
+                        dockToggleBtn.style.display = 'flex';
+                        // Garante que o ícone seja renderizado novamente
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
                 }
 
                 function positionSideDock() {
@@ -2337,7 +2363,9 @@
                         
                         row.innerHTML = `
                             <td class="p-3 font-bold text-lg">${item.estado}</td>
-                            <td class="p-3 text-xs max-w-xs truncate">${item.link}</td>
+                            <td class="p-3 text-xs max-w-xs truncate">
+                                <span class="font-bold">[${item.consulta || 'N/A'}]</span> ${item.link}
+                            </td>
                             <td class="p-3 text-center">
                                 ${item.link.startsWith('http') ? `
                                     <a href="${item.link}" target="_blank" class="p-2 secondary-btn inline-flex items-center gap-2 text-xs">
