@@ -11,7 +11,7 @@ const juntasData = [
     { estado: "Maranhão", sigla: "MA", link: "Consulta paga / Site fora do ar " },
     { estado: "Mato Grosso", sigla: "MT", link: "https://portalservicos.jucemat.mt.gov.br/certidaoweb/pesquisaEmpresas.seam?tipoCertidao=inteiro_teor" },
     { estado: "Mato Grosso do Sul", sigla: "MS", link: "https://portalservicos.jucems.ms.gov.br/certidaoweb/pesquisaEmpresas.seam?tipoCertidao=inteiro_teor" },
-    { estado: "Minas Gerais", sigla: "MG", link: "https://portalservicos.jucemg.mg.gov.br/certidaoweb/pesquisaEmpresas.seam?conversationId=201846" },
+    { estado: "Minas Gerais", sigla: "MG", link: "https://portalservicos.jucemg.mg.gov.br/certidaoweb/selecionarCertidao.seam" },
     { estado: "Pará", sigla: "PA", link: "https://regin.jucepa.pa.gov.br/requerimentoUniversal/NovaCertidaoUnificadaAux.aspx" },
     { estado: "Paraíba", sigla: "PB", link: "https://www.redesim.pb.gov.br/certidao-online/inteiro-teor?evento%5B0%5D=655&tipo_evento=cs" },
     { estado: "Paraná", sigla: "PR", link: "https://www.empresafacil.pr.gov.br/certidao-online/inteiro-teor?evento%5B0%5D=655&tipo_evento=cs" },
