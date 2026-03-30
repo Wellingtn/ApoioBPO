@@ -23,7 +23,7 @@ const linksData = [
             { name: "Simples Nacional", url: "https://www8.receita.fazenda.gov.br/simplesnacional/aplicacoes.aspx?id=21", icon: "calculator" },
             { name: "Validar Assinaturas (ITI)", url: "https://validar.iti.gov.br/", icon: "pen-tool" },
             { name: "Validador de Conformidade", url: "https://pbad.labsec.ufsc.br/verifier-hom/", icon: "file-signature"},
-            { name: "Portal NFe (Consulta)", url: "https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ%20gAVw2g=&AspxAutoDetectCookieSupport=1", icon: "file-text" },
+            { name: "Portal NFe (Consulta)", url: "https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=", icon: "file-text" },
             { name: "Regramento (SharePoint)", url: "https://grupometa-my.sharepoint.com/:o:/r/personal/mauricio_konig_meta_com_br/_layouts/15/Doc.aspx?sourcedoc=%7Bc25ac0fa-50eb-4c80-a819-1cd9d982f327%7D&action=view&wd=target(PESSOA%20PF.one%7Cf33ebd26-b26b-41b2-b37c-6ac8c7f725a2%2FEstado%20Civil%7Cf522c3d7-570e-4335-8871-b5df988b9978%2F)&wdorigin=NavigationUrl", icon: "book-open" }
         ]
     },
