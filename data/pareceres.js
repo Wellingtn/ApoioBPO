@@ -1,142 +1,125 @@
 const pareceresDataCorrigido = {
   "Pareceres Gerais": {
-    "DOCUMENTO ILEGÍVEL": "FAVOR ANEXAR DOCUMENTO LEGÍVEL, POIS NÃO FOI POSSÍVEL IDENTIFICAR COM NITIDEZ AS INFORMAÇÕES NO DOCUMENTO ANEXADO.",  
-    "DOCUMENTO INVÁLIDO": "O DOCUMENTO ANEXADO NÃO É VÁLIDO PARA COMPROVAR O TIPO DE FLUXO VIGENTE. FAVOR ANEXAR A DOCUMENTAÇÃO VÁLIDA.",  
-    "ERRO": "ERRO AO TENTAR ABRIR O ARQUIVO ANEXADO. FAVOR ANEXAR DOCUMENTO VÁLIDO PARA ANÁLISE.",   
-    "FALTA DE INFORMAÇÃO COMPROBATÓRIA":"A INFORMAÇÃO DE {} NÃO FOI ENCONTRADA NO DOCUMENTO ANEXADO. FAVOR ANEXAR DOCUMENTO QUE CONSTE ESSA INFORMAÇÃO",  
-    "CADASTRO DIVERGENTE DO COMPROVANTE EM ANEXO": "FAVOR CORRIGIR A INFORMAÇÃO DO CAMPO {} PARA {}.",  
-    "PRAZO DE VALIDADE": "O DOCUMENTO ANEXADO ESTÁ FORA DO PRAZO DE VALIDADE (90 DIAS). FAVOR ANEXAR UM DOCUMENTO ATUALIZADO QUE COMPROVE A INCLUSÃO/ALTERAÇÃO.",  
-    "CHAVES INCORRETAS": "O DOCUMENTO {} FOI ANEXADO NA CHAVE INCORRETA. FAVOR CORRIGIR.",   
-    "ASSINATURAS": "O DOCUMENTO ANEXADO APRESENTA INCONSISTÊNCIAS NAS ASSINATURAS (FALTANTES, INVÁLIDAS OU HÍBRIDAS). FAVOR ANEXAR DOCUMENTO COM ASSINATURAS VÁLIDAS E NO MESMO FORMATO.", 
-    "VÍNCULO NÃO ENCONTRADO": "NÃO FOI POSSÍVEL LOCALIZAR O VÍNCULO DO ASSOCIADO COM O TERCEIRO MENCIONADO NO DOCUMENTO. FAVOR ANEXAR DOCUMENTO QUE COMPROVE O VÍNCULO.",  
-    "FALTA DE DOCUMENTO COMPROBATÓRIO": "FAVOR ANEXAR A DOCUMENTAÇÃO QUE COMPROVE A INCLUSÃO/ALTERAÇÃO.",  
-    "DESCRIÇÃO DIVERGENTE": "A DESCRIÇÃO INFORMADA NO FLUXO NÃO CONDIZ COM OS COMPROVANTES ANEXADOS. (OBS: SOMENTE A DESCRIÇÃO INCORRETA NÃO CARACTERIZA MOTIVO DE REPROVAÇÃO. FAVOR REMOVER A OBS. EM CASO DE USO DO PARECER.)",  
-    "DOCUMENTO CORTADO": "O DOCUMENTO ANEXADO ESTÁ CORTADO. FAVOR ANEXAR A DOCUMENTAÇÃO COMPLETA E LEGÍVEL.",  
-    "DOCUMENTO RASURADO": "O DOCUMENTO ANEXADO ESTÁ RASURADO. FAVOR ANEXAR A DOCUMENTAÇÃO COMPLETA ONDE SEJA POSSÍVEL FAZER A VALIDAÇÃO.",  
-    "EXCLUSÃO NÃO PERMITIDA": "A EXCLUSÃO DO FLUXO NÃO FOI PERMITIDA PELO SISTEMA, QUE EXIBIU UMA MENSAGEM DE ERRO DURANTE A TENTATIVA.",  
-    "CAPTURA DE TELA": "O DOCUMENTO ANEXADO É UMA CAPTURA DE TELA (PRINT). FAVOR ANEXAR O DOCUMENTO ORIGINAL E VÁLIDO.",  
-    "APROVAÇÃO SEM VALIDAÇÃO": "NÃO HAVIA DOCUMENTOS NA ABA 'NOVO'. APROVADO CONFORME DOCUMENTAÇÃO VIGENTE."
+    "APROVAÇÃO SEM VALIDAÇÃO": "Não havia documentos na aba 'novo'. Aprovado conforme documentos vigentes.",
+    "ERRO": "(Colar o erro apresentado no Sisbr).",
+    "CHAVES INCORRETAS": "Solicitamos ajuste ... (preencher conforme o fluxo).",
+    "FALTA DE DOCUMENTO COMPROBATÓRIO": "Solicitamos o envio de .....(modificar conforme o fluxo).",
+    "PRAZO DE VALIDADE": "O documento anexado está fora do prazo de validade. Solicitamos que seja enviado um documento atualizado.",
+    "DOCUMENTO INVÁLIDO": "O documento anexado se refere a uma... (preencher conforme o fluxo) Solicitamos o ajuste da documentação anexada.",
+    "ASSINATURA DIGITAL VALIDADA": "Foi anexado a validação da assinatura.",
+    "DESCRIÇÃO DIVERGENTE": "Solicitamos o ajuste na descrição informada no fluxo, pois não condiz com os comprovantes.",
+    "ASSINATURAS": "Solicitamos o ajuste das assinaturas pois .....(modificar conforme o fluxo).",
+    "VÍNCULO NÃO ENCONTRADO": "Não foi possível encontrar vínculo entre o associado e o terceiro informado no comprovante em anexo. Solicitamos que seja anexado um comprovante em nome do associado ou a comprovação do vínculo."
   },
   "Fluxos de Fontes de Renda": {
-    "Pareceres Gerais de Renda": {
-      "RENDA MENSAL INVÁLIDA": "A RENDA CADASTRADA NÃO É VÁLIDA PARA COMPROVAÇÃO. FAVOR UTILIZAR UMA FONTE DE RENDA VÁLIDA PARA A INCLUSÃO/ALTERAÇÃO, CONFORME ORIENTA O IC 34373", 
-      "TIPO DE RENDA": "CORRIGIR O TIPO DE RENDA PARA {}.",  
-      "RENDA INFORMADA NÃO RECORRENTE": "A RENDA UTILIZADA NÃO É CONSIDERADA RECORRENTE. SOLICITAMOS A CORREÇÃO DA RENDA MENSAL PARA R$ {}, SEM A SOMA DO 13º SALÁRIO OU OUTROS VALORES NÃO RECORRENTES.",  
-      "ASSINATURAS": "O DOCUMENTO ANEXADO NECESSITA DA ASSINATURA DO CONTADOR, REPRESENTANTE DA EMPRESA OU EMPREGADO SICOOB. SOLICITAMOS QUE O MESMO SEJA REENVIADO DEVIDAMENTE ASSINADO.",  
-      "PRAZO DE VALIDADE": "O DOCUMENTO ANEXADO ESTÁ FORA DO PRAZO DE VALIDADE DO ANO EXERCÍCIO ATUAL. SOLICITAMOS QUE SEJA ANEXADO UM DOCUMENTO ATUALIZADO COM O PERIODO CORRETO.",  
-      "DOCUMENTO INVÁLIDO": "NÃO ACEITAMOS IMPOSTO DE RENDA EM STATUS DE PREENCHIMENTO (RASCUNHO). SOLICITAMOS QUE SEJA ANEXADO O IRPF TRANSMITIDO E VÁLIDO.",  
-      "FALTA DE DOCUMENTO COMPROBATÓRIO": "SOLICITAMOS QUE SEJA ANEXADO O RECIBO DE ENTREGA DO IRPF JUNTAMENTE COM O DECLARATÓRIO COMPLETO."  
-    },
-    "Pareceres de Renda Agropecuária": {
-      "RENDA NÃO É PROVENIENTE DE ATIVIDADE RURAL": "A RENDA CADASTRADA NÃO É AGROPECUÁRIA. FAVOR CORRIGIR O TIPO DE RENDA PARA {}.", 
-      "DIVISÃO DE RENDA AGROPECUÁRIA INCORRETA": "A DIVISÃO DA RENDA FAMILIAR ESTÁ INCORRETA. FAVOR CORRIGIR PARA R$ {}.", 
-      "FALTA DE DOCUMENTO COMPROBATÓRIO": "CONFORME CONSTA NO MANUAL DE CADASTRO, É NECESSÁRIO O ENVIO DAS VALIDAÇÕES DAS NOTAS FISCAIS (UMA POR UMA) PELO SITE QUE CONSTA NO MANUAL PÁGINA 53.", 
-      "LAUDO DE PRODUÇÃO AGROPECUÁRIA": "FAVOR AJUSTAR O LAUDO DE PRODUÇÃO AGROPECUÁRIA. O DOCUMENTO INDICA {} QUANDO O CORRETO SERIA {}.", 
-      "RENDA EFETIVA SOMADA COM PREVISÃO": "FOI UTILIZADA RENDA EFETIVA SOMADA COM PREVISÃO PARA A RENDA ANUAL. FAVOR CORRIGIR O VALOR DA RENDA PARA R$ {}." 
-    },
-    "Pareceres de Renda - SIMPLES Nacional": {
-      "COMPROVANTE DO SIMPLES NACIONAL": "SÓ SÃO PERMITIDOS DOCUMENTOS DO SIMPLES PARA EMPRESAS OPTANTES DO SIMPLES NACIONAL. FAVOR ANEXAR O COMPROVANTE CORRETO.", 
-      "CONSULTA DE OPÇÃO DO SIMPLES": "FAVOR ANEXAR O COMPROVANTE DE OPÇÃO PELO SIMPLES NACIONAL.", 
-      "CAMPO DE OPTANTE DO SIMPLES": "AJUSTAR O CAMPO OPTANTE DO SIMPLES NACIONAL PARA SIM OU NÃO.", 
-      "CÁLCULO DO SIMPLES": "A RENDA CADASTRADA ESTÁ INCORRETA. FAVOR CORRIGIR PARA R$ {} (1ª FORMA DE CÁLCULO) OU PARA R$ {} (2ª FORMA DE CÁLCULO), CONFORME ORIENTA O CÁLCULO A SER REALIZADO NO IC 32410. " 
+    "Pareceres de Renda - Pessoa Jurídica": {
+      "CONSULTA DE OPÇÃO PELO SIMPLES": "Solicitamos que seja anexada a consulta de opção pelo Simples Nacional, em sua devida chave.",
+      "CAMPO DE OPTANTE DO SIMPLES": "Solicitamos que seja ajustada a opção pelo simples para 'sim' ou 'não'. (seguir conforme o fluxo)",
+      "TIPO DE RENDA": "Solicitamos a correção do tipo de renda para... (preencher conforme o fluxo).",
+      "COMPROVANTE DO SIMPLES NACIONAL": "Solicitamos que seja anexado o recibo de entrega na apuração do PGDAS-D, juntamente com o referido documento.",
+      "CÁLCULO DO SIMPLES": "Solicitamos a correção da renda mensal para R$ xxx RBT12/12 ou R$ xxx RBT12 + RPA - xx/2024 dividido por 12. (preencher conforme o fluxo)",
+      "FALTA DE CONSULTA DO CRC": "Solicitamos que seja anexada .... (preencher conforme o fluxo)."
     },
     "Pareceres de Renda - Pessoa Física": {
-      "PRÓ-LABORE ACIMA DO LIMITE": "A RENDA CADASTRADA ULTRAPASSA O LIMITE DE R$ 6.750,00 PARA PRÓ-LABORE DE EMPRESAS MEI.", 
-      "RENDA DE TERCEIRO": "A RENDA CADASTRADA ESTÁ EM NOME DE TERCEIROS. FAVOR INFORMAR UMA RENDA PRÓPRIA.", 
-      "RENDA INFORMADA NÃO RECORRENTE": "A RENDA UTILIZADA NÃO É RECORRENTE. FAVOR CADASTRÁ-LA SEPARADAMENTE COM O TIPO DE RENDA OUTROS." 
+      "TIPO DE RENDA": "Solicitamos a correção do tipo de renda para... (preencher conforme o fluxo).",
+      "FALTA DE INFORMAÇÃO COMPROBATÓRIA": "Solicitamos a informação ... (preencher conforme o fluxo).",
+      "RENDA INVÁLIDA": "Solicitamos ajuste ... (preencher conforme o fluxo). (Motivos: Valor incorreto/Fontes divergentes/Não recorrente/Terceiro/Fonte pagadora IRPF/CNPJ Baixado/Pró-labore acima do limite)"
+    },
+    "Pareceres de Renda Agropecuária": {
+      "TIPO DE RENDA": "Solicitamos a correção do tipo de renda para ...(preencher conforme o fluxo)",
+      "RENDA INVÁLIDA": "Solicitamos ajuste ... (preencher conforme o fluxo). (Motivos: Não rural/Divisão incorreta/Efetiva somada com previsão)"
     }
   },
   "Fluxos de Pessoa": {
-    "Pareceres Gerais de Pessoa": {
-      "TIPO DE DOCUMENTO": "CORRIGIR O TIPO DE DOCUMENTO PARA {}.", 
-      "NÚMERO DO DOCUMENTO": "O NÚMERO CADASTRADO DIVERGE DO DOCUMENTO ANEXADO. CORRIGIR PARA {}.", 
-      "DATA DE EMISSÃO": "CORRIGIR A DATA DE EMISSÃO PARA {}.", 
-      "FICHA CADASTRAL": "DADOS INCORRETOS NA FICHA CADASTRAL. FAVOR AJUSTAR.", 
-      "FICHA PEP": "PREENCHIMENTO INCORRETO DA FICHA DE PESSOA POLITICAMENTE EXPOSTA (PEP).", 
-      "UF DO ÓRGÃO EXPEDIDOR": "CORRIGIR A UF DO ÓRGÃO EXPEDIDOR PARA {}." 
+    "Pareceres de Pessoa Jurídica": {
+      "DATA DE CONSTITUIÇÃO": "Solicitamos a correção da data de constituição para..., conforme consta no documento anexado.",
+      "NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE": "Solicitamos a correção do número de registro no órgão competente para..., conforme consta no documento anexado.",
+      "NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "Solicitamos a correção do número da última alteração do contrato social para..., conforme consta no documento anexado.",
+      "DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "Solicitamos a correção da data da última alteração do contrato social para..., conforme consta no documento anexado.",
+      "NÚMERO DE REGISTRO DE REPRESENTAÇÃO": "Solicitamos a correção do número de registro de representação para..., conforme consta no documento anexado.",
+      "OPÇÃO MEI": "Solicitamos a correção da Opção mei para..., conforme consta no documento anexado.",
+      "NÚMERO DO CONTRATO SOCIAL": "Solicitamos a correção do número do contrato social para..., conforme consta no documento anexado.",
+      "CAPITAL SOCIAL": "Solicitamos a correção do capital social para..., conforme consta no documento anexado.",
+      "INSCRIÇÃO ESTADUAL": "Solicitamos a correção do número da Inscrição Estadual para..., conforme consta no documento anexado.",
+      "INSCRIÇÃO MUNICIPAL": "Solicitamos a correção do número da Inscrição Municipal para..., conforme consta no documento anexado.",
+      "FICHA CADASTRAL": "Solicitamos ajustes no documento da ficha cadastral pois ... (preencher conforme o fluxo)."
     },
     "Pareceres de Pessoa Física": {
-      "ESTADO CIVIL": "CORRIGIR O ESTADO CIVIL PARA {}, CONFORME DOCUMENTO ANEXADO.", 
-      "ÓRGÃO EXPEDIDOR": "CORRIGIR O ÓRGÃO EXPEDIDOR PARA {}, CONFORME DOCUMENTO ANEXADO.", 
-      "NATURALIDADE": "CORRIGIR A NATURALIDADE PARA {}, CONFORME DOCUMENTO ANEXADO.", 
-      "FILIAÇÃO": "CORRIGIR O NOME DO PAI/MÃE PARA {}, CONFORME DOCUMENTO ANEXADO." 
-    },
-    "Pareceres de Pessoa Jurídica": {
-      "DATA DE CONSTITUIÇÃO": "CORRIGIR A DATA DE CONSTITUIÇÃO PARA {}.", 
-      "NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE": "CORRIGIR O NÚMERO DE REGISTRO NO ÓRGÃO COMPETENTE PARA {}.", 
-      "NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "CORRIGIR O NÚMERO DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL PARA {}.", 
-      "DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL": "CORRIGIR A DATA DA ÚLTIMA ALTERAÇÃO DO CONTRATO SOCIAL PARA {}.", 
-      "NÚMERO DE REGISTRO DE REPRESENTAÇÃO": "CORRIGIR O NÚMERO DE REGISTRO DE REPRESENTAÇÃO PARA {}.", 
-      "DATA DE REGISTRO DE REPRESENTAÇÃO": "CORRIGIR A DATA DE REGISTRO DE REPRESENTAÇÃO PARA {}.", 
-      "OPÇÃO MEI": "SOLICITAMOS A CORREÇÃO DA OPÇÃO MEI PARA {}, CONFORME CONSTA NO DOCUMENTO ANEXADO.", 
-      "NÚMERO DO CONTRATO SOCIAL": "CORRIGIR O NÚMERO DO CONTRATO SOCIAL PARA {}.", 
-      "CAPITAL SOCIAL": "CORRIGIR O CAPITAL SOCIAL PARA R$ {}.", 
-      "INSCRIÇÃO ESTADUAL": "CORRIGIR A INSCRIÇÃO ESTADUAL PARA {}.", 
-      "DATA DE REGISTRO NO ÓRGÃO COMPETENTE": "CORRIGIR A DATA DE REGISTRO NO ÓRGÃO COMPETENTE PARA {}." 
+      "TIPO DE DOCUMENTO": "Solicitamos a correção do tipo do documento para... (preencher conforme o fluxo)",
+      "ÓRGÃO EXPEDIDOR": "Solicitamos a correção do órgão expedidor para... (preencher conforme o fluxo)",
+      "UF DO ÓRGÃO EXPEDIDOR": "Solicitamos a correção da UF do órgão expedidor para... (preencher conforme o fluxo)",
+      "NATURALIDADE": "Solicitamos a correção da naturalidade para..., conforme documento anexado.",
+      "NÚMERO DO DOCUMENTO": "Solicitamos a correção do número do documento para... (preencher conforme o fluxo)",
+      "DATA DE EMISSÃO": "Solicitamos a correção da data de emissão para... (preencher conforme o fluxo)",
+      "FICHA CADASTRAL": "Solicitamos ajustes no documento da ficha cadastral pois ... (preencher conforme o fluxo).",
+      "FICHA PEP": "Solicitamos ajustes no documento da ficha cadastral pois ... (preencher conforme o fluxo).",
+      "ESTADO CIVIL": "Solicitamos que seja anexado documento para atualizar o ajuste do estado civil.",
+      "DOCUMENTAÇÃO": "Foram identificadas inconsistências no documento apresentado, o que impossibilita a conclusão da validação. Favor anexar documento válido.",
+      "DATA DE NASCIMENTO": "DATA DE NASCIMENTO ESTÁ INCORRETA, SEGUE PASSO A PASSO: Página inicial Atendimento à Cooperativa CAPES (Cadastro de Pessoas) Informações Cadastrais Alteração de Data de Nascimento, Estado Civil e Nome – CAPES."
     }
   },
   "Fluxos de Endereço": {
-    "TIPO DE ENDEREÇO": "CORRIGIR O TIPO DE ENDEREÇO PARA {}.", 
-    "LOGRADOURO": "CORRIGIR O LOGRADOURO PARA {}.", 
-    "NÚMERO": "CORRIGIR O NÚMERO PARA {}." 
+    "TIPO DE ENDEREÇO": "Solicitamos o ajuste do tipo de endereço para... (preencher conforme o fluxo).",
+    "LOGRADOURO": "Conforme o documento, solicitamos o ajuste do logradouro para... (preencher conforme o fluxo)",
+    "NÚMERO": "Conforme o documento, solicitamos o ajuste para ... (preencher conforme o fluxo)"
   },
   "Fluxos de Relacionamento": {
-    "Pareceres Gerais de Relacionamento": {
-      "TIPO DE RELACIONAMENTO": "O TIPO DE RELACIONAMENTO NÃO CONDIZ COM A DOCUMENTAÇÃO FORNECIDA. FAVOR AJUSTAR.", 
-      "DATA DE INÍCIO DO MANDATO": "A DATA DE INÍCIO DO MANDATO ESTÁ INVÁLIDA OU NÃO CONDIZ COM O DOCUMENTO. FAVOR CORRIGIR PARA {}.", 
-      "DATA DE FIM DO MANDATO": "A DATA DE FIM DO MANDATO ESTÁ INCORRETA OU NÃO É COMPATÍVEL COM O DOCUMENTO. FAVOR CORRIGIR PARA {}.", 
-      "NÚMERO DO REGISTRO": "FAVOR INFORMAR O NÚMERO DO REGISTRO.", 
-      "NÚMERO DO LIVRO": "FAVOR INFORMAR O NÚMERO DO LIVRO.", 
-      "NÚMERO DA FOLHA": "FAVOR INFORMAR O NÚMERO DA FOLHA.", 
-      "NOME DO CARTÓRIO": "FAVOR INFORMAR O NOME DO CARTÓRIO." 
-    },
     "Pareceres de Relacionamento - Pessoa Jurídica": {
-      "PERCENTUAL NO CAPITAL SOCIAL": "O PERCENTUAL INFORMADO NO CAPITAL SOCIAL ESTÁ INCORRETO OU INCONSISTENTE. FAVOR CORRIGIR PARA {}%." 
+      "NÚMERO DE REGISTRO": "Solicitamos a correção do número de registro para..., conforme consta no documento anexado.",
+      "NÚMERO DO LIVRO": "Solicitamos que seja preenchido o número de registro no órgão competente para..., conforme consta no documento anexado.",
+      "PERCENTUAL DO CAPITAL SOCIAL": "Solicitamos a correção do percentual do capital social para..., conforme consta no documento anexado.",
+      "TIPO DE RELACIONAMENTO": "Solicitamos a correção do tipo de relacionamento para..., conforme consta no documento anexado.",
+      "DATA DE INÍCIO DE MANDATO": "Solicitamos a correção da data de início de mandato para..., conforme consta no documento anexado.",
+      "DATA DE FIM DE MANDATO": "Solicitamos a correção da data de fim de mandato para..., conforme consta no documento anexado."
+    },
+    "Pareceres de Relacionamento - Pessoa Física": {
+      "DATA DE INÍCIO DE MANDATO": "Solicitamos a correção da data de início de mandato para..., conforme consta no documento anexado.",
+      "DATA DE FIM DE MANDATO": "Solicitamos a correção da data de fim de mandato para..., conforme consta no documento anexado.",
+      "TIPO DE RELACIONAMENTO": "Solicitamos a correção do tipo de relacionamento para..., conforme consta no documento anexado."
     }
   },
   "Fluxos de Bem": {
     "Pareceres Gerais de Bem": {
-      "TIPO DO BEM": "O TIPO DO BEM NÃO FOI INFORMADO OU ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.", 
-      "VALOR DE AVALIAÇÃO": "O VALOR DE AVALIAÇÃO ESTÁ INCORRETO OU NÃO CONDIZ COM O LAUDO. FAVOR CORRIGIR PARA R$ {}.", 
-      "ÁREA DIVERGENTE": "A ÁREA INFORMADA DIVERGE DA DOCUMENTAÇÃO. FAVOR CORRIGIR PARA {}.", 
-      "DATA DE AVALIAÇÃO": "A DATA DA AVALIAÇÃO NÃO CORRESPONDE À DATA DO LAUDO. FAVOR CORRIGIR PARA {}.", 
-      "VALOR DO BEM": "O VALOR DO BEM INFORMADO NÃO ESTÁ CORRETO. FAVOR CORRIGIR PARA R$ {}. CONFORME ORIENTA O IC 34374", 
-      "DESCRIÇÃO DO BEM": "A DESCRIÇÃO DO BEM NÃO CONDIZ COM O TIPO DE BEM OU ESTÁ INCOMPLETA. FAVOR AJUSTAR.", 
-      "BEM EM PROCESSO DE AQUISIÇÃO": "O IMÓVEL INFORMADO ESTÁ CADASTRADO COMO EM PROCESSO DE AQUISIÇÃO NA PLATAFORMA DE ATENDIMENTO. FAVOR ASSINALAR A FLAG DE BEM EM AQUISIÇÃO NO CADASTRO DO IMÓVEL.", 
-      "BEM NÃO COMPROVADO COMO PATRIMÔNIO": "O BEM INFORMADO NÃO FOI COMPROVADO COMO PATRIMÔNIO. FAVOR ANEXAR DOCUMENTAÇÃO COMPROBATÓRIA.", 
-      "LAUDO DE AVALIAÇÃO": "O LAUDO DE AVALIAÇÃO NÃO É VÁLIDO OU NÃO CORRESPONDE AO BEM INFORMADO. FAVOR ANEXAR LAUDO VÁLIDO.", 
-      "PERCENTUAL DE PROPRIEDADE": "O PERCENTUAL DE PROPRIEDADE ESTÁ INCORRETO. FAVOR AJUSTAR PARA {}%.", 
-      "CADASTRO DE BENS EM CONJUNTO": "OS BENS FORAM INFORMADOS EM CONJUNTO QUANDO DEVERIAM SER CADASTRADOS SEPARADAMENTE. FAVOR REALIZAR CADASTROS INDIVIDUAIS.", 
-      "EXCLUSÃO DE BEM": "POR SE TRATAR DE EXCLUSÃO, O PERCENTUAL DE PROPRIEDADE DEVE SER ZERADO. FAVOR AJUSTAR.", 
-      "EMPREENDIMENTO NÃO É VÁLIDO COMO BEM": "EMPREENDIMENTOS NÃO SÃO ACEITOS COMO BENS PATRIMONIAIS. FAVOR REMOVER O CADASTRO." 
+      "TIPO DO BEM": "Solicitamos a correção do tipo do bem para... (preencher conforme o fluxo)",
+      "EMPREENDIMENTO NÃO É VÁLIDO": "Empreendimentos só serão aceitos em fluxo de produtividade.",
+      "CADASTRO EM CONJUNTO": "Solicitamos que os bens sejam cadastrados separadamente.",
+      "PERCENTUAL DE PROPRIEDADE": "Solicitamos a correção do percentual de propriedade para....(modificar conforme o fluxo).",
+      "BEM EM PROCESSO DE AQUISIÇÃO": "Solicitamos a correção do campo 'processo de aquisição' para..., conforme documento anexado.",
+      "VALOR DO BEM": "Solicitamos a correção do valor do bem para..., conforme laudo de avaliação.",
+      "VALOR DE AVALIAÇÃO": "Solicitamos a correção do valor de avaliação para..., conforme laudo de avaliação.",
+      "DATA DE AVALIAÇÃO": "Solicitamos a correção da data de avaliação para..., conforme documento anexado.",
+      "BEM NÃO COMPROVADO COMO PATRIMÔNIO": "O bem não está comprovado como patrimônio do associado, Solicitamos que seja anexado comprovante de propriedade do bem."
     },
     "Pareceres de Bens Móveis": {
-      "TIPO DO CHASSI": "O TIPO DE CHASSI ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.", 
-      "NÚMERO DO CHASSI": "O NÚMERO DO CHASSI ESTÁ INVÁLIDO OU NÃO FOI REGISTRADO CORRETAMENTE. FAVOR CORRIGIR PARA {}.", 
-      "RENAVAM": "O NÚMERO DO RENAVAM ESTÁ INCORRETO OU NÃO CORRESPONDE AO VEÍCULO. FAVOR CORRIGIR PARA {}.", 
-      "PLACA": "A PLACA DO VEÍCULO ESTÁ INVÁLIDA OU NÃO FOI REGISTRADA CORRETAMENTE. FAVOR CORRIGIR PARA {}.", 
-      "ANO DE FABRICAÇÃO": "O ANO DE FABRICAÇÃO INFORMADO ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.",  
-      "ANO MODELO": "O ANO MODELO NÃO CORRESPONDE AO VEÍCULO REGISTRADO. FAVOR CORRIGIR PARA {}." 
+      "NÚMERO DO CHASSI": "O número do chassi está divergente do documento, solicitamos a correção para...(preencher conforme o fluxo)",
+      "TIPO DO CHASSI": "O tipo do chassi está divergente do documento, solicitamos a correção para...(preencher conforme o fluxo)",
+      "RENAVAM": "O número do Renavam está divergente do documento, solicitamos a correção para...(preencher conforme o fluxo)",
+      "PLACA": "A placa está divergente do documento, solicitamos a correção para...(preencher conforme o fluxo)",
+      "UF": "A UF está divergente, ajustar para .... (preencher conforme o fluxo)",
+      "ANO DE FABRICAÇÃO": "O ano de fabricação está incorreto, solicitamos a correção para... (preencher conforme o fluxo)",
+      "ANO MODELO": "O ano modelo está incorreto, solicitamos a correção para... (preencher conforme o fluxo)",
+      "TIPO COR AUTOMÓVEL": "Solicitamos a correção do tipo cor para ....(preencher conforme o fluxo)"
     },
     "Pareceres de Bens Imóveis": {
-      "ÁREA DIVERGENTE": "A ÁREA DO IMÓVEL INFORMADA DIVERGE DA DOCUMENTAÇÃO. FAVOR CORRIGIR PARA {}.", 
-      "UNIDADE DE MEDIDA": "A UNIDADE DE MEDIDA NÃO ESTÁ COERENTE COM O DOCUMENTO. FAVOR CORRIGIR PARA {}.", 
-      "BEM EM PROCESSO DE AQUISIÇÃO": "O IMÓVEL INFORMADO ESTÁ CADASTRADO COMO EM PROCESSO DE AQUISIÇÃO NA PLATAFORMA DE ATENDIMENTO. FAVOR ASSINALAR A FLAG DE BEM EM AQUISIÇÃO NO CADASTRO DO IMÓVEL.", 
-      "MATRÍCULA": "O NÚMERO DA MATRÍCULA INFORMADO ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}.", 
-      "PERCENTUAL DE PROPRIEDADE": "O PERCENTUAL DE PROPRIEDADE ESTÁ INCORRETO. FAVOR AJUSTAR PARA {}%.", 
-      "FALTA DE INFORMAÇÃO COMPROBATÓRIA": "A INFORMAÇÃO SOLICITADA NÃO FOI INFORMADA NO DOCUMENTO ANEXADO. FAVOR ANEXAR DOCUMENTO QUE CONTENHA ESSA INFORMAÇÃO.", 
-      "VALOR DO BEM": "O VALOR DO IMÓVEL INFORMADO ESTÁ INCORRETO. FAVOR CORRIGIR PARA R$ {}." 
-    },
-    "Pareceres de Bens Agropecuários": {
-      "QUANTIDADE DE SEMOVENTES DIVERGENTE": "A QUANTIDADE DE SEMOVENTES INFORMADA DIVERGE DO COMPROVANTE. FAVOR CORRIGIR PARA {}.", 
-      "PERCENTUAL DE ARRENDAMENTO": "O PERCENTUAL DE ARRENDAMENTO NÃO FOI INFORMADO OU ESTÁ INCORRETO. FAVOR CORRIGIR PARA {}%.", 
-      "DESCRIÇÃO DE SEMOVENTES DIFERENTE DO DOCUMENTO": "A DESCRIÇÃO DO SEMOVENTE DIVERGE DO DOCUMENTO. FAVOR AJUSTAR." 
+      "ÁREA DIVERGENTE": "Solicitamos a correção da área total para..., conforme documento anexado.",
+      "LOGRADOURO": "Conforme o documento, solicitamos o ajuste do logradouro para... (preencher conforme o fluxo)",
+      "NÚMERO": "Conforme o documento, solicitamos o ajuste para ... (preencher conforme o fluxo)",
+      "MUNICÍPIO": "Solicitamos a correção do município para ..., conforme documento anexado."
+    }
+  },
+  "Fluxos de Certidão": {
+    "Pareceres Gerais de Certidão":  {
+      "DATA DE EMISSÃO": "Solicitamos a correção da data de emissão para...(modificar conforme o fluxo).",
+      "NÚMERO DA CERTIDÃO": "Solicitamos a correção do número da certidão para...(modificar conforme o fluxo).",
+      "TIPO DE CERTIDÃO": "Solicitamos a correção do tipo de certidão para ....(modificar conforme o fluxo)."
     }
   },
   "Fluxos de Produtor": {
     "Pareceres Gerais de Produtor": {
-      "CATEGORIA DE PRODUTOR": "A CATEGORIA DO PRODUTOR ESTÁ INCORRETA. FAVOR AJUSTAR PARA {}.", 
-      "CÓDIGO DE INSCRIÇÃO": "SOLICITAMOS A CORREÇÃO DO CÓDIGO DE INSCRIÇÃO PARA {}"
+      "CÓDIGO DE INSCRIÇÃO": "Solicitamos a correção do código de inscrição para ...(modificar conforme o fluxo).",
+      "CATEGORIA DO PRODUTOR": "Solicitamos a correção da categoria do produtor para...(modificar conforme o fluxo).",
+      "APROVAÇÃO RENDAS VIGENTES": "Aprovado conforme as rendas vigentes visto que as rendas pendentes ultrapassaram o prazo de 8h.",
+      "REPROVAÇÃO RENDAS VIGENTES": "De acordo com as rendas vigentes do cadastro o porte do produtor deve ser ajustado para xxxx visto que as rendas pendentes ultrapassaram o prazo de 8h."
     }
   }, 
   "Fluxos da 300":{
