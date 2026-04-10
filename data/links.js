@@ -15,6 +15,29 @@ const linksData = [
         ]
     },
     {
+        category: "Regramento",
+        icon: "album",
+        description: "Links do regramento de cada segmento",
+        items: [
+            {name: "Renda PF", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgChT0I6tbVrT6romTqABUCZAUifqxZoL4tRMXpCaU1HPDI?e=wNsJeo", icon: "Wallet" },
+            {name: "Renda PJ", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgAkqU0L57UETIiaFQjsP6U3AT7XA76o4MezrA9fgkEt7ac?e=bvYreP", icon: "Briefcase" },
+            {name: "Renda AGRO", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgAMviYoI5vSTaJx0jSdqMzHAWfz3LCKRJHL18TlZ99xygk?e=czYpUK", icon: "Sprout" },
+            {name: "Relacionamento PF", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgAVvdvp-12nSbBTUJOQCjmkAS4u6e8FhEPAeEee_x7yuh4?e=QSM3ly", icon: "Contact2" },
+            {name: "Relacionamento PJ", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgACT-IPrcqGRYKD1LKa5lEbAXNshtvdloR_LINLwMD2z3w?e=JEsDgG", icon: "Handshake" },
+            {name: "Recursos Gerais", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgDED5ZvrU-mQ6LqbZYpkymhAXohsy3UpSigObIVQ7U4WAg?e=jK1oMH", icon: "Package" },
+            {name: "Produtor", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgDTXbIoQSuZT6stbpJzjM6mAZ6Uaxp1xQ8mDA0UQCO1UUk?e=8vImCT", icon: "Wheat" },
+            {name: "Produtividade", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgDMv_xCUsInTIG0v5IzHYOiAS4bLhCmwly1tvFSZW7AuRw?e=36qM9Y", icon: "Zap" },
+            {name: "Pessoa PF", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgANWWVb1AY5So2tb2pN1u5qAS1rRYaRkgUTixdwbx-THOY?e=K1reoT", icon: "User" },
+            {name: "Pessoa PJ", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgAjlqoGgY8fQ7bOV4jKOF4oActjJc-AETggHqOogsBKYy0?e=oN1VHr", icon: "Building2" },
+            {name: "Imposto de Renda", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgBPKfiZz5psT421ICPnfcWjARRsuGKgvCdAhqI-IpUEkIM?e=qhtz4Q", icon: "Landmark" },
+            {name: "Endereço", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgDpRR3GJSqFSoyIb3SXMt7jARnEuj8Z0xIHU2tByCY42lA?e=P8DDr9", icon: "Signpost" },
+            {name: "Certidão", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgCZJXDmNvZaRJlgWSnJuJAMAWp0UlNgcel8nKfhkuhvjZA?e=iWzBqj", icon: "Scroll" },
+            {name: "Bem Novo", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgCwJJoVlhqMT7k4-jys_QzIAW_B0_9zpNHZj3Lkw-h-EOo?e=AnuQSu", icon: "Home" },
+            {name: "Assinaturas", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgAiivbQ5yD2R6T0MqU4PyNpAZ_T5MVkwfwCBtFo7pmG1Hc?e=QpHrKb", icon: "Feather" },
+            {name: "Tributação", url: "https://grupometa.sharepoint.com/sites/Sicoob-BPO/_layouts/15/Doc.aspx?sourcedoc={e60964ae-e338-4a4d-b1c0-3d40131ca345}&action=view&wd=target%28TRIBUTA%C3%87%C3%83O.one%7Cf0f5f848-dddc-4dc9-9c9e-eac5823f7d43%2FRegras%7Cbd6e377c-1281-4adf-a0b5-0b9e6d55df34%2F%29&wdorigin=NavigationUrl", icon: "Receipt" },
+        ]
+    },
+    {
         category: "SICOOB / Operacional",
         icon: "landmark",
         description: "Links úteis para análise e validação",
@@ -24,7 +47,7 @@ const linksData = [
             { name: "Validar Assinaturas (ITI)", url: "https://validar.iti.gov.br/", icon: "pen-tool" },
             { name: "Validador de Conformidade", url: "https://pbad.labsec.ufsc.br/verifier-hom/", icon: "file-signature"},
             { name: "Portal NFe (Consulta)", url: "https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=", icon: "file-text" },
-            { name: "Regramento (SharePoint)", url: "https://grupometa-my.sharepoint.com/:o:/r/personal/mauricio_konig_meta_com_br/_layouts/15/Doc.aspx?sourcedoc=%7Bc25ac0fa-50eb-4c80-a819-1cd9d982f327%7D&action=view&wd=target(PESSOA%20PF.one%7Cf33ebd26-b26b-41b2-b37c-6ac8c7f725a2%2FEstado%20Civil%7Cf522c3d7-570e-4335-8871-b5df988b9978%2F)&wdorigin=NavigationUrl", icon: "book-open" }
+            { name: "Regramento (SharePoint)", url: "https://grupometa.sharepoint.com/sites/Sicoob-BPO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FSicoob%2DBPO%2FDocumentos%20Compartilhados%2F01%2E%20Opera%C3%A7%C3%A3o%2F07%2E%20One%20Note&viewid=a3c98474%2D18b8%2D4bc7%2Db0f5%2D99c954f6c693&p=true&ct=1775498000138&or=Teams%2DHL", icon: "book-open" }
         ]
     },
     {
