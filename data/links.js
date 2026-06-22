@@ -33,7 +33,6 @@ const linksData = [
             {name: "Endereço", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgDpRR3GJSqFSoyIb3SXMt7jARnEuj8Z0xIHU2tByCY42lA?e=P8DDr9", icon: "Signpost" },
             {name: "Certidão", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgCZJXDmNvZaRJlgWSnJuJAMAWp0UlNgcel8nKfhkuhvjZA?e=iWzBqj", icon: "Scroll" },
             {name: "Bem Novo", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgCwJJoVlhqMT7k4-jys_QzIAW_B0_9zpNHZj3Lkw-h-EOo?e=AnuQSu", icon: "Home" },
-            {name: "Assinaturas", url: "https://grupometa.sharepoint.com/:o:/s/Sicoob-BPO/IgAiivbQ5yD2R6T0MqU4PyNpAZ_T5MVkwfwCBtFo7pmG1Hc?e=QpHrKb", icon: "Feather" },
             {name: "Tributação", url: "https://grupometa.sharepoint.com/sites/Sicoob-BPO/_layouts/15/Doc.aspx?sourcedoc={e60964ae-e338-4a4d-b1c0-3d40131ca345}&action=view&wd=target%28TRIBUTA%C3%87%C3%83O.one%7Cf0f5f848-dddc-4dc9-9c9e-eac5823f7d43%2FRegras%7Cbd6e377c-1281-4adf-a0b5-0b9e6d55df34%2F%29&wdorigin=NavigationUrl", icon: "Receipt" },
         ]
     },
