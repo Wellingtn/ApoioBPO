@@ -412,8 +412,7 @@
 
                 <div>
                     <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">2. Finalidade de Uso</h3>
-                    <p>O ApoioBPO destina-se exclusivamente ao uso interno e profissional da equipe da Meta Serviços em
-                        Informática S.A., no âmbito dos serviços de BPO prestados ao Banco Cooperativo Sicoob S.A.</p>
+                    <p>O ApoioBPO destina-se exclusivamente ao uso interno e profissional da equipe da Insi, no âmbito dos serviços de BPO prestados ao Banco Cooperativo Sicoob S.A.</p>
                     <p class="mt-2">Principais funcionalidades:</p>
                     <ul class="list-disc list-inside pl-4">
                         <li>Cálculo de renda para pessoas físicas (PF) e jurídicas (PJ);</li>
@@ -453,8 +452,7 @@
                 <div>
                     <h3 class="font-semibold text-base mt-4 mb-2 text-[var(--text-primary)]">6. Suporte e Comunicação de
                         Incidentes</h3>
-                    <p>Dúvidas, falhas ou incidentes devem ser reportados imediatamente pelo canal oficial da Meta
-                        Serviços em Informática S.A. (Microsoft Teams, e-mail corporativo ou ferramenta designada). O
+                    <p>Dúvidas, falhas ou incidentes devem ser reportados imediatamente pelo canal oficial da Insi(Microsoft Teams, e-mail corporativo ou ferramenta designada). O
                         não reporte pode limitar a responsabilidade dos autores.</p>
                 </div>
 
@@ -532,6 +530,7 @@
                 <div id="parecer-module" class="module-content hidden"></div>
                 <div id="contador-module" class="module-content hidden"></div>
                 <div id="juntas-module" class="module-content hidden"></div>
+                <div id="verificador-module" class="module-content hidden"></div>
             </div>
         </main>
 
@@ -585,6 +584,12 @@
                         <i data-lucide="globe" class="icon"></i>
                     </div>
                     <span class="label">Juntas C.</span>
+                </button>
+                <button class="dock-item" data-target="verificador-module" data-title="Verificador de Assinaturas">
+                    <div class="icon-bg" style="background: linear-gradient(135deg, #a855f7, #3b82f6);">
+                        <i data-lucide="file-signature" class="icon"></i>
+                    </div>
+                    <span class="label">Assinaturas</span>
                 </button>
             </div>
         </nav>
@@ -1071,6 +1076,7 @@
                     'parecer-module': initParecerModule,
                     'contador-module': initContadorModule,
                     'juntas-module': initJuntasModule,
+                    'verificador-module': initVerificadorModule,
                 };
                 if (modules[moduleId]) {
                     modules[moduleId](container);
@@ -1809,55 +1815,312 @@
 
                 // --- Aba NFs ---
                 const nfsTab = container.querySelector('#nfs-tab');
+
+                // Mapa de produtos -> tipo de cálculo
+                const nfsProdutosMap = [
+                    { tipo: 'anual_sazonal', label: 'Anual ou Sazonal', produtos: ['Soja','Milho','Trigo','Arroz','Feijão','Algodão','Café','Cana-de-açúcar','Tabaco','Fumo','Cacau','Girassol','Sorgo','Amendoim','Gergelim','Aveia','Centeio','Triticale','Silvicultura','Eucalipto','Pinus'] },
+                    { tipo: 'mensal', label: 'Mensal', produtos: ['Leite bovino','Leite caprino','Ovos','Avicultura','Frango','Suinocultura','Piscicultura','Floricultura','Viveiros','Mudas','Seringueira','Látex','Banana','Mamão','Limão','Maracujá','Morango','Pimentão','Pepino'] },
+                    { tipo: 'diaria', label: 'Diária ou Frequente', produtos: ['Alface','Rúcula','Couve','Repolho','Agrião','Espinafre','Acelga','Tomate','Quiabo','Jiló','Abobrinha','Berinjela','Flores','Ervas','Temperos','Hortaliças','Verduras','Legumes','Frutas'] },
+                    { tipo: 'periodica', label: 'Periódica (mais de um mês)', produtos: ['Pecuária','Bovinos','Confinamento','Búfalos','Ovinocultura','Caprinos','Equinos','Apicultura','Camarão','Uva','Maçã','Pera','Pêssego','Ameixa','Caqui','Abacaxi','Melão','Melancia','Goiaba','Manga','Laranja','Tangerina','Abacate','Coco','Erva-mate'] },
+                ];
+
+                // Lista completa de produtos com tipo associado
+                const todosProdutos = [];
+                nfsProdutosMap.forEach(cat => {
+                    cat.produtos.forEach(p => todosProdutos.push({ nome: p, tipo: cat.tipo, label: cat.label }));
+                });
+
                 nfsTab.innerHTML = `
-                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 content-card p-4">
-                            <h3 class="text-lg font-semibold mb-4">Notas Fiscais</h3>
-                            <div id="nfs-grid" class="grid grid-flow-col grid-rows-10 gap-x-8 gap-y-2 overflow-x-auto custom-scrollbar pb-2"></div>
+                    <div class="space-y-6">
+                        <!-- Busca de produto -->
+                        <div class="max-w-lg mx-auto">
+                            <label class="block text-sm font-semibold mb-2 text-[var(--text-secondary)]">Buscar produto para calcular</label>
+                            <div class="relative">
+                                <input type="text" id="nf-produto-search" autocomplete="off" placeholder="Ex: alface, soja, leite bovino..." class="w-full p-3 pr-10 form-input">
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"></i>
+                                <div id="nf-produto-dropdown" class="absolute z-50 w-full mt-1 content-card border border-[var(--border-color)] rounded-xl shadow-xl overflow-hidden hidden"></div>
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-4">
-                            <div class="content-card p-4 space-y-4">
-                                <h3 class="text-lg font-semibold text-center">Cálculo</h3>
-                                <div class="flex flex-col gap-2">
-                                    <label for="nfs-propriedade" class="text-sm font-medium text-[var(--text-secondary)]">Propriedade (%)</label>
-                                    <input type="text" inputmode="decimal" id="nfs-propriedade" value="100" class="w-full p-3 form-input">
+
+                        <!-- Calculadora (oculta até selecionar produto) -->
+                        <div id="nf-calculadora" class="hidden">
+                            <!-- Badge do produto selecionado -->
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-[var(--text-secondary)]">Produto:</span>
+                                    <span id="nf-produto-badge" class="px-3 py-1 rounded-full text-sm font-semibold bg-[var(--accent-color)]/20 text-[var(--accent-color)] border border-[var(--accent-color)]/30"></span>
+                                    <span id="nf-tipo-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--bg-color)] border border-[var(--border-color)] text-[var(--text-secondary)]"></span>
                                 </div>
-                                <div class="flex flex-col gap-2 text-center">
-                                    <label class="text-sm font-medium text-[var(--text-secondary)]">Renda Anual</label>
-                                    <p id="nfs-renda-anual" class="text-2xl font-bold value">R$ 0,00</p>
-                                </div>
-                                <div class="flex flex-col gap-2 text-center">
-                                    <label class="text-sm font-medium text-[var(--text-secondary)]">Renda Mensal</label>
-                                    <p id="nfs-renda-mensal" class="text-2xl font-bold value">R$ 0,00</p>
+                                <button id="nf-trocar-produto" type="button" class="p-3 form-input min-w-[200px]">Trocar produto</button>
+                            </div>
+
+                            <!-- Calculadora: Anual ou Sazonal -->
+                            <div id="calc-anual_sazonal" class="calc-panel hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="content-card p-5 space-y-4">
+                                        <h3 class="text-base font-semibold">Dados da Safra</h3>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Valor Total da Produção (R$)</label>
+                                            <input type="text" inputmode="decimal" id="as-valor-total" placeholder="0,00" class="w-full p-3 form-input">
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Nº de meses do ciclo/safra</label>
+                                            <input type="number" id="as-meses" placeholder="Ex: 6" min="1" class="w-full p-3 form-input">
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Propriedade (%)</label>
+                                            <input type="text" inputmode="decimal" id="as-propriedade" value="100" class="w-full p-3 form-input">
+                                        </div>
+                                        <button id="as-limpar" type="button" class="w-full p-3 secondary-btn flex items-center justify-center gap-2">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar
+                                        </button>
+                                    </div>
+                                    <div class="content-card p-5 space-y-4 text-center flex flex-col justify-center">
+                                        <p class="text-sm text-[var(--text-secondary)]">Fórmula: Valor Total ÷ Nº Meses × % Propriedade</p>
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Renda Mensal</label>
+                                            <p id="as-renda-mensal" class="text-3xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <button id="nfs-limpar" type="button" class="w-full p-3 secondary-btn flex items-center justify-center gap-2">
-                                <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
-                            </button>
+
+                            <!-- Calculadora: Mensal e Diária (mesma lógica) -->
+                            <div id="calc-mensal" class="calc-panel hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="content-card p-5 space-y-4">
+                                        <h3 class="text-base font-semibold">Notas Fiscais</h3>
+                                        <p class="text-xs text-[var(--text-secondary)]">Informe os valores das notas. Se for um único mês, a soma é a renda mensal. Se forem vários meses, divida pela quantidade de meses informada.</p>
+                                        <div id="mensal-nfs-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1"></div>
+                                        <button id="mensal-add-nf" type="button" class="w-full p-2 secondary-btn flex items-center justify-center gap-2 text-sm">
+                                            <i data-lucide="plus" class="w-4 h-4"></i> Adicionar NF
+                                        </button>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Nº de meses comprovados</label>
+                                            <input type="number" id="mensal-meses" value="1" min="1" class="w-full p-3 form-input">
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Propriedade (%)</label>
+                                            <input type="text" inputmode="decimal" id="mensal-propriedade" value="100" class="w-full p-3 form-input">
+                                        </div>
+                                        <button id="mensal-limpar" type="button" class="w-full p-3 secondary-btn flex items-center justify-center gap-2">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar
+                                        </button>
+                                    </div>
+                                    <div class="content-card p-5 space-y-4 text-center flex flex-col justify-center">
+                                        <p class="text-sm text-[var(--text-secondary)]">Fórmula: Soma das NFs ÷ Nº Meses × % Propriedade</p>
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Soma das NFs</label>
+                                            <p id="mensal-soma" class="text-xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                        <hr class="border-[var(--border-color)]">
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Renda Mensal</label>
+                                            <p id="mensal-renda-mensal" class="text-3xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Calculadora: Diária (reutiliza o mesmo painel "mensal") -->
+                            <div id="calc-diaria" class="calc-panel hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="content-card p-5 space-y-4">
+                                        <h3 class="text-base font-semibold">Notas Fiscais</h3>
+                                        <p class="text-xs text-[var(--text-secondary)]">Informe os valores das notas. Se for um único mês, a soma é a renda mensal. Se forem vários meses, divida pela quantidade de meses informada.</p>
+                                        <div id="diaria-nfs-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1"></div>
+                                        <button id="diaria-add-nf" type="button" class="w-full p-2 secondary-btn flex items-center justify-center gap-2 text-sm">
+                                            <i data-lucide="plus" class="w-4 h-4"></i> Adicionar NF
+                                        </button>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Nº de meses comprovados</label>
+                                            <input type="number" id="diaria-meses" value="1" min="1" class="w-full p-3 form-input">
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Propriedade (%)</label>
+                                            <input type="text" inputmode="decimal" id="diaria-propriedade" value="100" class="w-full p-3 form-input">
+                                        </div>
+                                        <button id="diaria-limpar" type="button" class="w-full p-3 secondary-btn flex items-center justify-center gap-2">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar
+                                        </button>
+                                    </div>
+                                    <div class="content-card p-5 space-y-4 text-center flex flex-col justify-center">
+                                        <p class="text-sm text-[var(--text-secondary)]">Fórmula: Soma das NFs ÷ Nº Meses × % Propriedade</p>
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Soma das NFs</label>
+                                            <p id="diaria-soma" class="text-xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                        <hr class="border-[var(--border-color)]">
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Renda Mensal</label>
+                                            <p id="diaria-renda-mensal" class="text-3xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Calculadora: Periódica -->
+                            <div id="calc-periodica" class="calc-panel hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="content-card p-5 space-y-4">
+                                        <h3 class="text-base font-semibold">Documentos / Notas Fiscais</h3>
+                                        <p class="text-xs text-[var(--text-secondary)]">Some todas as NFs e divida pelo total de meses representados pelos documentos.</p>
+                                        <div id="periodica-nfs-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1"></div>
+                                        <button id="periodica-add-nf" type="button" class="w-full p-2 secondary-btn flex items-center justify-center gap-2 text-sm">
+                                            <i data-lucide="plus" class="w-4 h-4"></i> Adicionar NF
+                                        </button>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Nº de meses representados</label>
+                                            <input type="number" id="periodica-meses" value="1" min="1" class="w-full p-3 form-input">
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="text-sm font-medium text-[var(--text-secondary)]">Propriedade (%)</label>
+                                            <input type="text" inputmode="decimal" id="periodica-propriedade" value="100" class="w-full p-3 form-input">
+                                        </div>
+                                        <button id="periodica-limpar" type="button" class="w-full p-3 secondary-btn flex items-center justify-center gap-2">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i> Limpar
+                                        </button>
+                                    </div>
+                                    <div class="content-card p-5 space-y-4 text-center flex flex-col justify-center">
+                                        <p class="text-sm text-[var(--text-secondary)]">Fórmula: Soma das NFs ÷ Nº Meses × % Propriedade</p>
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Soma das NFs</label>
+                                            <p id="periodica-soma" class="text-xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                        <hr class="border-[var(--border-color)]">
+                                        <div>
+                                            <label class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Renda Mensal</label>
+                                            <p id="periodica-renda-mensal" class="text-3xl font-bold value mt-1">R$ 0,00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>`;
 
-                const nfsGrid = nfsTab.querySelector('#nfs-grid');
-                nfsGrid.innerHTML = Array.from({ length: 50 }, (_, i) => `
-                    <div class="flex items-center gap-2">
-                        <label for="nf-${i + 1}" class="text-sm font-medium w-12">${i + 1}</label>
-                        <input type="text" inputmode="decimal" id="nf-${i + 1}" class="nf-input w-full p-2 form-input" placeholder="0,00">
-                    </div>`).join('');
+                // ── Lógica da busca de produto ────────────────────────────────────────
+                const nfProdutoSearch = nfsTab.querySelector('#nf-produto-search');
+                const nfDropdown = nfsTab.querySelector('#nf-produto-dropdown');
+                const nfCalculadora = nfsTab.querySelector('#nf-calculadora');
 
-                const calcularNFs = () => {
-                    let total = 0;
-                    nfsTab.querySelectorAll('.nf-input').forEach(input => total += parseLocalFloat(input.value));
-                    const propriedade = parseLocalFloat(nfsTab.querySelector('#nfs-propriedade').value) / 100;
-                    const rendaAnual = total * (propriedade > 0 ? propriedade : 1);
-                    nfsTab.querySelector('#nfs-renda-anual').textContent = formatCurrency(rendaAnual);
-                    nfsTab.querySelector('#nfs-renda-mensal').textContent = formatCurrency(rendaAnual / 12);
+                const showCalc = (tipo, nomeDisplay, labelDisplay) => {
+                    nfsTab.querySelectorAll('.calc-panel').forEach(p => p.classList.add('hidden'));
+                    const panel = nfsTab.querySelector(`#calc-${tipo}`);
+                    if (panel) panel.classList.remove('hidden');
+                    nfCalculadora.classList.remove('hidden');
+                    nfsTab.querySelector('#nf-produto-badge').textContent = nomeDisplay;
+                    nfsTab.querySelector('#nf-tipo-badge').textContent = labelDisplay;
+                    nfDropdown.classList.add('hidden');
+                    nfProdutoSearch.value = nomeDisplay;
+                    safeCreateIcons();
                 };
-                nfsTab.addEventListener('input', calcularNFs);
-                nfsTab.querySelector('#nfs-limpar').addEventListener('click', () => {
-                    nfsTab.querySelectorAll('.nf-input').forEach(input => input.value = '');
-                    nfsTab.querySelector('#nfs-propriedade').value = '100';
-                    calcularNFs();
+
+                nfProdutoSearch.addEventListener('input', () => {
+                    const q = removeAccents(nfProdutoSearch.value.toLowerCase().trim());
+                    if (!q) { nfDropdown.classList.add('hidden'); return; }
+                    const matches = todosProdutos.filter(p => removeAccents(p.nome.toLowerCase()).includes(q)).slice(0, 10);
+                    if (matches.length === 0) {
+                        nfDropdown.innerHTML = `<div class="p-3 text-sm text-[var(--text-secondary)]">Nenhum produto encontrado.</div>`;
+                    } else {
+                        nfDropdown.innerHTML = matches.map(p =>
+                            `<button type="button" class="nf-produto-option w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-color)] transition-colors flex items-center justify-between" data-tipo="${p.tipo}" data-label="${p.label}" data-nome="${p.nome}">
+                                <span>${p.nome}</span>
+                                <span class="text-xs text-[var(--text-secondary)]">${p.label}</span>
+                            </button>`
+                        ).join('');
+                    }
+                    nfDropdown.classList.remove('hidden');
                 });
+
+                nfDropdown.addEventListener('click', e => {
+                    const btn = e.target.closest('.nf-produto-option');
+                    if (!btn) return;
+                    showCalc(btn.dataset.tipo, btn.dataset.nome, btn.dataset.label);
+                });
+
+                document.addEventListener('click', e => {
+                    if (!nfsTab.contains(e.target)) nfDropdown.classList.add('hidden');
+                });
+
+                nfsTab.querySelector('#nf-trocar-produto').addEventListener('click', () => {
+                    nfCalculadora.classList.add('hidden');
+                    nfProdutoSearch.value = '';
+                    nfProdutoSearch.focus();
+                });
+
+                // ── Helpers de cálculo NFs dinâmicas ────────────────────────────────
+                const criarLinhaDeNF = (prefixo) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-2';
+                    div.innerHTML = `<input type="text" inputmode="decimal" placeholder="R$ 0,00" class="${prefixo}-nf-value w-full p-2 form-input text-sm">
+                        <button type="button" class="${prefixo}-remove-nf p-2 secondary-btn"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+                    div.querySelector(`.${prefixo}-remove-nf`).addEventListener('click', () => {
+                        div.remove();
+                        calcNFsGenerico(prefixo);
+                        safeCreateIcons();
+                    });
+                    div.querySelector(`.${prefixo}-nf-value`).addEventListener('input', () => calcNFsGenerico(prefixo));
+                    return div;
+                };
+
+                const calcNFsGenerico = (prefixo) => {
+                    const panel = nfsTab.querySelector(`#calc-${prefixo}`);
+                    if (!panel) return;
+                    let soma = 0;
+                    panel.querySelectorAll(`.${prefixo}-nf-value`).forEach(inp => soma += parseLocalFloat(inp.value));
+                    const meses = parseInt(panel.querySelector(`#${prefixo}-meses`).value) || 1;
+                    const prop = parseLocalFloat(panel.querySelector(`#${prefixo}-propriedade`).value) / 100 || 1;
+                    const mensal = (soma / meses) * prop;
+                    panel.querySelector(`#${prefixo}-soma`).textContent = formatCurrency(soma);
+                    panel.querySelector(`#${prefixo}-renda-mensal`).textContent = formatCurrency(mensal);
+                };
+
+                const setupNFsPanel = (prefixo) => {
+                    const panel = nfsTab.querySelector(`#calc-${prefixo}`);
+                    const list = panel.querySelector(`#${prefixo}-nfs-list`);
+                    // Adiciona primeira linha
+                    const primeira = criarLinhaDeNF(prefixo);
+                    list.appendChild(primeira);
+                    safeCreateIcons();
+
+                    panel.querySelector(`#${prefixo}-add-nf`).addEventListener('click', () => {
+                        const nova = criarLinhaDeNF(prefixo);
+                        list.appendChild(nova);
+                        safeCreateIcons();
+                    });
+                    panel.querySelector(`#${prefixo}-meses`).addEventListener('input', () => calcNFsGenerico(prefixo));
+                    panel.querySelector(`#${prefixo}-propriedade`).addEventListener('input', () => calcNFsGenerico(prefixo));
+                    panel.querySelector(`#${prefixo}-limpar`).addEventListener('click', () => {
+                        list.innerHTML = '';
+                        const nova = criarLinhaDeNF(prefixo);
+                        list.appendChild(nova);
+                        panel.querySelector(`#${prefixo}-meses`).value = '1';
+                        panel.querySelector(`#${prefixo}-propriedade`).value = '100';
+                        calcNFsGenerico(prefixo);
+                        safeCreateIcons();
+                    });
+                };
+
+                // ── Setup das calculadoras Anual/Sazonal ────────────────────────────
+                const asPanel = nfsTab.querySelector('#calc-anual_sazonal');
+                const calcAS = () => {
+                    const total = parseLocalFloat(asPanel.querySelector('#as-valor-total').value);
+                    const meses = parseInt(asPanel.querySelector('#as-meses').value) || 1;
+                    const prop = parseLocalFloat(asPanel.querySelector('#as-propriedade').value) / 100 || 1;
+                    asPanel.querySelector('#as-renda-mensal').textContent = formatCurrency((total / meses) * prop);
+                };
+                asPanel.addEventListener('input', calcAS);
+                asPanel.querySelector('#as-limpar').addEventListener('click', () => {
+                    asPanel.querySelector('#as-valor-total').value = '';
+                    asPanel.querySelector('#as-meses').value = '';
+                    asPanel.querySelector('#as-propriedade').value = '100';
+                    calcAS();
+                });
+
+                // ── Setup das calculadoras Mensal / Diária / Periódica ──────────────
+                setupNFsPanel('mensal');
+                setupNFsPanel('diaria');
+                setupNFsPanel('periodica');
 
                 // --- Aba Produtor ---
                 const produtorTab = container.querySelector('#produtor-tab');
@@ -1985,60 +2248,288 @@
             }
 
             function initRegrasModule(container) {
+
+                // ── Dados: Isentos e Não Tributáveis (IRPF) ──────────────────────────
+                const regrasIsentos = (typeof regrasData !== 'undefined') ? regrasData : [];
+
+                // ── Dados: Tributação Exclusiva/Definitiva ────────────────────────────
+                const regrasTributacao = [
+                    { item: '01', ref: '13º Salário', type: ['Outros'], aceito: true },
+                    { item: '02', ref: 'Ganhos de capital na alienação de bens e/ou direitos', type: ['Não é aceito'], aceito: false },
+                    { item: '05', ref: 'Ganhos líquidos em renda variável (bolsa de valores, mercadorias, futuros e assemelhados e fundos de investimento imobiliário)', type: ['Outros', 'Aplicação'], aceito: true },
+                    { item: '06', ref: 'Rendimentos de aplicações financeiras', type: ['Outros', 'Aplicação'], aceito: true, obs: 'Pode ser somado fontes pagadoras diferentes desde que o tipo de renda seja "aplicação ou outros".' },
+                    { item: '07', ref: 'Rendimentos recebidos acumuladamente', type: ['Outros'], aceito: true },
+                    { item: '10', ref: 'Juros sobre capital próprio', type: ['Outros'], aceito: true },
+                    { item: '11', ref: 'Participação nos lucros ou resultados', type: ['Outros'], aceito: true },
+                    { item: '12', ref: 'Aplicações Financeiras e Lucros e Dividendos no Exterior', type: ['Outros', 'Aplicação'], aceito: true },
+                    { item: '13', ref: 'Outros', type: ['Outros'], aceito: true },
+                    { item: '99', ref: 'Outros', type: ['Outros'], aceito: true },
+                ];
+
+                // ── Dados: Notas Fiscais ──────────────────────────────────────────────
+                const regrasNFs = [
+                    {
+                        categoria: 'Anual ou Sazonal',
+                        icon: 'sun',
+                        produtos: ['Soja', 'Milho', 'Trigo', 'Arroz', 'Feijão', 'Algodão', 'Café', 'Cana-de-açúcar', 'Tabaco (Fumo)', 'Cacau', 'Girassol', 'Sorgo', 'Amendoim', 'Gergelim', 'Aveia', 'Centeio', 'Triticale', 'Silvicultura (Eucalipto, Pinus e demais florestas plantadas)'],
+                        regra: 'Quando a nota fiscal representar a produção de uma safra ou ciclo produtivo, o valor total da produção deverá ser convertido em renda mensal. Para isso, divide-se o valor total pelo número de meses representados pelo ciclo produtivo ou safra considerada. O resultado corresponde à renda mensal a ser cadastrada no sistema.',
+                        calculo: 'anual_sazonal'
+                    },
+                    {
+                        categoria: 'Mensal',
+                        icon: 'calendar',
+                        produtos: ['Leite bovino', 'Leite caprino', 'Produção de ovos (avicultura de postura)', 'Avicultura integrada', 'Frango de corte com lotes recorrentes', 'Suinocultura integrada', 'Piscicultura com comercialização contínua', 'Floricultura', 'Viveiros e produção de mudas', 'Seringueira (látex)', 'Banana', 'Mamão', 'Limão', 'Maracujá', 'Morango', 'Pimentão', 'Pepino', 'Outras culturas com colheita contínua e comercialização recorrente'],
+                        regra: 'Quando os documentos representarem um único mês, devem ser somadas todas as notas fiscais do período para obtenção da renda mensal. Caso sejam apresentados documentos de vários meses, deve-se somar o valor total das notas e dividir pela quantidade de meses comprovados, obtendo-se a renda mensal média.',
+                        calculo: 'mensal'
+                    },
+                    {
+                        categoria: 'Diária ou Frequente',
+                        icon: 'repeat',
+                        produtos: ['Hortaliças em geral (alface, rúcula, couve, repolho, agrião, espinafre, acelga)', 'Verduras', 'Legumes (tomate, quiabo, jiló, abobrinha, berinjela)', 'Frutas comercializadas continuamente', 'Flores', 'Ervas', 'Temperos', 'Produção para feiras livres', 'Mercados locais e programas institucionais'],
+                        regra: 'Quando forem apresentadas apenas notas fiscais referentes a um único mês, devem ser somadas todas as vendas realizadas no período para obtenção da renda mensal. Quando forem apresentados documentos de dois ou mais meses, deve-se somar todas as receitas do período e dividir pela quantidade de meses efetivamente comprovados, apurando-se a renda mensal média.',
+                        calculo: 'mensal'
+                    },
+                    {
+                        categoria: 'Periódica (mais de um mês)',
+                        icon: 'clock',
+                        produtos: ['Pecuária de corte, cria, recria e engorda de bovinos', 'Confinamento', 'Bubalinocultura', 'Ovinocultura', 'Caprinocultura de corte', 'Equinocultura', 'Venda de matrizes e reprodutores', 'Apicultura', 'Carcinicultura (camarão)', 'Fruticultura com safras específicas (uva, maçã, pera, pêssego, ameixa, caqui, abacaxi, melão, melancia, goiaba, manga, laranja, tangerina, abacate, coco)', 'Erva-mate', 'Demais atividades cuja comercialização ocorre em ciclos superiores a um mês'],
+                        regra: 'Deve-se somar o valor de todas as notas fiscais ou documentos apresentados e dividir pela quantidade de meses efetivamente representada pela documentação, obtendo-se a renda mensal média da atividade.',
+                        calculo: 'periodica'
+                    }
+                ];
+
+                // ── Monta o HTML principal do módulo ─────────────────────────────────
                 container.innerHTML = `
-                    <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                        <div class="relative flex-grow">
-                             <input type="text" id="regras-search-input" placeholder="Pesquisar por item, ref ou tipo..." class="w-full p-3 pr-10 form-input">
-                             <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"></i>
+                    <div class="flex mb-6 border-b border-[var(--border-color)] flex-shrink-0 overflow-x-auto">
+                        <button class="tab-button py-3 px-5 font-semibold whitespace-nowrap active" data-main-tab="irpf">IRPF</button>
+                        <button class="tab-button py-3 px-5 font-semibold whitespace-nowrap" data-main-tab="nfs">Notas Fiscais</button>
+                    </div>
+
+                    <!-- ABA IRPF -->
+                    <div id="regras-irpf-panel">
+                        <!-- Sub-abas IRPF -->
+                        <div class="flex mb-5 border-b border-[var(--border-color)] overflow-x-auto">
+                            <button class="tab-button py-2 px-4 text-sm font-semibold whitespace-nowrap active" data-irpf-tab="isentos">Isentos e Não Tributáveis</button>
+                            <button class="tab-button py-2 px-4 text-sm font-semibold whitespace-nowrap" data-irpf-tab="tributacao">Tributação Exclusiva/Definitiva</button>
+                        </div>
+
+                        <!-- Barra de busca + filtro IRPF (compartilhada pelas sub-abas) -->
+                        <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                            <div class="relative flex-grow">
+                                <input type="text" id="irpf-search-input" placeholder="Pesquisar por item, referência ou tipo..." class="w-full p-3 pr-10 form-input">
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"></i>
+                            </div>
+                            <select id="irpf-filter-aceito" class="p-3 form-input min-w-[160px]">
+                                <option value="">Todos</option>
+                                <option value="aceito">Aceitos</option>
+                                <option value="nao_aceito">Não Aceitos</option>
+                            </select>
+                        </div>
+
+                        <!-- Sub-aba: Isentos e Não Tributáveis -->
+                        <div id="irpf-isentos-panel">
+                            <div class="overflow-auto custom-scrollbar border border-[var(--border-color)] rounded-lg">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-[var(--bg-color)] sticky top-0">
+                                        <tr class="border-b border-[var(--border-color)]">
+                                            <th class="p-3 font-semibold w-16">Item</th>
+                                            <th class="p-3 font-semibold">Referência</th>
+                                            <th class="p-3 font-semibold w-52">Tipo de Renda</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="isentos-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Sub-aba: Tributação Exclusiva/Definitiva -->
+                        <div id="irpf-tributacao-panel" class="hidden">
+                            <div class="overflow-auto custom-scrollbar border border-[var(--border-color)] rounded-lg">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-[var(--bg-color)] sticky top-0">
+                                        <tr class="border-b border-[var(--border-color)]">
+                                            <th class="p-3 font-semibold w-16">Item</th>
+                                            <th class="p-3 font-semibold">Referência</th>
+                                            <th class="p-3 font-semibold w-52">Tipo de Renda</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tributacao-tbody"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="overflow-auto custom-scrollbar border border-[var(--border-color)] rounded-lg">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-[var(--bg-color)] sticky top-0">
-                                <tr class="border-b border-[var(--border-color)]">
-                                    <th class="p-3 font-semibold">Item</th>
-                                    <th class="p-3 font-semibold">Referência</th>
-                                    <th class="p-3 font-semibold">Tipo de Renda Aceito</th>
-                                </tr>
-                            </thead>
-                            <tbody id="regras-irpf-tbody"></tbody>
-                        </table>
+
+                    <!-- ABA NOTAS FISCAIS -->
+                    <div id="regras-nfs-panel" class="hidden">
+                        <!-- Barra de busca + filtro NFs -->
+                        <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                            <div class="relative flex-grow">
+                                <input type="text" id="nfs-regras-search-input" placeholder="Pesquisar por produto ou categoria..." class="w-full p-3 pr-10 form-input">
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"></i>
+                            </div>
+                            <select id="nfs-filter-categoria" class="p-3 form-input min-w-[200px]">
+                                <option value="">Todas as categorias</option>
+                                <option value="Anual ou Sazonal">Anual ou Sazonal</option>
+                                <option value="Mensal">Mensal</option>
+                                <option value="Diária ou Frequente">Diária ou Frequente</option>
+                                <option value="Periódica (mais de um mês)">Periódica (mais de um mês)</option>
+                            </select>
+                        </div>
+                        <div id="nfs-regras-list" class="space-y-4"></div>
                     </div>`;
 
-                const tbody = container.querySelector('#regras-irpf-tbody');
-                const searchInput = container.querySelector('#regras-search-input');
+                // ── Lógica das abas principais ────────────────────────────────────────
+                const mainTabBtns = container.querySelectorAll('[data-main-tab]');
+                const irpfPanel = container.querySelector('#regras-irpf-panel');
+                const nfsPanelEl = container.querySelector('#regras-nfs-panel');
 
-                const renderTable = (filter = '') => {
-                    if (typeof regrasData === 'undefined' || !tbody) return;
+                mainTabBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        mainTabBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const target = btn.dataset.mainTab;
+                        irpfPanel.classList.toggle('hidden', target !== 'irpf');
+                        nfsPanelEl.classList.toggle('hidden', target !== 'nfs');
+                        safeCreateIcons();
+                    });
+                });
 
-                    tbody.innerHTML = '';
-                    const lowerCaseFilter = removeAccents(filter.toLowerCase());
+                // ── Lógica das sub-abas IRPF ─────────────────────────────────────────
+                const irpfTabBtns = container.querySelectorAll('[data-irpf-tab]');
+                const isentosPanel = container.querySelector('#irpf-isentos-panel');
+                const tributacaoPanel = container.querySelector('#irpf-tributacao-panel');
 
-                    const filteredData = regrasData.filter(regra => {
-                        return removeAccents(regra.item.toLowerCase()).includes(lowerCaseFilter) ||
-                            removeAccents(regra.ref.toLowerCase()).includes(lowerCaseFilter) ||
-                            regra.type.some(t => removeAccents(t.toLowerCase()).includes(lowerCaseFilter));
+                irpfTabBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        irpfTabBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const target = btn.dataset.irpfTab;
+                        isentosPanel.classList.toggle('hidden', target !== 'isentos');
+                        tributacaoPanel.classList.toggle('hidden', target !== 'tributacao');
+                        renderCurrentIrpfTab();
+                    });
+                });
+
+                // ── Render de tabela genérica ─────────────────────────────────────────
+                const renderIrpfTable = (tbodyEl, data, filter, filterAceito) => {
+                    tbodyEl.innerHTML = '';
+                    const lowerFilter = removeAccents(filter.toLowerCase());
+
+                    const filtered = data.filter(regra => {
+                        const matchText = removeAccents(regra.item.toLowerCase()).includes(lowerFilter) ||
+                            removeAccents(regra.ref.toLowerCase()).includes(lowerFilter) ||
+                            regra.type.some(t => removeAccents(t.toLowerCase()).includes(lowerFilter));
+                        const naoAceito = regra.type.includes('Não é aceito');
+                        if (filterAceito === 'aceito') return matchText && !naoAceito;
+                        if (filterAceito === 'nao_aceito') return matchText && naoAceito;
+                        return matchText;
                     });
 
-                    if (filteredData.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-[var(--text-secondary)]">Nenhum resultado encontrado.</td></tr>`;
+                    if (filtered.length === 0) {
+                        tbodyEl.innerHTML = `<tr><td colspan="3" class="text-center p-4 text-[var(--text-secondary)]">Nenhum resultado encontrado.</td></tr>`;
                         return;
                     }
 
-                    filteredData.forEach(regra => {
+                    filtered.forEach(regra => {
+                        const naoAceito = regra.type.includes('Não é aceito');
                         const row = document.createElement('tr');
                         row.className = 'border-b border-[var(--border-color)] last:border-b-0';
                         row.innerHTML = `
                             <td class="p-3 font-semibold">${regra.item}</td>
-                            <td class="p-3">${regra.ref}</td>
-                            <td class="p-3">${regra.type.join(', ')}</td>
-                        `;
-                        tbody.appendChild(row);
+                            <td class="p-3">
+                                ${regra.ref}
+                                ${regra.obs ? `<p class="text-xs mt-1 text-[var(--text-secondary)] italic">${regra.obs}</p>` : ''}
+                            </td>
+                            <td class="p-3">
+                                ${naoAceito
+                                    ? `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-red-900/30 text-red-400"><i data-lucide="x-circle" class="w-3 h-3"></i> Não aceito</span>`
+                                    : regra.type.map(t => `<span class="inline-block mr-1 mb-1 px-2 py-0.5 rounded-full text-xs bg-[var(--bg-color)] border border-[var(--border-color)]">${t}</span>`).join('')
+                                }
+                            </td>`;
+                        tbodyEl.appendChild(row);
                     });
+                    safeCreateIcons();
                 };
 
-                searchInput.addEventListener('input', () => renderTable(searchInput.value));
-                renderTable(); // Render inicial
+                const isentosTbody = container.querySelector('#isentos-tbody');
+                const tributacaoTbody = container.querySelector('#tributacao-tbody');
+                const irpfSearch = container.querySelector('#irpf-search-input');
+                const irpfFilterAceito = container.querySelector('#irpf-filter-aceito');
+
+                const renderCurrentIrpfTab = () => {
+                    const filter = irpfSearch.value;
+                    const filterAceito = irpfFilterAceito.value;
+                    const isIsentos = !isentosPanel.classList.contains('hidden');
+                    if (isIsentos) {
+                        renderIrpfTable(isentosTbody, regrasIsentos, filter, filterAceito);
+                    } else {
+                        renderIrpfTable(tributacaoTbody, regrasTributacao, filter, filterAceito);
+                    }
+                };
+
+                irpfSearch.addEventListener('input', renderCurrentIrpfTab);
+                irpfFilterAceito.addEventListener('change', renderCurrentIrpfTab);
+                renderCurrentIrpfTab(); // render inicial
+
+                // ── Render das regras de Notas Fiscais ────────────────────────────────
+                const nfsSearchInput = container.querySelector('#nfs-regras-search-input');
+                const nfsFilterCategoria = container.querySelector('#nfs-filter-categoria');
+                const nfsListEl = container.querySelector('#nfs-regras-list');
+
+                const renderNFsRegras = () => {
+                    const filter = removeAccents(nfsSearchInput.value.toLowerCase());
+                    const filterCat = nfsFilterCategoria.value;
+
+                    const filtered = regrasNFs.filter(cat => {
+                        const catMatch = !filterCat || cat.categoria === filterCat;
+                        if (!catMatch) return false;
+                        if (!filter) return true;
+                        return removeAccents(cat.categoria.toLowerCase()).includes(filter) ||
+                            cat.produtos.some(p => removeAccents(p.toLowerCase()).includes(filter)) ||
+                            removeAccents(cat.regra.toLowerCase()).includes(filter);
+                    }).map(cat => {
+                        if (!filter) return { ...cat, produtosFiltrados: cat.produtos };
+                        const produtosFiltrados = cat.produtos.filter(p => removeAccents(p.toLowerCase()).includes(filter));
+                        return { ...cat, produtosFiltrados: produtosFiltrados.length > 0 ? produtosFiltrados : cat.produtos };
+                    });
+
+                    nfsListEl.innerHTML = '';
+
+                    if (filtered.length === 0) {
+                        nfsListEl.innerHTML = `<div class="text-center p-8 text-[var(--text-secondary)]">Nenhuma categoria encontrada.</div>`;
+                        return;
+                    }
+
+                    filtered.forEach(cat => {
+                        const card = document.createElement('div');
+                        card.className = 'content-card p-5 rounded-xl border border-[var(--border-color)]';
+                        card.innerHTML = `
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="p-2 rounded-lg bg-[var(--bg-color)] text-[var(--accent-color)]">
+                                    <i data-lucide="${cat.icon}" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-base font-bold text-[var(--accent-color)]">${cat.categoria}</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Produtos</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        ${cat.produtosFiltrados.map(p => `<span class="px-2 py-0.5 rounded-full text-xs bg-[var(--bg-color)] border border-[var(--border-color)]">${p}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)] mb-2">Regra de Cálculo</p>
+                                    <p class="text-sm leading-relaxed text-[var(--text-color)]">${cat.regra}</p>
+                                </div>
+                            </div>`;
+                        nfsListEl.appendChild(card);
+                    });
+                    safeCreateIcons();
+                };
+
+                nfsSearchInput.addEventListener('input', renderNFsRegras);
+                nfsFilterCategoria.addEventListener('change', renderNFsRegras);
+                renderNFsRegras();
             }
 
             function initLinksModule(container) {
@@ -2381,6 +2872,337 @@
 
                 searchInput.addEventListener('input', () => renderTable(searchInput.value));
                 renderTable();
+            }
+            
+            function initVerificadorModule(container) {
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto space-y-6 animate-fade-in">
+                        <!-- Área de Upload (Dropzone) -->
+                        <div class="p-6 content-card text-center border-2 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--accent-color)] transition-colors cursor-pointer relative" id="dropzone">
+                            <input type="file" id="signature-file-input" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <div class="space-y-2 pointer-events-none flex flex-col items-center justify-center py-4">
+                                <div class="p-3 rounded-full bg-[var(--bg-color)] text-[var(--text-secondary)]">
+                                    <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+                                </div>
+                                <p class="font-semibold text-sm" id="file-status-text">Clique ou arraste o arquivo assinado aqui</p>
+                                <p class="text-[10px] text-[var(--text-secondary)]">Formatos aceitos: PDF, P7S, XML</p>
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="flex gap-4">
+                            <button id="btn-verificar-assinatura" type="button" class="w-full p-3 primary-btn flex items-center justify-center gap-2" disabled>
+                                <i data-lucide="shield-check" class="w-5 h-5"></i> Verificar Assinatura
+                            </button>
+                            <button id="btn-limpar-verificador" type="button" class="w-1/3 p-3 secondary-btn flex items-center justify-center gap-2">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i> Limpar
+                            </button>
+                        </div>
+
+                        <!-- Painel de Carregamento (Spinner) -->
+                        <div id="verificador-loading" class="hidden text-center p-6 content-card space-y-2">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[var(--accent-color)] border-t-transparent"></div>
+                            <p class="text-sm font-medium text-[var(--text-secondary)]">Consultando API do LabSEC...</p>
+                        </div>
+
+                        <!-- Resultados da Validação -->
+                        <div id="verificador-resultado" class="hidden p-5 content-card space-y-4 animate-fade-in">
+                            <div class="flex items-center gap-3 border-b border-[var(--border-color)] pb-3">
+                                <div id="resultado-status-icon" class="p-2 rounded-xl"></div>
+                                <div>
+                                    <h4 class="font-bold text-lg">Resultado Global</h4>
+                                    <p id="resultado-status-texto" class="font-semibold text-sm uppercase tracking-wider"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 text-sm bg-[var(--bg-color)] p-3 rounded-lg border border-[var(--border-color)]">
+                                <div class="text-[var(--text-secondary)]">Data de Verificação:</div>
+                                <div id="res-data-verificacao" class="font-medium text-right truncate"></div>
+                                <div class="text-[var(--text-secondary)]">Tipo de Arquivo:</div>
+                                <div id="res-tipo-arquivo" class="font-medium text-right"></div>
+                            </div>
+
+                            <div id="resultado-detalhes-lista" class="space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar pr-1 mt-4"></div>
+                        </div>
+                    </div>
+                `;
+
+                safeCreateIcons();
+
+                const fileInput = container.querySelector('#signature-file-input');
+                const dropzone = container.querySelector('#dropzone');
+                const fileStatusText = container.querySelector('#file-status-text');
+                const btnVerificar = container.querySelector('#btn-verificar-assinatura');
+                const btnLimpar = container.querySelector('#btn-limpar-verificador');
+                const loadingPanel = container.querySelector('#verificador-loading');
+                const resultPanel = container.querySelector('#verificador-resultado');
+
+                const statusIconEl = container.querySelector('#resultado-status-icon');
+                const statusTextEl = container.querySelector('#resultado-status-texto');
+                const detalhesLista = container.querySelector('#resultado-detalhes-lista');
+                const dataVerificacaoEl = container.querySelector('#res-data-verificacao');
+                const tipoArquivoEl = container.querySelector('#res-tipo-arquivo');
+
+                let arquivoSelecionado = null;
+
+                // Gerenciamento do arquivo selecionado
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        arquivoSelecionado = file;
+                        fileStatusText.textContent = `Arquivo pronto: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+                        dropzone.classList.add('border-[var(--accent-color)]');
+                        btnVerificar.disabled = false;
+                    }
+                });
+
+                // Evento de envio para a API
+                btnVerificar.addEventListener('click', async () => {
+                    if (!arquivoSelecionado) return;
+
+                    // Reset visual e exibe loading
+                    resultPanel.classList.add('hidden');
+                    loadingPanel.classList.remove('hidden');
+                    btnVerificar.disabled = true;
+
+                    // Constrói o FormData exigido pelo endpoint /report da API
+                    const formData = new FormData();
+                    formData.append('signature_files[]', arquivoSelecionado); 
+                    formData.append('report_type', 'json');
+
+                    try {
+                        // Chamada para o servidor de homologação fornecido na documentação técnica
+                        const response = await fetch('https://pbad.labsec.ufsc.br/verifier-hom/report', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) throw new Error('Falha na comunicação com o servidor do Verificador.');
+
+                        const data = await response.json();
+
+                        // O OpenAPI especifica que o retorno principal é em data.reports (array)
+                        const report = data?.reports?.[0] || {};
+                        const signatures = report?.signatures?.signature || [];
+                        const firstSig = Array.isArray(signatures)
+                            ? signatures[0]
+                            : signatures;
+
+                        // Envia tanto o resultado da validação quanto o relatório inteiro
+                        exibirResultado({
+                            ...(firstSig?.validationResult || {}),
+                            report,
+                            raw: data
+                        });
+
+                    } catch (error) {
+                        console.error(error);
+                        alert('Erro ao validar assinatura: ' + error.message);
+                    } finally {
+                        loadingPanel.classList.add('hidden');
+                        btnVerificar.disabled = false;
+                    }
+                });
+
+                // Função interna para tratar e colorir os retornos da API baseados na OpenAPI fornecida
+                function exibirResultado(res) {
+                    detalhesLista.innerHTML = '';
+                    const report = res.report || {};
+                    const validation = res.result ? res : (report.signatures?.signature?.[0]?.validationResult || {});
+
+                    // Preenche campos de sumário
+                    dataVerificacaoEl.textContent = report.date?.verificationDate || 'N/D';
+                    tipoArquivoEl.textContent = report.initialReport?.fileType || 'N/D';
+
+                    // Resultado global informado pela API (Pode ser Aprovado, Reprovado, Indeterminado)
+                    const generalStatus = (report.generalStatus || '').trim().toLowerCase();
+
+                    let status;
+                    switch (generalStatus) {
+                        case 'aprovado':
+                            status = 'SUCCESS';
+                            break;
+                        case 'reprovado':
+                            status = 'TOTAL_FAILURE';
+                            break;
+                        case 'indeterminado':
+                        case 'incompleto':
+                            status = 'INDETERMINATE';
+                            break;
+                        default:
+                            // Fallback para fallback
+                            status = validation.result || 'INDETERMINATE';
+                            break;
+                    }
+                    
+                    // Estilização baseada no status global da validação
+                    if (status === 'SUCCESS') {
+                        statusIconEl.className = 'p-2 rounded-xl bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400';
+                        statusIconEl.innerHTML = '<i data-lucide="check-circle" class="w-6 h-6"></i>';
+                        statusTextEl.textContent = 'Assinatura Aprovada';
+                        statusTextEl.className = 'font-semibold text-sm text-green-500 uppercase tracking-wider';
+                    } else if (status === 'TOTAL_FAILURE') {
+                        statusIconEl.className = 'p-2 rounded-xl bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400';
+                        statusIconEl.innerHTML = '<i data-lucide="alert-octagon" class="w-6 h-6"></i>';
+                        statusTextEl.textContent = 'Assinatura Reprovada';
+                        statusTextEl.className = 'font-semibold text-sm text-red-500 uppercase tracking-wider';
+                    } else {
+                        statusIconEl.className = 'p-2 rounded-xl bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400';
+                        statusIconEl.innerHTML = '<i data-lucide="help-circle" class="w-6 h-6"></i>';
+                        statusTextEl.textContent = `Status: ${report.generalStatus || 'Indeterminado'}`;
+                        statusTextEl.className = 'font-semibold text-sm text-yellow-500 uppercase tracking-wider';
+                    }
+
+                    // Listagem dos sub-motivos/razões retornados no JSON da API
+                    const reasons = validation.reasons || [];
+
+                    if (reasons.length > 0) {
+                        reasons.forEach(item => {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'p-3 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-xl flex flex-col gap-1 text-xs';
+                            
+                            let badgeColor = 'text-gray-400 bg-gray-100 dark:bg-gray-800';
+                            if (item.resultETSI === 'VALID') badgeColor = 'text-green-500 bg-green-100/50 dark:bg-green-950/40';
+                            if (item.resultETSI === 'INVALID') badgeColor = 'text-red-500 bg-red-100/50 dark:bg-red-950/40';
+                            if (item.resultETSI === 'INDETERMINATE') badgeColor = 'text-yellow-500 bg-yellow-100/50 dark:bg-yellow-950/40';
+
+                            itemDiv.innerHTML = `
+                                <div class="flex justify-between items-center font-semibold">
+                                    <span>${item.reasonName || item.reasonType}</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${item.resultETSI || item.result}</span>
+                                </div>
+                                ${item.message ? `<p class="text-[var(--text-secondary)] mt-1">${item.message}</p>` : ''}
+                            `;
+                            detalhesLista.appendChild(itemDiv);
+                        });
+                    } else {
+                        let html = '';
+
+                        if (report.initialReport?.errorMessages?.errorMessage) {
+                            html += `
+                                <div class="p-3 bg-red-100/50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-xs">
+                                    <strong>Erro:</strong> ${report.initialReport.errorMessages.errorMessage}
+                                </div>
+                            `;
+                        } else if (report.initialReport?.errorMessages?.errorMessage) {
+                            // Exibe apenas se houver uma mensagem real de erro
+                            detalhesLista.innerHTML += `
+                                <div class="p-3 bg-red-100/50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-xs mb-4">
+                                    <strong>Erro:</strong> ${report.initialReport.errorMessages.errorMessage}
+                                </div>
+                            `;
+                        }
+                    }
+
+                    if (report.signatures?.signature) {
+                        const signatures = Array.isArray(report.signatures.signature)
+                            ? report.signatures.signature
+                            : [report.signatures.signature];
+
+                        const tabela = document.createElement("div");
+
+                        tabela.className =
+                            "mt-4 border border-[var(--border-color)] rounded-xl overflow-hidden";
+
+                        let html = `
+                            <h3 class="font-semibold p-3 border-b border-[var(--border-color)] bg-[var(--bg-color)]">
+                                Assinaturas Encontradas (${report.initialReport?.qtdSignatures || signatures.length})
+                            </h3>
+
+                            <table class="w-full text-sm">
+                                <thead class="bg-[var(--bg-color)] opacity-80">
+                                    <tr class="border-b border-[var(--border-color)]">
+                                        <th class="text-left p-3">Nome</th>
+                                        <th class="text-left p-3">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        signatures.forEach(sig => {
+                            // Tenta localizar o nome do assinante em diferentes campos segundo a documentação
+                            let nome =
+                                sig.certification?.signer?.subjectName ||
+                                sig.certification?.signer?.certificates?.certificate?.[0]?.subjectName ||
+                                sig.attributes?.requiredAttributes?.requiredAttribute
+                                    ?.find?.(a => a.name === "SignatureDictionary")
+                                    ?.value?.Name ||
+                                "Não identificado";
+
+                            // Se vier no formato "CN=NOME:CPF,...", extrai apenas o nome principal
+                            const match = nome.match(/CN=([^,:]+)/i);
+                            if (match) {
+                                nome = match[1].trim();
+                            }
+                            
+                            const status = sig.validationResult?.result || "INDETERMINATE";
+
+                            let badge = `
+                                <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400 text-xs font-semibold">
+                                    INDETERMINADO
+                                </span>
+                            `;
+
+                            if (status === "SUCCESS") {
+                                badge = `
+                                    <span class="px-2 py-1 rounded bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 text-xs font-semibold">
+                                        APROVADO
+                                    </span>
+                                `;
+                            } else if (status === "TOTAL_FAILURE") {
+                                badge = `
+                                    <span class="px-2 py-1 rounded bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 text-xs font-semibold">
+                                        REPROVADO
+                                    </span>
+                                `;
+                            }
+
+                            html += `
+                                <tr class="border-b border-[var(--border-color)] last:border-0 hover:bg-[var(--bg-color)]/50 transition-colors">
+                                    <td class="p-3 font-medium">${nome}</td>
+                                    <td class="p-3">${badge}</td>
+                                </tr>
+                            `;
+                        });
+
+                        html += `
+                                </tbody>
+                            </table>
+                        `;
+
+                        tabela.innerHTML = html;
+                        detalhesLista.appendChild(tabela);
+                    }
+
+                    if (report) {
+                        const extra = document.createElement('details');
+                        extra.className = 'mt-4 border border-[var(--border-color)] rounded-xl p-3 bg-[var(--bg-color)]';
+
+                        extra.innerHTML = `
+                            <summary class="cursor-pointer font-semibold text-sm text-[var(--accent-color)] outline-none select-none">
+                                Ver payload JSON bruto
+                            </summary>
+                            <pre class="mt-3 p-3 text-xs overflow-auto bg-black/5 dark:bg-black/20 rounded-lg max-h-64 custom-scrollbar">
+${JSON.stringify(res.raw, null, 2)}
+                            </pre>
+                            `;
+                        detalhesLista.appendChild(extra);
+                    }
+
+                    resultPanel.classList.remove('hidden');
+                    safeCreateIcons();
+                }
+
+                // Botão Limpar
+                btnLimpar.addEventListener('click', () => {
+                    arquivoSelecionado = null;
+                    fileInput.value = '';
+                    fileStatusText.textContent = 'Clique ou arraste o arquivo assinado aqui';
+                    dropzone.classList.remove('border-[var(--accent-color)]');
+                    btnVerificar.disabled = true;
+                    resultPanel.classList.add('hidden');
+                    loadingPanel.classList.add('hidden');
+                });
             }
 
             function initContadorModule(container) {

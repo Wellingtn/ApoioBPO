@@ -1,0 +1,2291 @@
+openapi: 3.0.3
+
+info:
+  title: Verificador de Conformidade ICP-Brasil
+  version: 2.29
+
+externalDocs:
+  url: 'https://pbad.labsec.ufsc.br/releases/codigos-de-referencia'
+
+servers:
+  - url: https://pbad.labsec.ufsc.br/verifier-hom
+    description: Servidor de homologação do LabSEC/UFSC
+
+tags:
+  - name: ConfigServlet
+    description: Mostra as configurações iniciais do verificador de conformidade (Somente Localhost)
+  - name: ReportServlet
+    description: Realiza verificação de assinaturas digitais em arquivos
+
+paths:
+  /config:
+    put:
+      x-internal: true
+      tags:
+        - ConfigServlet
+      summary: Retorna um json com as configurações do verificador de conformidade
+      operationId: configPost
+      description: Retorna as configurações do verificador, para a página inicial poder fazer suas configurações default
+      responses:
+        200:
+          description: Retorna as configurações do verificador de conformidade
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/configReport'
+  /report:
+    post:
+      tags:
+        - ReportServlet
+      summary: Retorna o relatório de verificação de assinaturas
+      operationId: reportPost
+      description: Assinaturas anexadas e destacadas não são permitidas na mesma requisição.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                verify_incremental_updates:
+                  required: false
+                  description: Se deve ser checado atualizações incrementais para arquivos PDF
+                  type: boolean
+                  enum: [ "true", "false" ]
+                  default: "false"
+                use_fallback_incremental_updates:
+                    required: false
+                    description: Se deve ser usado o o fallback para verificação de atualizações incrementais em arquivos PDF, senão utiliza o método padrão.
+                    type: boolean
+                    enum: [ "true", "false" ]
+                    default: "false"
+                extended_report:
+                  required: false
+                  description: Se o relatório deve ser estendido (fazendo a verificação de todos os atributos) ou não (checando apenas caminho de certificação, cifra assimétrica e hash do arquivo)
+                  type: boolean
+                  enum: [ "true", "false" ]
+                  default: "true"
+                show_payload_json:
+                  required: false
+                  description: Se o relatório deve conter o payload da assinatura JSON
+                  type: boolean
+                  enum: [ "true", "false" ]
+                  default: "true"
+                report_type:
+                  required: false
+                  description: Formato desejado do relatório de saída.
+                  type: string
+                  enum: [ "pdf", "xml", "json", "html" ]
+                  default: json
+                emit_receipt:
+                  required: false
+                  description: Se deve ser emitido um recibo da verificação
+                  type: boolean
+                  enum: [ "true", "false" ]
+                  default: "false"
+                signature_files[]:
+                  required: true
+                  description: Array de arquivos assinados
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                detached_files[]:
+                  required: false
+                  description: Array de arquivos destacados, respectivamente correspondentes às assinaturas em `signature_files[]`.
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                        format: binary
+                      - type: object
+                        properties:
+                          algorithm:
+                            type: string
+                            description: Algoritmo de resumo criptográfico
+                          hash:
+                            type: string
+                            description: Valor do hash em formato hexadecimal
+                  uniqueItems: true
+                receipt_files[]:
+                  required: false
+                  description: Array de arquivos de recibo assinados, respectivamente correspondentes às assinaturas
+                    em `signature_files[]`.
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                verification_packages[]:
+                  required: false
+                  description: Array de pacotes de verificação exportados em JSON ou em XML (XAIP)
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                return_artifacts:
+                  required: false
+                  description: Quando habilitado, serão retornados todos os artefatos utilizados durante a verificação do documento fornecido. Estes artefatos incluem certificados, CRLs, OCSPs, referência de tempo, entre outros. De posse destes artefatos, é possível reproduzir a verificação do documento, sendo útil para fins de testes. O pacote de verificação pode ser baixado tanto em JSON (estrutura em array com uma entrada por arquivo verificado) quanto em XML no formato XAIP (pacote ZIP com um XML por arquivo verificado). Cada elemento destes conjuntos, por sua vez, contém pares chave-valor com informações relevantes e artefatos utilizados na verificação.O pacote é disponibilizado para download apenas para relatórios gerados em formato 'HTML', sendo também anexado ao JSON do relatório caso este esteja no formato 'JSON'.
+                  type: boolean
+                extensions_profile:
+                  required: false
+                  description: Visibilidade das informações do assinante
+                  type: string
+                  enum: [ "default", "visible", "masked", "invisible" ]
+                  default: "default"
+                profile_verification:
+                  required: false
+                  description: Se deve ser verificado o perfil da assinatura
+                  type: boolean
+                  enum: [ "true", "false" ]
+                  default: "false"
+                signature_extension:
+                  required: false
+                  description: Se deve o verificador deve subir o nível do perfil da assinatura. A operação de subida de nível é feita apenas se profileVerification for true.
+                  type: string
+                  enum: [ "T", "LT", "LTA" ]
+                tsa_info:
+                  required: false
+                  $ref: '#/components/schemas/TsaInfo'
+                time_reference_type:
+                  required: false
+                  description: Tipo de referência de tempo a ser utilizada na verificação. Quando "current", utiliza a data/hora atual. Quando "custom", utiliza a data/hora informada em `time_reference`.
+                  type: string
+                  enum: ["current", "custom"]
+                  default: "current"
+                time_reference:
+                  required: false
+                  description: Data e hora customizadas para referência de tempo na verificação, no formato ISO 8601 (ex. `2025-06-15T14:30:00`). Utilizado quando `time_reference_type` é "custom".
+                  type: string
+                  format: date-time
+      responses:
+        200:
+          description: Retorna o relatório de verificação de assinaturas. Os arquivos em formato PDF e XML têm organização similar ao esquema JSON fornecido. Em caso de recibo com um relatório diferente do HTML, retorna-se um arquivo ZIP contendo o recibo e o relatório no formato desejado
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/report'
+                  - $ref: '#/components/schemas/simpleReport'
+            application/pdf: { }
+            text/xml: { }
+        500:
+          description: Erro na verificação de assinaturas. Favor utilizar o e-mail `cgnpe@iti.gov.br` para reportar o erro com o arquivo responsável em anexo.
+        504:
+          description: Erro na verificação de assinaturas. A verificação excedeu o limite de tempo.
+        507:
+          description: Erro na verificação de assinaturas. A verificação excedeu o limite de espaço de memória.
+    get:
+      tags:
+        - ReportServlet
+      summary: Retorna o relatório de verificação de assinaturas
+      description: Retorna o relatório por assinaturas hosteadas em outros locais (anexadas e destacadas não são permitidas na mesma requisição)
+      parameters:
+        - name: signature_files
+          in: query
+          description: URL das assinaturas (se várias, tem que ser no formato signature_files=&signature_files=)
+          required: true
+          schema:
+            type: string
+        - name: detached_files
+          in: query
+          description: URL de assinaturas destacadas, respectivamente correspondentes às assinaturas em signature_files.
+          required: false
+          schema:
+            type: string
+        - name: receipt_files
+          in: query
+          description: URL de recibos assinados, respectivamente correspondentes às assinaturas em signature_files.
+          required: false
+          schema:
+            type: string
+        - name: report_type
+          in: query
+          description: Formato desejado do relatório de saída
+          schema:
+            type: string
+            enum: [ "pdf", "xml", "json", "html" ]
+            default: "html"
+        - name: emit_receipt
+          in: query
+          description: Se deve ser emitido um recibo da verificação
+          schema:
+            type: boolean
+            enum: [ "true", "false" ]
+            default: "false"
+        - name: verify_incremental_updates
+          in: query
+          description: Se deve ser checado atualizações incrementais para arquivos PDF
+          schema:
+            type: boolean
+            enum: [ "true", "false" ]
+            default: "false"
+        - name: use_fallback_incremental_updates
+          in: query
+          description: Se deve ser usado o o fallback para verificação de atualizações incrementais em arquivos PDF, senão utiliza o método padrão.
+          schema:
+            type: boolean
+            enum: [ "true", "false" ]
+            default: "false"
+        - name: extended_report
+          in: query
+          description: Se o relatório é estendido (fazendo a verificação de todos os atributos) ou não (checando apenas caminho de certificação, cifra assimétrica e hash do arquivo)
+          required: false
+          schema:
+            type: boolean
+            enum: [ "true", "false" ]
+            default: "true"
+        - name: show_payload_json
+          in: query
+          description: Se o relatório deve conter o payload da assinatura JSON
+          schema:
+            type: boolean
+            enum: [ "true", "false" ]
+            default: "false"
+        - name: extensions_profile
+          in: query
+          description: Visibilidade das informações do assinante
+          schema:
+            type: string
+            enum: [ "default", "visible", "masked", "invisible" ]
+            default: "default"
+        - name: profile_verification
+          in: query
+          description: Se deve ser verificado o perfil da assinatura
+          required: false
+          schema:
+            type: boolean
+            enum: [ "true", "false" ]
+            default: "false"
+        - name: signature_extension
+          in: query
+          description: Se deve o verificador deve subir o nível do perfil da assinatura. A operação de subida de nível é feita apenas se profileVerification for true.
+          required: false
+          schema:
+            type: string
+            enum: [ "T", "LT", "LTA" ]
+      responses:
+        200:
+          description: Retorna o relatório de verificação de assinaturas (no formato especificado).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/report'
+
+components:
+  schemas:
+    report:
+      type: object
+      description: Relatório do Verificador de Conformidade. É feito um relatório para cada arquivo de assinatura.
+      properties:
+        reports:
+          type: array
+          description: Relatório do Verificador de Conformidade. É feito um relatório para cada arquivo de assinatura.
+          items:
+            type: object
+            properties:
+              date:
+                type: object
+                description: Data de verificação
+                properties:
+                  sourceOfDate:
+                    type: string
+                    description: Como foi obtido (Online / Offline)
+                  verificationDate:
+                    type: string
+                    description: Data de verificação do documento no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                required:
+                  - sourceOfDate
+                  - verificationDate
+              generalStatus:
+                type: string
+                description: Status do documento (Aprovado / Reprovado / Indeterminado / Incompleto)
+              number:
+                type: integer
+                description: Número do relatório atual
+              pas:
+                type: object
+                description: Informações de políticas de assinatura utilizadas no documento
+                properties:
+                  pa:
+                    type: object
+                    description: Informações de uma política de assinatura (doc-icp-15)
+                    properties:
+                      valid:
+                        type: string
+                        description: Se a PA é válida
+                      period:
+                        type: string
+                        description: Período de validade da política, no formato "de 'dd/MM/yyyy HH:mm:ss zzz' até 'dd/MM/yyyy HH:mm:ss zzz'" (padrão Java)
+                      expired:
+                        type: boolean
+                        description: Se a PA está com validade expirada
+                      online:
+                        type: boolean
+                        description: Se foi obtida online
+                      validOnLpa:
+                        type: string
+                        description: Íntegra segundo a LPA (Lista de políticas de assinatura aprovadas)
+                      oid:
+                        type: string
+                        description: Identificador da política (nome e OID (Object Identifier) único)
+                      revoked:
+                        type: boolean
+                        description: Se a PA foi revogada
+                      error:
+                        type: string
+                        description: Mensagem de erro
+                    required:
+                      - error
+                      - expired
+                      - oid
+                      - online
+                      - period
+                      - revoked
+                      - valid
+                      - validLpa
+              software:
+                type: object
+                description: Sobre o software usado para verificar a assinatura
+                properties:
+                  name:
+                    type: string
+                    description: Nome do software (Verificador de Conformidade)
+                  version:
+                    type: number
+                    description: Versão do Verificador de Conformidade utilizada
+                  sourceFile:
+                    type: string
+                    description: Nome do arquivo fonte utilizado (p7s, xml, pdf)
+                  sourceFileHash:
+                    type: string
+                    description: Resumo criptográfico SHA256 em base hexadecimal do arquivo fonte utilizado
+                required:
+                  - name
+                  - sourceFile
+                  - version
+                  - sourceFileHash
+              lpas:
+                type: object
+                description: Informações de listas de políticas de assinatura utilizadas no documento
+                properties:
+                  lpa:
+                    type: object
+                    description: Informações de uma lista de políticas de assinatura aprovadas (doc-icp-15)
+                    properties:
+                      name:
+                        type: string
+                        description: Nome da LPA, incluindo versão
+                      online:
+                        type: boolean
+                        description: Se a LPA foi obtida online
+                      valid:
+                        type: boolean
+                        description: Se a LPA é válida
+                      lpaErrorMessage:
+                        type: string
+                        description: Mensagem de erro caso a lpa não esteja válida
+                      period:
+                        type: string
+                        description: Data final de expiração da LPA no formato 'dd/MM/yyyy HH:mm:ss z' (padrão Java), ou uma mensagem de erro no lugar
+                      expired:
+                        type: boolean
+                        description: Se a LPA está expirada
+                      version:
+                        type: string
+                        description: Versão da LPA
+                    required:
+                      - name
+                      - online
+                      - valid
+                      - period
+                      - expired
+                      - version
+              initialReport:
+                type: object
+                description: Relatório inicial de dados da assinatura e arquivo
+                properties:
+                  qtdAnchorsSign:
+                    type: integer
+                    description: Quantidade de assinaturas ancoradas no arquivo
+                  qtdSignatures:
+                    type: integer
+                    description: Quantidade de assinaturas no arquivo
+                  fileType:
+                    type: string
+                    description: Tipo de arquivo identificado (ASN1, XML ou PDF)
+                  errorMessages:
+                    type: object
+                    description: Mensagens de erro
+                    properties:
+                      errorMessage:
+                        type: string
+                        description: Mensagem de erro (se houver)
+              onlyVerifyAnchored:
+                type: boolean
+                description: Se só serão consideradas assinaturas ancoradas no processo de verificação
+              extendedReport:
+                type: boolean
+                description: Se o relatório é estendido (fazendo a verificação de todos os atributos) ou não (checando apenas caminho de certificação, cifra assimétrica e hash do arquivo)
+              conformity:
+                type: array
+                description: Referências de conformidade encontradas no arquivo (caso assinatura seja válida)
+                required: false
+                items:
+                  type: object
+                  properties:
+                    reference:
+                      type: string
+                      description: Referência que a validade da assinatura pertence
+                    link:
+                      type: string
+                      description: Link para a validade da referência
+              signatures:
+                type: object
+                description: Informações das assinaturas presentes no documento
+                properties:
+                  signature:
+                    $ref: '#/components/schemas/signature'
+              notAnchoredSignatures:
+                type: object
+                description: Informações das assinaturas não ancoradas presentes no documento
+                properties:
+                  notAnchoredSignature:
+                    $ref: '#/components/schemas/signature'
+              unprocessedSignatures:
+                type: object
+                description: Informações das assinaturas não processadas presentes no documento
+                properties:
+                  unprocessedSignature:
+                    oneOf:
+                      - $ref: '#/components/schemas/unprocessedSignature'
+                      - type: array
+                        description: Assinaturas não processadas
+                        items:
+                          $ref: '#/components/schemas/unprocessedSignature'
+            required:
+              - date
+              - generalStatus
+              - number
+              - signatures
+              - software
+      required:
+        - report
+    configReport:
+      type: object
+      description: Configurações iniciais do verificador de conformidade
+      properties:
+        config:
+          properties:
+            softwareVersion:
+              type: string
+              description: Versão do software que está utilizando no momento
+            signatureLimit:
+              type: integer
+              description: Quantidade máxima de verificações de assinaturas por vez
+        verification:
+          properties:
+            extendedReport:
+              type: boolean
+              description: Se o relatório de verificação deve ser completo
+            reportType:
+              type: string
+              description: Tipo de relatório de verificação
+            incrementalUpdates:
+              type: boolean
+              description: Se o verificador deve realizar buscas por atualizações incrementais em documentos PDF
+            showPayload:
+              type: boolean
+              description: Se o verificador deve mostrar o conteúdo do payload de assinaturas JSON
+            emitReceipt:
+              type: boolean
+              description: Se deve ser emitido um recibo da verificação
+            returnArtifacts:
+              type: boolean
+              description: Quando habilitado, serão retornados todos os artefatos utilizados durante a verificação do documento fornecido. Estes artefatos incluem certificados, CRLs, OCSPs, referência de tempo, entre outros. De posse destes artefatos, é possível reproduzir a verificação do documento, sendo útil para fins de testes.
+    simpleReport:
+      type: object
+      description: Relatório simples de verificação de conformidade de assinaturas
+      properties:
+        reports:
+          type: array
+          description: Relatório do Verificador de Conformidade. É feito um relatório para cada arquivo de assinatura.
+          items:
+            type: object
+            properties:
+              date:
+                type: object
+                description: Data de verificação
+                properties:
+                  sourceOfDate:
+                    type: string
+                    description: Como foi obtido (Online / Offline)
+                  verificationDate:
+                    type: string
+                    description: Data de verificação do documento no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                required:
+                  - sourceOfDate
+                  - verificationDate
+              generalStatus:
+                type: string
+                description: Status do documento (Aprovado / Reprovado / Indeterminado)
+              number:
+                type: integer
+                description: Número do relatório atual
+              software:
+                type: object
+                description: Sobre o software usado para verificar a assinatura
+                properties:
+                  name:
+                    type: string
+                    description: Nome do software (Verificador de Conformidade)
+                  version:
+                    type: number
+                    description: Versão do Verificador de Conformidade utilizada
+                  sourceFile:
+                    type: string
+                    description: Nome do arquivo fonte utilizado (p7s, xml, pdf)
+                  sourceFileHash:
+                    type: string
+                    description: Resumo criptográfico SHA256 em base hexadecimal do arquivo fonte utilizado
+                required:
+                  - name
+                  - sourceFile
+                  - version
+                  - sourceFileHash
+              initialReport:
+                type: object
+                description: Relatório inicial de dados da assinatura e arquivo
+                properties:
+                  qtdAnchorsSign:
+                    type: integer
+                    description: Quantidade de assinaturas ancoradas no arquivo
+                  qtdSignatures:
+                    type: integer
+                    description: Quantidade de assinaturas no arquivo
+                  fileType:
+                    type: string
+                    description: Tipo de arquivo identificado (ASN1, XML ou PDF)
+                  hasAdvanced:
+                    type: boolean
+                    description: Se é possível fazer a verificação completa de assinaturas segundo a DOC-ICP-15.03, ou seja, há assinaturas avançadas (CAdES, XAdES ou PAdES)
+                  errorMessages:
+                    type: object
+                    description: Mensagens de erro
+                    properties:
+                      errorMessage:
+                        type: string
+                        description: Mensagem de erro (se houver)
+              extendedReport:
+                type: boolean
+                description: Se o relatório é estendido (fazendo a verificação de todos os atributos) ou não (checando apenas caminho de certificação, cifra assimétrica e hash do arquivo)
+              conformity:
+                type: array
+                description: Referências de conformidade encontradas no arquivo (caso assinatura seja válida)
+                items:
+                  type: object
+                  properties:
+                    reference:
+                      type: string
+                      description: Referência que a validade da assinatura pertence
+                    link:
+                      type: string
+                      description: Link para a validade da referência
+              signatures:
+                type: object
+                description: Informações das assinaturas presentes no documento
+                properties:
+                  signature:
+                    type: object
+                    description: Informações de uma assinatura
+                    properties:
+                      containsMandatedCertificates:
+                        type: boolean
+                        description: Se os certificados obrigatórios estão presentes na assinatura
+                      errorMessages:
+                        type: object
+                        description: Mensagens de erro
+                        properties:
+                          errorMessage:
+                            type: string
+                            description: Mensagem de erro (se houver)
+                      hasInvalidUpdates:
+                        type: boolean
+                        description: Se há alguma atualização incremental inválida / pendente
+                      integrity:
+                        type: object
+                        description: Elementos que asseguram integridade da assinatura
+                        properties:
+                          schema:
+                            type: boolean
+                            description: Se é válida a estrutura da assinatura
+                          schemaMessage:
+                            type: string
+                            description: Caso haja erro de conformidade com a estrutura da assinatura, este campo deve informar o motivo
+                          schemaPattern:
+                            type: string
+                            description: Indica qual o padrão que a estrutura da assinatura deve estar de acordo
+                          messageDigest:
+                            type: string
+                            description: Valor do MessageDigest gerado (do resumo criptográfico) de N caracteres (de acordo com tamanho da assinatura requirido)
+                          references:
+                            type: object
+                            description: Referências nas assinaturas XML/XAdES (vazio em outros tipos de assinatura)
+                            properties:
+                              reference:
+                                type: object
+                                description: Informações de validade de uma referência
+                                properties:
+                                  hash:
+                                    type: boolean
+                                    description: Se o resumo criptográfico da referência é válido
+                          asymmetricCipher:
+                            type: boolean
+                            description: Se a cifra assimétrica é válida
+                          hash:
+                            type: boolean
+                            description: Se o resumo criptográfico da assinatura é válido
+                        required:
+                          - asymmetricCipher
+                          - hash
+                          - messageDigest
+                          - references
+                          - schema
+                          - schemaPattern
+                      signatureType:
+                        type: string
+                        description: Tipo de assinatura, indicando se é anexada ao documento, por exemplo (ATTACHED / DETACHED / ENVELOPING / ENVELOPED / DETACHED_ENVELOPED / DETACHED_ENVELOPING / ENVELOPING_ENVELOPED / DETACHED_ENVELOPING_ENVELOPED).
+                          Pode ser vazio
+                      signingTime:
+                        type: string
+                        description: Datetime da assinatura, se presente, no formato DateTimeFormatter Long (Java)
+                      certification:
+                        type: object
+                        description: Dados gerais sobre a certificação (carimbos do tempo + certificados)
+                        properties:
+                          signer:
+                            type: object
+                            description: Informações do assinante do certificado
+                            properties:
+                              certPathMessage:
+                                type: string
+                                description: Mensagem sobre o caminho de certificação do assinante, se o caminho não for válido
+                              extensions:
+                                type: object
+                                description: Informações do certficado do assinante
+                                properties:
+                                  subjectAlternativeNames:
+                                    type: object
+                                    description: Informações de identificação do assinante
+                                    properties:
+                                      generalName:
+                                        type: array
+                                        description: Informações do assinante
+                                        items:
+                                          type: object
+                                          properties:
+                                            name:
+                                              type: string
+                                              description: Descrição da informação (E-mail, por exemplo)
+                                            value:
+                                              type: string
+                                              description: Conteúdo da informação
+                                          required:
+                                            - name
+                                            - value
+                                  certificatePolicies:
+                                    type: object
+                                    description: Informações do certificado do assinante
+                                    properties:
+                                      certificatePolicy:
+                                        type: array
+                                        description: Informações do certificado
+                                        items:
+                                          type: object
+                                          properties:
+                                            name:
+                                              type: string
+                                              description: Descrição da informação (tipo do certificado, por exemplo)
+                                            value:
+                                              type: string
+                                              description: Conteúdo da informação
+                                          required:
+                                            - name
+                                            - value
+                              certificates:
+                                type: object
+                                description: Informações de todos os certificados do caminho de certificação
+                                properties:
+                                  certificate:
+                                    type: array
+                                    description: Todos os certificados do caminho de certificação
+                                    items:
+                                      type: object
+                                      properties:
+                                        notAfter:
+                                          type: string
+                                          description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                                        ocsp:
+                                          type: object
+                                          description: Informações de revogação do certificado obtidas através de OCSP (Online Certificate Status Protocol), se houver
+                                          properties:
+                                            validSignature:
+                                              type: boolean
+                                              description: Se o certificado é válido segundo a resposta OCSP
+                                            online:
+                                              type: boolean
+                                              description: Se as informações de busca da OCSP foram obtidas online
+                                            revoked:
+                                              type: boolean
+                                              description: Se o certificado foi revogado
+                                            revokedReason:
+                                              type: string
+                                              description: Motivo da revogação na resposta OCSP
+                                          required:
+                                            - online
+                                            - validSignature
+                                            - revoked
+                                        validSignature:
+                                          type: boolean
+                                          description: Se o certificado está válido
+                                        serialNumber:
+                                          type: string
+                                          description: Número serial do certificado digital
+                                        expired:
+                                          type: boolean
+                                          description: Se o certificado está expirado
+                                        issuerName:
+                                          type: string
+                                          description: Identificação do emissor do certificado
+                                        online:
+                                          type: boolean
+                                          description: Se o certificado foi obtido online
+                                        revoked:
+                                          type: boolean
+                                          description: Se o certificado foi revogado (na LCR)
+                                        revokedReason:
+                                          type: string
+                                          description: Motivo da revogação na LCR, caso o certificado tenha sido revogado
+                                        notBefore:
+                                          type: string
+                                          description: Data inicial da validade do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                                        subjectName:
+                                          type: string
+                                          description: Identificação do proprietário do certificado digital
+                                        crl:
+                                          type: object
+                                          description: Lista de certificados revogados (LCR)
+                                          properties:
+                                            validSignature:
+                                              type: boolean
+                                              description: Se a assinatura da LCR é válida
+                                            serialNumber:
+                                              type: string
+                                              description: Número serial da LCR
+                                            issuerName:
+                                              type: string
+                                              description: Identificação do emissor da LCR
+                                            online:
+                                              type: boolean
+                                              description: Se a LCR foi obtida online
+                                            dates:
+                                              type: object
+                                              description: Datas importantes relacionadas à LCR
+                                              properties:
+                                                thisUpdate:
+                                                  type: string
+                                                  description: Data da última atualização da LCR no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                                                nextUpdate:
+                                                  type: string
+                                                  description: Data da próxima atualização da LCR no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                                              required:
+                                                - nextUpdate
+                                                - thisUpdate
+                                          required:
+                                            - dates
+                                            - issuerName
+                                            - online
+                                            - serialNumber
+                                            - validSignature
+                                        timeReference:
+                                          type: string
+                                          description: Referência de tempo utilizada na verificação do certificado
+                                        validAtTimeReference:
+                                          type: boolean
+                                          description: Se o certificado não está expirado na referência de tempo
+                                      required:
+                                        - expired
+                                        - issuerName
+                                        - notAfter
+                                        - notBefore
+                                        - online
+                                        - revoked
+                                        - serialNumber
+                                        - subjectName
+                                        - validSignature
+                                        - timeReference
+                                        - validAtTimeReference
+                              certPathValid:
+                                type: string
+                                description: Status do caminho de certificação da assinatura (Valid / Invalid / Expired / Revoked / NotValidYet / Unknown)
+                              present:
+                                type: boolean
+                                description: Se a assinatura está presente no documento
+                              subjectName:
+                                type: string
+                                description: Nome do assinante presente no certificado
+                              resultsAtTimeReference:
+                                type: object
+                                description: Informações de validade da assinatura em relação à referência de tempo
+                                properties:
+                                  resultAtTimeReference:
+                                    type: array
+                                    description: Informações de validade da assinatura em relação à referência de tempo
+                                    items:
+                                      type: object
+                                      properties:
+                                        timeReference:
+                                          type: string
+                                          description: Referência de tempo
+                                        result:
+                                          type: object
+                                          description: Resultado da validação do caminho de certificação em relação à referência de tempo
+                                          properties:
+                                            status:
+                                              type: string
+                                              enum: [ "Valid", "Revoked", "Expired", "NotValidYet", "Invalid", "UnmetRequirement", "NotAnchored" ]
+                                            message:
+                                              type: string
+                                              description: Mensagem de erro (se houver)
+                            required:
+                              - certPathValid
+                              - certificate
+                              - form
+                              - present
+                              - subjectName
+                              - validSignature
+                        required:
+                          - signer
+                    required:
+                      - certification
+                      - containsMandatedCertificates
+                      - hasInvalidUpdates
+                      - integrity
+                      - signatureType
+              unprocessedSignatures:
+                type: object
+                description: Informações das assinaturas não processadas presentes no documento
+                properties:
+                  unprocessedSignature:
+                    oneOf:
+                      - $ref: '#/components/schemas/unprocessedSignature'
+                      - type: array
+                        description: Assinaturas não processadas
+                        items:
+                          $ref: '#/components/schemas/unprocessedSignature'
+            required:
+              - date
+              - generalStatus
+              - number
+              - signatures
+              - software
+      required:
+        - report
+    unprocessedSignature:
+      type: object
+      description: Informações de uma assinatura que não foi processada
+      properties:
+        errorMessages:
+          type: object
+          description: Mensagens de erro
+          properties:
+            errorMessage:
+              type: string
+              description: Mensagem de erro
+        objectDictionarySignature:
+          type: string
+          description: Localização do objeto da assinatura no documento
+    signature:
+      type: object
+      description: Informações de uma assinatura
+      properties:
+        validationResult:
+          $ref: '#/components/schemas/validationResult'
+        containsMandatedCertificates:
+          type: boolean
+          description: Se os certificados obrigatórios estão presentes na assinatura
+        attributeValid:
+          type: string
+          description: Se os atributos obrigatórios são válidos, indeterminados ou inválidos
+        errorMessages:
+          type: object
+          description: Mensagens de erro
+          properties:
+            errorMessage:
+              type: string
+              description: Mensagem de erro (se houver)
+        updateVerificationMethod:
+          type: string
+          description: Método de verificação incremental especificado pela assinatura PDF
+        hasInvalidUpdates:
+          type: boolean
+          description: Se há alguma atualização incremental inválida / pendente
+        signaturePolicy:
+          type: string
+          description: Política de assinatura utilizada (pode ser vazia)
+        integrity:
+          type: object
+          description: Elementos que asseguram integridade da assinatura
+          properties:
+            schema:
+              type: boolean
+              description: Se é válida a estrutura da assinatura
+            schemaMessage:
+              type: string
+              description: Caso haja erro de conformidade com a estrutura da assinatura, este campo deve informar o motivo
+            schemaPattern:
+              type: string
+              description: Indica qual o padrão que a estrutura da assinatura deve estar de acordo
+            messageDigest:
+              type: string
+              description: Valor do MessageDigest gerado (do resumo criptográfico) de N caracteres (de acordo com tamanho da assinatura requirido)
+            references:
+              type: object
+              description: Referências nas assinaturas XML/XAdES (vazio em outros tipos de assinatura)
+              properties:
+                reference:
+                  type: object
+                  description: Informações de validade de uma referência
+                  properties:
+                    hash:
+                      type: boolean
+                      description: Se o resumo criptográfico da referência é válido
+            asymmetricCipher:
+              type: boolean
+              description: Se a cifra assimétrica é válida
+            hash:
+              type: boolean
+              description: Se o resumo criptográfico da assinatura é válido
+          required:
+            - asymmetricCipher
+            - hash
+            - messageDigest
+            - references
+            - schema
+            - schemaPattern
+        signatureType:
+          type: string
+          description: Tipo de assinatura, indicando se é anexada ao documento, por exemplo (ATTACHED / DETACHED / ENVELOPING / ENVELOPED / DETACHED_ENVELOPED / DETACHED_ENVELOPING / ENVELOPING_ENVELOPED / DETACHED_ENVELOPING_ENVELOPED).
+            Pode ser vazio
+        isPQC:
+          type: boolean
+          description: Se o algoritmo criptográfico utilizado tem resistência pós-quântica
+        algorithm:
+          type: string
+          description: Algoritmo utilizado para assinar o documento
+        xPathSignature:
+          type: string
+          description: XPath da assinatura no documento (XML/XAdES)
+        attributes:
+          type: object
+          description: Atributos da assinatura
+          properties:
+            requiredAttributes:
+              type: object
+              description: Atributos obrigatórios de acordo com a política de assinatura
+              properties:
+                requiredAttribute:
+                  type: array
+                  description: Atributos obrigatórios da assinatura (e seus erros, se houver)
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do atributo obrigatório
+                      errorMessages:
+                        type: object
+                        description: Mensagens de erro
+                        properties:
+                          errorMessage:
+                            type: string
+                            description: Mensagem de erro (se houver)
+                      status:
+                        type: string
+                        description: Status da validação do atributo (Valid / Invalid / Indeterminate)
+                      alertMessage:
+                        type: string
+                        description: Mensagem de alerta sobre o atributo
+                      value:
+                        type: object
+                        description: Valor representativo do atributo. Pode ser vazio
+                    required:
+                      - error
+                      - name
+            ignoredAttributes:
+              type: object
+              description: Atributos ignorados na verificação
+              properties:
+                ignoredAttribute:
+                  type: array
+                  description: Atributos ignorados da assinatura (e seus erros, se houver)
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do atributo extra
+                      errorMessages:
+                        type: object
+                        description: Mensagens de erro
+                        properties:
+                          errorMessage:
+                            type: string
+                            description: Mensagem de erro (se houver)
+                      status:
+                        type: string
+                        description: Status da validação do atributo (Valid / Invalid / Indeterminate)
+                      alertMessage:
+                        type: string
+                        description: Mensagem de alerta sobre o atributo
+                      value:
+                        type: object
+                        description: Valor representativo do atributo. Pode ser vazio
+                    required:
+                      - error
+                      - name
+            optionalAttributes:
+              type: object
+              description: Atributos presentes na assinatura mas que não são obrigatórios. Pode ser vazio
+              properties:
+                optionalAttribute:
+                  type: array
+                  description: Atributos opcionais da assinatura (e seus erros, se houver)
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do atributo opcional
+                      errorMessages:
+                        type: object
+                        description: Mensagens de erro
+                        properties:
+                          errorMessage:
+                            type: string
+                            description: Mensagem de erro (se houver)
+                      status:
+                        type: string
+                        description: Status da validação do atributo (Valid / Invalid / Indeterminate)
+                      alertMessage:
+                        type: string
+                        description: Mensagem de alerta sobre o atributo
+                      value:
+                        type: object
+                        description: Valor representativo do atributo. Pode ser vazio
+                    required:
+                      - error
+                      - name
+            extraAttributes:
+              type: object
+              description: Eventuais atributos extras que a assinatura possa ter. Pode ser vazio
+              properties:
+                extraAttribute:
+                  type: array
+                  description: Atributos extra da assinatura (e seus erros, se houver)
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do atributo extra
+                      errorMessages:
+                        type: object
+                        description: Mensagens de erro
+                        properties:
+                          errorMessage:
+                            type: string
+                            description: Mensagem de erro (se houver)
+                      status:
+                        type: string
+                        description: Status da validação do atributo (Valid / Invalid / Indeterminate)
+                      alertMessage:
+                        type: string
+                        description: Mensagem de alerta sobre o atributo
+                      value:
+                        type: object
+                        description: Valor representativo do atributo. Pode ser vazio
+                    required:
+                      - error
+                      - name
+          required:
+            - extraAttributes
+            - optionalAttributes
+            - requiredAttributes
+        paRules:
+          type: object
+          description: Regras da política de assinatura
+          properties:
+            prohibited:
+              type: string
+              description: Como foram implementadas as regras da PA
+            mandatedCertificateInfo:
+              type: string
+              description: Certificados necessários (se é assinante apenas ou se há dependentes)
+            required:
+              type: string
+              description: Regras obrigatórios para a assinatura
+          required:
+            - mandatedCertificateInfo
+            - prohibited
+            - required
+        signingTime:
+          type: string
+          description: Datetime da assinatura, se presente, no formato DateTimeFormatter Long (Java)
+        certification:
+          type: object
+          description: Dados gerais sobre a certificação (carimbos do tempo + certificados)
+          properties:
+            timeStamps:
+              type: object
+              description: Informações sobre os carimbos de tempo na assinatura
+              properties:
+                timeStamp:
+                  type: object
+                  description: Informações sobre um carimbo de tempo
+                  properties:
+                    attributeValid:
+                      type: boolean
+                      description: Se os atributos do carimbo são válidos
+                    timeStampIdentifier:
+                      type: string
+                      description: Identificador do carimbo de tempo (apenas nome)
+                    validationResult:
+                      $ref: '#/components/schemas/validationResult'
+                    certPathValidity:
+                      $ref: '#/components/schemas/validationResult'
+                    tspServices:
+                      type: object
+                      description: Serviços de confiança
+                      properties:
+                        tspService:
+                          type: array
+                          description: Serviços de confiança
+                          items:
+                            type: object
+                            description: Serviço de confiança
+                            properties:
+                              serviceType:
+                                type: string
+                                description: Tipo do serviço de confiança
+                              serviceValid:
+                                type: boolean
+                                description: Se o serviço é valido no contexto da assinatura
+                              reason:
+                                type: string
+                                description: Mensagem de erro
+                              serviceStatus:
+                                type: string
+                                description: Status do serviço de confiança
+                              serviceName:
+                                type: string
+                                description: Nome do serviço de confiança
+                              digitalIdentity:
+                                type: object
+                                description: Identidade digital
+                                properties:
+                                  errorMessages:
+                                    type: object
+                                    description: Mensagens de erro
+                                    properties:
+                                      errorMessage:
+                                        type: array
+                                        description: Mensagens de erro
+                                        items:
+                                          type: string
+                                          description: Mensagem de erro
+                                  certificates:
+                                    type: object
+                                    description: Certificados X509
+                                    properties:
+                                      certificate:
+                                        type: array
+                                        description: Certificados X509
+                                        items:
+                                          type: object
+                                          description: Certificado X509
+                                          properties:
+                                            notAfter:
+                                              type: string
+                                              description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss'
+                                            notBefore:
+                                              type: string
+                                              description: Data de início de validade do certificado no formato 'dd/MM/yyyy HH:mm:ss'
+                                            issuerName:
+                                              type: string
+                                              description: Nome do emissor do certificado
+                                            subjectName:
+                                              type: string
+                                              description: Nome do assinante do certificado
+                                            hash:
+                                              description: Resumo SHA256 do certificado.
+                                              type: string
+                                            sigAlgName:
+                                              description: Algorítimo de assinatura utilizado.
+                                              type: string
+                                  subjectKeyIdentifier:
+                                    type: string
+                                    description: Identificador da chave pública do assinante do certificado
+                                  subjectName:
+                                    type: string
+                                    description: Nome do assinante do certificado
+                    integrity:
+                      type: object
+                      description: Informações de integridade do carimbo de tempo
+                      properties:
+                        schema:
+                          type: boolean
+                          description: Se a estrutura do carimbo é válida
+                        references:
+                          type: object
+                          description: Referências nas assinaturas XML/XAdES (vazio em outros tipos de assinatura)
+                          properties:
+                            reference:
+                              type: object
+                              description: Informações de validade de uma referência
+                              properties:
+                                hash:
+                                  type: boolean
+                                  description: Se o resumo criptográfico da referência é válido
+                              required:
+                                - hash
+                        asymmetricCipher:
+                          type: boolean
+                          description: Se a cifra assimétrica é válida
+                        hash:
+                          type: boolean
+                          description: Se o resumo criptográfico da assinatura é válido
+                      required:
+                        - asymmetricCipher
+                        - hash
+                        - references
+                        - schema
+                    timeStampName:
+                      type: string
+                      description: Nome da entidade geradora do certificado de carimbo de tempo
+                    certificates:
+                      type: object
+                      description: Informações de todos os certificados do caminho de certificação
+                      properties:
+                        certificate:
+                          type: array
+                          description: Todos os certificados do caminho de certificação do carimbo de tempo
+                          items:
+                            type: object
+                            properties:
+                              notAfter:
+                                type: string
+                                description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                              ocsp:
+                                type: object
+                                description: Informações de revogação do certificado obtidas através de OCSP (Online Certificate Status Protocol), se houver
+                                properties:
+                                  validSignature:
+                                    type: boolean
+                                    description: Se o certificado é válido segundo a resposta OCSP
+                                  online:
+                                    type: boolean
+                                    description: Se as informações de busca da OCSP foram obtidas online
+                                  revoked:
+                                    type: boolean
+                                    description: Se o certificado foi revogado
+                                  revokedReason:
+                                    type: string
+                                    description: Motivo da revogação na resposta OCSP
+                                required:
+                                  - online
+                                  - validSignature
+                                  - revoked
+                              validSignature:
+                                type: boolean
+                                description: Se o certificado está válido
+                              serialNumber:
+                                type: string
+                                description: Número serial do certificado digital
+                              expired:
+                                type: boolean
+                                description: Se o certificado está expirado
+                              issuerName:
+                                type: string
+                                description: Identificação do emissor do certificado
+                              online:
+                                type: boolean
+                                description: Se o certificado foi obtido online
+                              revoked:
+                                type: boolean
+                                description: Se o certificado foi revogado (na LCR)
+                              revokedReason:
+                                type: string
+                                description: Motivo da revogação na LCR, caso o certificado tenha sido revogado
+                              notBefore:
+                                type: string
+                                description: Data inicial da validade do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                              subjectName:
+                                type: string
+                                description: Identificação do proprietário do certificado digital
+                              crl:
+                                type: object
+                                description: Lista de certificados revogados (LCR)
+                                properties:
+                                  validSignature:
+                                    type: boolean
+                                    description: Se a assinatura da LCR é válida
+                                  serialNumber:
+                                    type: string
+                                    description: Número serial da LCR
+                                  issuerName:
+                                    type: string
+                                    description: Identificação do emissor da LCR
+                                  online:
+                                    type: boolean
+                                    description: Se a LCR foi obtida online
+                                  dates:
+                                    type: object
+                                    description: Datas importantes relacionadas à LCR
+                                    properties:
+                                      thisUpdate:
+                                        type: string
+                                        description: Data da última atualização da LCR no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                                      nextUpdate:
+                                        type: string
+                                        description: Data da próxima atualização da LCR no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                                    required:
+                                      - nextUpdate
+                                      - thisUpdate
+                                required:
+                                  - dates
+                                  - issuerName
+                                  - online
+                                  - serialNumber
+                                  - validSignature
+                              timeReference:
+                                type: string
+                                description: Referência de tempo utilizada na verificação do certificado
+                              validAtTimeReference:
+                                type: boolean
+                                description: Se o certificado não está expirado na referência de tempo
+                            required:
+                              - expired
+                              - issuerName
+                              - notAfter
+                              - notBefore
+                              - online
+                              - revoked
+                              - serialNumber
+                              - subjectName
+                              - validSignature
+                              - timeReference
+                              - validAtTimeReference
+                    attributes:
+                      type: object
+                      description: Atributos da assinatura do carimbo de tempo
+                      properties:
+                        requiredAttributes:
+                          type: object
+                          description: Atributos obrigatórios
+                          properties:
+                            requiredAttribute:
+                              type: array
+                              description: Atributous obrigatórios da assinatura (e seus erros, se houver)
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    description: Nome do atributo obrigatório
+                                  status:
+                                    type: string
+                                    description: Status da validação do atributo (Valid / Invalid / Indeterminate)
+                                  errorMessages:
+                                    type: object
+                                    description: Mensagens de erro
+                                    properties:
+                                      errorMessage:
+                                        type: string
+                                        description: Mensagem de erro (se houver)
+                                  alertMessage:
+                                    type: string
+                                    description: Mensagem de alerta sobre o atributo
+                                  value:
+                                    type: object
+                                    description: Valor representativo do atributo. Pode ser vazio
+                                required:
+                                  - error
+                                  - name
+                        optionalAttributes:
+                          type: object
+                          description: Atributos presentes na assinatura mas que não são obrigatórios
+                          properties:
+                            optionalAttribute:
+                              type: array
+                              description: Atributos opcionais da assinatura (e seus erros, se houver)
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    description: Nome do atributo opcional
+                                  errorMessages:
+                                    type: object
+                                    description: Mensagens de erro
+                                    properties:
+                                      errorMessage:
+                                        type: string
+                                        description: Mensagem de erro (se houver)
+                                  status:
+                                    type: string
+                                    description: Status da validação do atributo (Valid / Invalid / Indeterminate)
+                                  alertMessage:
+                                    type: string
+                                    description: Mensagem de alerta sobre o atributo
+                                  value:
+                                    type: object
+                                    description: Valor representativo do atributo. Pode ser vazio
+                                required:
+                                  - error
+                                  - name
+                      required:
+                        - optionalAttributes
+                        - requiredAttributes
+                    timeStampTimeReference:
+                      type: string
+                      description: Horário de referência do carimbo de tempo no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                  required:
+                    - attributeValid
+                    - attributes
+                    - certPathValidity
+                    - validationResult
+                    - certificate
+                    - integrity
+                    - timeStampIdentifier
+                    - timeStampName
+                    - timeStampTimeReference
+            signer:
+              type: object
+              description: Informações do assinante do certificado
+              properties:
+                certPathValidity:
+                  $ref: '#/components/schemas/validationResult'
+                tspServices:
+                  type: object
+                  description: Serviços de confiança
+                  properties:
+                    tspService:
+                      type: array
+                      description: Serviços de confiança
+                      items:
+                        type: object
+                        description: Serviço de confiança
+                        properties:
+                          serviceType:
+                            type: string
+                            description: Tipo do serviço de confiança
+                          serviceValid:
+                            type: boolean
+                            description: Se o serviço é valido no contexto da assinatura
+                          reason:
+                            type: string
+                            description: Mensagem de erro
+                          serviceStatus:
+                            type: string
+                            description: Status do serviço de confiança
+                          serviceName:
+                            type: string
+                            description: Nome do serviço de confiança
+                          digitalIdentity:
+                            type: object
+                            description: Identidade digital
+                            properties:
+                              errorMessages:
+                                type: object
+                                description: Mensagens de erro
+                                properties:
+                                  errorMessage:
+                                    type: array
+                                    description: Mensagens de erro
+                                    items:
+                                      type: string
+                                      description: Mensagem de erro
+                              certificates:
+                                type: object
+                                description: Certificados X509
+                                properties:
+                                  certificate:
+                                    type: array
+                                    description: Certificados X509
+                                    items:
+                                      type: object
+                                      description: Certificado X509
+                                      properties:
+                                        notAfter:
+                                          type: string
+                                          description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss'
+                                        notBefore:
+                                          type: string
+                                          description: Data de início de validade do certificado no formato 'dd/MM/yyyy HH:mm:ss'
+                                        issuerName:
+                                          type: string
+                                          description: Nome do emissor do certificado
+                                        subjectName:
+                                          type: string
+                                          description: Nome do assinante do certificado
+                                        hash:
+                                          description: Resumo SHA256 do certificado.
+                                          type: string
+                                        sigAlgName:
+                                          description: Algorítimo de assinatura utilizado.
+                                          type: string
+                              subjectKeyIdentifier:
+                                type: string
+                                description: Identificador da chave pública do assinante do certificado
+                              subjectName:
+                                type: string
+                                description: Nome do assinante do certificado
+                extensions:
+                  type: object
+                  description: Informações do certficado do assinante
+                  properties:
+                    subjectAlternativeNames:
+                      type: object
+                      description: Informações de identificação do assinante
+                      properties:
+                        generalName:
+                          type: array
+                          description: Informações do assinante
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Descrição da informação (E-mail, por exemplo)
+                              value:
+                                type: string
+                                description: Conteúdo da informação
+                            required:
+                              - name
+                              - value
+                    certificatePolicies:
+                      type: object
+                      description: Informações do certificado do assinante
+                      properties:
+                        certificatePolicy:
+                          type: array
+                          description: Informações do certificado
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Descrição da informação (tipo do certificado, por exemplo)
+                              value:
+                                type: string
+                                description: Conteúdo da informação
+                            required:
+                              - name
+                              - value
+                validSignature:
+                  type: string
+                  description: Status de validade da assinatura (Aprovado / Indeterminada / Reprovado)
+                form:
+                  type: string
+                  description: Tipo de assinatura (no próprio certificado / em outro documento)
+                certificates:
+                  type: object
+                  description: Informações de todos os certificados do caminho de certificação
+                  properties:
+                    certificate:
+                      type: array
+                      description: Todos os certificados do caminho de certificação
+                      items:
+                        $ref: '#/components/schemas/certificate'
+                present:
+                  type: boolean
+                  description: Se a assinatura está presente no documento
+                subjectName:
+                  type: string
+                  description: Nome do assinante presente no certificado
+                certificateAttributes:
+                  type: object
+                  description: certificados de atributo da assinatura
+                  properties:
+                    certificateAttribute:
+                      type: object
+                      description: certificados de atributo da assinatura
+                      properties:
+                        certificates:
+                          type: object
+                          description: Informações de todos os certificados do caminho de certificação
+                          properties:
+                            certificate:
+                              type: array
+                              description: certificado de atributo e caminho de certificação
+                              items:
+                                type: object
+                                anyOf:
+                                  - $ref: '#/components/schemas/attrCertificate'
+                                  - $ref: '#/components/schemas/certificate'
+                resultsAtTimeReference:
+                  type: object
+                  description: Informações de validade da assinatura em relação à referência de tempo
+                  properties:
+                    resultAtTimeReference:
+                      type: array
+                      description: Informações de validade da assinatura em relação à referência de tempo
+                      items:
+                        type: object
+                        properties:
+                          timeReference:
+                            type: string
+                            description: Referência de tempo
+                          validationResult:
+                            $ref: '#/components/schemas/validationResult'
+              required:
+                - certPathValidity
+                - certificate
+                - form
+                - present
+                - subjectName
+                - validSignature
+          required:
+            - signer
+            - timeStamps
+      required:
+        - attributeValid
+        - attributes
+        - certification
+        - containsMandatedCertificates
+        - validationResult
+        - hasInvalidUpdates
+        - integrity
+        - paRules
+        - signaturePolicy
+        - signatureType
+    certificate:
+      description: Todos os certificados do caminho de certificação do carimbo de tempo
+      type: object
+      properties:
+        certificateType:
+          type: string
+          description: Tipo do certificado de atributo
+          enum: [ Certificate, AttributeCertificate, AutonomousAttributeCertificate ]
+        notAfter:
+          type: string
+          description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+        ocsp:
+          type: object
+          description: Informações de revogação do certificado obtidas através de OCSP (Online Certificate Status Protocol), se houver
+          properties:
+            validSignature:
+              type: boolean
+              description: Se o certificado é válido segundo a resposta OCSP
+            online:
+              type: boolean
+              description: Se as informações de busca da OCSP foram obtidas online
+            revoked:
+              type: boolean
+              description: Se o certificado foi revogado
+            revokedReason:
+              type: string
+              description: Motivo da revogação na resposta OCSP
+          required:
+            - online
+            - validSignature
+            - revoked
+        validSignature:
+          type: boolean
+          description: Se o certificado está válido
+        serialNumber:
+          type: string
+          description: Número serial do certificado digital
+        expired:
+          type: boolean
+          description: Se o certificado está expirado
+        issuerName:
+          type: string
+          description: Identificação do emissor do certificado
+        online:
+          type: boolean
+          description: Se o certificado foi obtido online
+        revoked:
+          type: boolean
+          description: Se o certificado foi revogado (na LCR)
+        revokedReason:
+          type: string
+          description: Motivo da revogação na LCR, caso o certificado tenha sido revogado
+        notBefore:
+          type: string
+          description: Data inicial da validade do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+        subjectName:
+          type: string
+          description: Identificação do proprietário do certificado digital
+        crl:
+          type: object
+          description: Lista de certificados revogados (LCR)
+          properties:
+            validSignature:
+              type: boolean
+              description: Se a assinatura da LCR é válida
+            serialNumber:
+              type: string
+              description: Número serial da LCR
+            issuerName:
+              type: string
+              description: Identificação do emissor da LCR
+            online:
+              type: boolean
+              description: Se a LCR foi obtida online
+            dates:
+              type: object
+              description: Datas importantes relacionadas à LCR
+              properties:
+                thisUpdate:
+                  type: string
+                  description: Data da última atualização da LCR no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+                nextUpdate:
+                  type: string
+                  description: Data da próxima atualização da LCR no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+              required:
+                - nextUpdate
+                - thisUpdate
+          required:
+            - dates
+            - issuerName
+            - online
+            - serialNumber
+            - validSignature
+        timeReference:
+          type: string
+          description: Referência de tempo utilizada na verificação do certificado
+        validAtTimeReference:
+          type: boolean
+          description: Se o certificado não está expirado na referência de tempo
+      required:
+        - expired
+        - issuerName
+        - notAfter
+        - notBefore
+        - online
+        - revoked
+        - serialNumber
+        - subjectName
+        - validSignature
+        - timeReference
+        - validAtTimeReference
+    attrCertificate:
+      type: object
+      description: Certificado de atributo
+      properties:
+        certificateType:
+          type: string
+          description: Tipo do certificado de atributo
+          enum: [ Certificate, AttributeCertificate, AutonomousAttributeCertificate ]
+        notAfter:
+          type: string
+          description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+        validSignature:
+          type: boolean
+          description: Se o certificado está válido
+        serialNumber:
+          type: string
+          description: Número serial do certificado digital
+        expired:
+          type: boolean
+          description: Se o certificado está expirado
+        issuerName:
+          type: string
+          description: Identificação do emissor do certificado
+        online:
+          type: boolean
+          description: Se o certificado foi obtido online
+        revoked:
+          type: boolean
+          description: Se o certificado foi revogado (na LCR)
+        notBefore:
+          type: string
+          description: Data inicial da validade do certificado no formato 'dd/MM/yyyy HH:mm:ss zzz' (padrão Java)
+        attributes:
+          type: object
+          description: Atributos do certificado de atributo
+          properties:
+            attribute:
+              type: array
+              description: Atributos do certificado de atributo
+              items:
+                type: object
+                properties:
+                  oid:
+                    type: string
+                    description: OID do atributo
+                  value:
+                    type: string
+                    description: Valor do atributo
+                required:
+                  - oid
+                  - value
+    trustedList:
+      type: object
+      description: Informações sobre a lista de confiança
+      properties:
+        type:
+          type: string
+          description: Tipo da lista de confiança
+          enum: [ TL, LOTL, UNDEFINED ]
+        originalUrl:
+          type: string
+          description: URL original da lista de confiança
+        sequenceNumber:
+          type: integer
+          description: Número de sequência da lista de confiança
+        tlValid:
+          type: boolean
+          description: Se a lista de confiança é válida
+        statusDeterminationApproach:
+          type: string
+          description: Método de determinação de status da lista de confiança
+        signature:
+          $ref: '#/components/schemas/signature'
+        schemeName:
+          type: string
+          description: Nome do esquema da lista de confiança
+        certificateCount:
+          type: integer
+          description: Número de certificados na lista de confiança
+        trustServiceProviderCount:
+          type: integer
+          description: Número de prestadores de serviço de confiança na lista de confiança
+        tslType:
+          type: string
+          description: Tipo da lista de confiança
+        operatorName:
+          type: string
+          description: Nome do operador da lista de confiança
+        informationURI:
+          type: string
+          description: URI com informações sobre a lista de confiança
+        nextUpdate:
+          type: string
+          description: Data da próxima atualização da lista de confiança no formato 'dd/MM/yyyy HH:mm:ss'
+        errorMessages:
+          type: object
+          description: Mensagens de erro
+          properties:
+            errorMessage:
+              type: array
+              description: Mensagens de erro
+              items:
+                type: string
+                description: Mensagem de erro
+        versionIdentifier:
+          type: string
+          description: Versão da lista de confiança
+        countryCode:
+          type: string
+          description: Código do país
+        trustServiceCount:
+          type: integer
+          description: Número de serviços de confiança
+        issueDateTime:
+          type: string
+          description: Data de emissão da lista de confiança no formato 'dd/MM/yyyy HH:mm:ss'
+        distributionPoints:
+          type: object
+          description: Pontos de distribuição da lista de confiança
+          properties:
+            distributionPoint:
+              type: array
+              description: Pontos de distribuição da lista de confiança
+              items:
+                type: string
+                description: Ponto de distribuição da lista de confiança
+        communityRules:
+          type: object
+          description: Regras da comunidade
+          properties:
+            communityRule:
+              type: array
+              description: Regras da comunidade
+              items:
+                type: string
+                description: Regra da comunidade
+        trustServiceProviders:
+          type: object
+          description: Prestadores de serviço de confiança
+          properties:
+            trustServiceProvider:
+              type: array
+              description: Prestadores de serviço de confiança
+              items:
+                type: object
+                description: Prestador de serviço de confiança
+                properties:
+                  errorMessages:
+                    type: object
+                    description: Mensagens de erro
+                    properties:
+                      errorMessage:
+                        type: array
+                        description: Mensagens de erro
+                        items:
+                          type: string
+                          description: Mensagem de erro
+                  tspServices:
+                    type: object
+                    description: Serviços de confiança
+                    properties:
+                      tspService:
+                        type: array
+                        description: Serviços de confiança
+                        items:
+                          type: object
+                          description: Serviço de confiança
+                          properties:
+                            serviceType:
+                              type: string
+                              description: Tipo do serviço de confiança
+                            errorMessages:
+                              type: object
+                              description: Mensagens de erro
+                              properties:
+                                errorMessage:
+                                  type: array
+                                  description: Mensagens de erro
+                                  items:
+                                    type: string
+                                    description: Mensagem de erro
+                            serviceStatus:
+                              type: string
+                              description: Status do serviço de confiança
+                            serviceName:
+                              type: string
+                              description: Nome do serviço de confiança
+                            digitalIdentity:
+                              type: object
+                              description: Identidade digital
+                              properties:
+                                errorMessages:
+                                  type: object
+                                  description: Mensagens de erro
+                                  properties:
+                                    errorMessage:
+                                      type: array
+                                      description: Mensagens de erro
+                                      items:
+                                        type: string
+                                        description: Mensagem de erro
+                                certificates:
+                                  type: object
+                                  description: Certificados X509
+                                  properties:
+                                    certificate:
+                                      type: array
+                                      description: Certificados X509
+                                      items:
+                                        type: object
+                                        description: Certificado X509
+                                        properties:
+                                          notAfter:
+                                            type: string
+                                            description: Data de expiração do certificado no formato 'dd/MM/yyyy HH:mm:ss'
+                                          notBefore:
+                                            type: string
+                                            description: Data de início de validade do certificado no formato 'dd/MM/yyyy HH:mm:ss'
+                                          issuerName:
+                                            type: string
+                                            description: Nome do emissor do certificado
+                                          subjectName:
+                                            type: string
+                                            description: Nome do assinante do certificado
+                                          hash:
+                                            description: Resumo SHA256 do certificado.
+                                            type: string
+                                          sigAlgName:
+                                            description: Algorítimo de assinatura utilizado.
+                                            type: string
+                                subjectKeyIdentifier:
+                                  type: string
+                                  description: Identificador da chave pública do assinante do certificado
+                                subjectName:
+                                  type: string
+                                  description: Nome do assinante do certificado
+                  tspInformationUri:
+                    type: string
+                    description: URI com informações sobre o prestador de serviço de confiança
+                  tspTradeNames:
+                    type: object
+                    description: Nomes comerciais dos prestadores de serviço de confiança
+                    properties:
+                      tspTradeName:
+                        type: array
+                        description: Nomes comerciais dos prestadores de serviço de confiança
+                        items:
+                          type: string
+                          description: Nome comercial do prestador de serviço de confiança
+                  countryCode:
+                    type: string
+                    description: Código do país
+                  countryName:
+                    type: string
+                    description: Nome do país
+                  tspNames:
+                    type: object
+                    description: Nomes dos prestadores de serviço de confiança
+                    properties:
+                      tspName:
+                        type: array
+                        description: Nomes dos prestadores de serviço de confiança
+                        items:
+                          type: string
+                          description: Nome do prestador de serviço de confiança
+    trustedLOTL:
+      type: object
+      description: Informações sobre a lista de confiança
+      properties:
+        type:
+          type: string
+          description: Tipo da lista de confiança
+          enum: [ TL, LOTL, UNDEFINED ]
+        originalUrl:
+          type: string
+          description: URL original da lista de confiança
+        sequenceNumber:
+          type: integer
+          description: Número de sequência da lista de confiança
+        tlValid:
+          type: boolean
+          description: Se a lista de confiança é válida
+        statusDeterminationApproach:
+          type: string
+          description: Método de determinação de status da lista de confiança
+        signature:
+          $ref: '#/components/schemas/signature'
+        schemeName:
+          type: string
+          description: Nome do esquema da lista de confiança
+        tslType:
+          type: string
+          description: Tipo da lista de confiança
+        operatorName:
+          type: string
+          description: Nome do operador da lista de confiança
+        informationURI:
+          type: string
+          description: URI com informações sobre a lista de confiança
+        nextUpdate:
+          type: string
+          description: Data da próxima atualização da lista de confiança no formato 'dd/MM/yyyy HH:mm:ss'
+        errorMessages:
+          type: object
+          description: Mensagens de erro
+          properties:
+            errorMessage:
+              type: array
+              description: Mensagens de erro
+              items:
+                type: string
+                description: Mensagem de erro
+        versionIdentifier:
+          type: string
+          description: Versão da lista de confiança
+        countryCode:
+          type: string
+          description: Código do país
+        countryName:
+          type: string
+          description: Nome do país
+        issueDateTime:
+          type: string
+          description: Data de emissão da lista de confiança no formato 'dd/MM/yyyy HH:mm:ss'
+        distributionPoints:
+          type: object
+          description: Pontos de distribuição da lista de confiança
+          properties:
+            distributionPoint:
+              type: array
+              description: Pontos de distribuição da lista de confiança
+              items:
+                type: string
+                description: Ponto de distribuição da lista de confiança
+        communityRules:
+          type: object
+          description: Regras da comunidade
+          properties:
+            communityRule:
+              type: array
+              description: Regras da comunidade
+              items:
+                type: string
+                description: Regra da comunidade
+        tls:
+          type: object
+          description: Listas de confiança
+          properties:
+            trustedList:
+              oneOf:
+                - $ref: '#/components/schemas/trustedList'
+                - type: array
+                  description: Listas de confiança
+                  items:
+                    $ref: '#/components/schemas/trustedList'
+            trustedLOTL:
+              oneOf:
+                - $ref: '#/components/schemas/trustedLOTL'
+                - type: array
+                  description: Listas de confiança
+                  items:
+                    $ref: '#/components/schemas/trustedLOTL'
+    trustedListWithErrors:
+      type: object
+      description: Informações sobre Listas de Confiança com erros
+      properties:
+        type:
+          type: string
+          description: Tipo da lista de confiança
+          enum: [ TL, LOTL, UNDEFINED ]
+        originalUrl:
+          type: string
+          description: URL original da lista de confiança
+        distributionPoints:
+          type: object
+          description: Pontos de distribuição da lista de confiança
+          properties:
+            distributionPoint:
+              type: array
+              description: Pontos de distribuição da lista de confiança
+              items:
+                type: string
+                description: Ponto de distribuição da lista de confiança
+        errorSummary:
+          type: string
+          description: Resumo dos erros
+        errorMessages:
+          type: object
+          description: Mensagens de erro
+          properties:
+            errorMessage:
+              type: array
+              description: Mensagens de erro
+              items:
+                type: string
+                description: Mensagem de erro
+    TsaInfo:
+      description: |
+        Informações do servidor de carimbo de tempo.
+
+        Define o tipo de autenticação e os parâmetros necessários para uso da carimbadora, podendo ser:
+        - **Local**: utiliza um arquivo PKCS#12 local como fonte de carimbo.
+        - **OAuth2**: usa autenticação via OAuth2 com obtenção de token.
+        - **Basic**: autenticação básica com usuário e senha via HTTP.
+      type: object
+      oneOf:
+        - type: object
+          description: Dados da carimbadora remota com autenticação OAuth
+          properties:
+            authType:
+              description: Tipo de autenticação utilizada
+              type: string
+              enum:
+                - OAuth2
+            url:
+              description: Url da carimbadora
+              type: string
+            oAuthUrl:
+              description: Url para aquisição do token oAuth
+              type: string
+            oAuthId:
+              description: Usuário para aquisição do token
+              type: string
+            oAuthSecret:
+              description: Senha para aquisição do token
+              type: string
+          example:
+            authType: OAuth2
+            url: "https://tsa.example.com"
+            oauthUrl: "https://tsa.example.com/oauth/token"
+            oauthId: "meu-cliente"
+            oauthSecret: "minha-senha"
+        - type: object
+          description: Dados da carimbadora para acesso local
+          properties:
+            authType:
+              description: Tipo de autenticação utilizada
+              type: string
+              enum:
+                - Local
+            url:
+              description: Url para arquivo PKCS#12 de carimbadora
+              type: string
+            password:
+              description: Senha do arquivo PKCS#12
+              type: string
+          example:
+            authType: Local
+            url: "file:///etc/tsa/cert.p12"
+            password: "senha123"
+        - type: object
+          description: Dados da carimbadora remota com autenticação Basic
+          properties:
+            authType:
+              description: Tipo de autenticação utilizada
+              type: string
+              enum:
+                - Basic
+            url:
+              description: Url da carimbadora
+              type: string
+            clientId:
+              description: Usuário para autenticação na carimbadora
+              type: string
+            clientSecret:
+              description: Senha para autenticação na carimbadora
+              type: string
+          example:
+            authType: Basic
+            url: "https://tsa.example.com"
+            clientId: "usuario123"
+            clientSecret: "senha456"
+    validationResult:
+      type: object
+      description: Resultado da validação de uma assinatura digital
+      properties:
+        result:
+          type: enum
+          description: Resultado da validação da assinatura digital
+          enum: [ "SUCCESS", "TOTAL_FAILURE", "INDETERMINATE" ]
+        reasons:
+          type: array
+          description: Razões para o resultado da validação
+          items:
+            type: object
+            description: Razão para o resultado da validação
+            properties:
+              reasonType:
+                type: string
+                description: Tipo da razão
+              reasonName:
+                type: string
+                description: Nome da razão
+              result:
+                type: enum
+                description: Resultado da razão
+                enum: [ "SUCCESS", "TOTAL_FAILURE", "INDETERMINATE", "IGNORE" ]
+              resultETSI:
+                type: enum
+                description: Resultado da razão segundo a definição da ETSI
+                enum: [ "VALID", "INVALID", "INDETERMINATE", "NOT_APPLICABLE" ]
+              message:
+                type: string
+                description: Mensagem explicativa da razão
+        warnings:
+          type: array
+          description: Avisos relacionados à validação da assinatura digital
+          items:
+            type: string
+            description: Aviso relacionado à validação da assinatura digital

@@ -2,16 +2,16 @@
 
 const linksData = [
     {
-        category: "META",
+        category: "Insi",
         icon: "building-2",
         description: "Ferramentas corporativas e RH",
         items: [
-            { name: "MetaX (TeamCulture)", url: "https://beta.teamculture.com.br/engagement/survey/", icon: "bar-chart-3" },
+            { name: "InsiX (TeamCulture)", url: "https://beta.teamculture.com.br/engagement/survey/", icon: "bar-chart-3" },
             { name: "Sênior X", url: "https://platform.senior.com.br/senior-x/#/", icon: "briefcase" },
             { name: "Udemy Business", url: "https://meta.udemy.com/organization/home/", icon: "graduation-cap" },
             { name: "Outlook Web", url: "https://outlook.office365.com/mail/", icon: "mail" },
             { name: "Site da Meta", url: "https://meta.com.br/", icon: "globe" },
-            { name: "Meta Hub (Vagas)", url: "https://meta.jobs.recrut.ai/vagas", icon: "user-plus" }
+            { name: "Insi Hub (Vagas)", url: "https://meta.jobs.recrut.ai/vagas", icon: "user-plus" }
         ]
     },
     {
